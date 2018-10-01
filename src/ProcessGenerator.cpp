@@ -26,13 +26,8 @@ void ProcessGenerator::initializeMap(){
     }
 }
 
-void ProcessGenerator::spawnShips(int quantity, int capacity){
-    pid_t pid;
-
-    //TODO: aca, wrappear esto en una clase Mapa, que genere el MAPA
-    //con las distancias y que tenga una interfaz para leerlo.
-    //Discutir si vale la pena ponerle un lock de lectura
-    //al mapa o no.
+pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
+    pid_t pid = 0;
     this->initializeMap();
 
     for (int i=0; i < quantity; i++){
@@ -43,26 +38,32 @@ void ProcessGenerator::spawnShips(int quantity, int capacity){
             int starting_hb = (rand() % this->harbourQty);
             Ship ship(this->map, starting_hb, capacity);
             ship.sail();
-            exit(0);
         }else{
             this->processes.push_back(pid);
         }
+        if (pid==0){
+            exit(0);
+        }
     }
+    return pid;
 }
 
-void ProcessGenerator::spawnHarbours(){
-    pid_t pid;
+pid_t ProcessGenerator::spawnHarbours(){
+    pid_t pid = 0;
     for (int i=1; i <= this->harbourQty; i++){
         pid = fork();
         if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
         if (pid==0){
             Harbour hb(i);
             hb.openHarbour();
-            exit(0);
         }else{
             this->processes.push_back(pid);
         }
+        if (pid==0){
+            exit(0);
+        }
     }
+    return pid;
 }
 
 int ProcessGenerator::beginSimulation(){
@@ -74,9 +75,11 @@ int ProcessGenerator::beginSimulation(){
         sleep(5);
     }
     cout << "Signaling all child processes to end\n";
-    for (procIter it = this->processes.begin(); it != this->processes.end(); ++it){
+    while(!this->processes.empty()){
         //signal all child processes to end in orderly fashion:
-        kill(*it, SIGINT);
+        pid_t pid = this->processes.back();
+        this->processes.pop_back();
+        kill(pid, SIGINT);
     }
     cout << "Waiting for all child processes to end\n";
     for (size_t i=0; i<this->processes.size(); i++){
@@ -87,6 +90,4 @@ int ProcessGenerator::beginSimulation(){
     return 0;
 }
 
-ProcessGenerator::~ProcessGenerator(){
-
-}
+ProcessGenerator::~ProcessGenerator(){}

@@ -20,9 +20,13 @@ int main(int argc, char *argv[]){
 
     ProcessGenerator pc;
     //spawn harbour processes
-    pc.spawnHarbours();
+    if (pc.spawnHarbours() == 0){
+        return 0;
+    }
     //spawn ship processes
-    pc.spawnShips(shipQty, shipCty);
+    if (pc.spawnShips(shipQty, shipCty) == 0){
+        return 0;
+    }
     //begin simulation (spawn people processes)
     pc.beginSimulation();
     return 0;

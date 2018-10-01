@@ -26,8 +26,8 @@ class ProcessGenerator : public Process{
 public:
     ProcessGenerator();
     ~ProcessGenerator();
-    void spawnShips(int qty, int capacity);
-    void spawnHarbours();
+    pid_t spawnShips(int qty, int capacity);
+    pid_t spawnHarbours();
     int beginSimulation();
 
 };
