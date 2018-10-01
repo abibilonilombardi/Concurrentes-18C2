@@ -11,3 +11,4 @@ cd build
 
 # generate Makefile and run 'make' command.
 cmake ../src && make
+

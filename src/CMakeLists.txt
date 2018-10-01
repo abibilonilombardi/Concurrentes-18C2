@@ -12,7 +12,9 @@ add_subdirectory(Handlers)
 add_subdirectory(Logger)
 add_subdirectory(Pipes)
 
-# add the executable
-add_executable(LakeConcu LakeConcu.cpp)
-target_link_libraries(LakeConcu Fifos Logger Handlers Pipes)
+file(GLOB_RECURSE SRCS *.cpp)
+file(GLOB_RECURSE HDRS *.h)
 
+# add the executable
+add_executable(LakeConcu LakeConcu.cpp ${SRCS} ${HDRS})
+target_link_libraries(LakeConcu Fifos Logger Handlers Pipes)

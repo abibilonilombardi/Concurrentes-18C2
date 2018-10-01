@@ -1,1 +1,1 @@
-docker run -v $(pwd):/root testconcu ./LakeConcu 5 10
+run -v $(pwd):/root lakeconcu ./LakeConcu 5 10

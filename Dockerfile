@@ -10,7 +10,8 @@ RUN apt-get update && \
 WORKDIR /root
 
 # Copy the current directory contents into the container at /root
-COPY . /root
+COPY . 
 
+RUN [./files/build.sh]
 
 ENTRYPOINT ["valgrind"]
