@@ -19,8 +19,11 @@ int main(int argc, char *argv[]){
     int shipCty = atoi(argv[2]);
 
     ProcessGenerator pc;
+    //spawn harbour processes
     pc.spawnHarbours();
+    //spawn ship processes
     pc.spawnShips(shipQty, shipCty);
-
+    //begin simulation (spawn people processes)
+    pc.beginSimulation();
     return 0;
 }

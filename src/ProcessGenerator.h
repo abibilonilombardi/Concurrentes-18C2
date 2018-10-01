@@ -4,9 +4,11 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <time.h>
+#include <vector>
 
 #include "MemoriaCompartida.h"
 #include "Ship.h"
+#include "Process.h"
 #include "Harbour.h"
 
 using namespace std;
@@ -14,17 +16,20 @@ using namespace std;
 #ifndef PROCGEN_H
 #define PROCGEN_H
 
-class ProcessGenerator {
-    int processQty;
+class ProcessGenerator : public Process{
     int harbourQty;
-    //int shipQty;
-    //pid_t *ships;
+    vector<pid_t> processes;
     MemoriaCompartida<int> map;
+
+    void initializeMap();
+
 public:
     ProcessGenerator();
     ~ProcessGenerator();
     void spawnShips(int qty, int capacity);
     void spawnHarbours();
+    int beginSimulation();
+
 };
 
 #endif //PROCGEN_H
