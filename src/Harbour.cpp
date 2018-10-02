@@ -13,7 +13,7 @@ string Harbour::entranceName(int harbour_id){
 }
 
 
-Harbour::Harbour(int id):id(id){
+Harbour::Harbour(int id):Process(),id(id){
     //Primero abro el FIFO de escritura para
     //que el barco se quede bloqueado allí en
     //cualquier caso.
