@@ -27,6 +27,4 @@ void Ship::sail(){
     }
 }
 
-Ship::~Ship(){
-    this->map.liberar();
-}
+Ship::~Ship(){}

@@ -18,10 +18,10 @@ using namespace std;
 
 class ProcessGenerator : public Process{
     int harbourQty;
+    vector<int> dstToHarbours;
     vector<pid_t> processes;
-    MemoriaCompartida<int> map;
 
-    void initializeMap();
+    void initializeMap(MemoriaCompartida<int> &m);
 
 public:
     ProcessGenerator();

@@ -4,31 +4,30 @@
 #define MAX_DST_HARBOURS 10
 #define MAP "/bin/bash"
 
-typedef std::vector<pid_t>::iterator procIter;
 
 ProcessGenerator::ProcessGenerator():Process(),harbourQty(0){
-    //ojo! si hago el attach de la mem. compartida aca TODOS los hijos de este
-    //proceso van a quedar attacheados a la memoria compartida!
     srand(1);//TODO:srand(time(NULL));
     this->harbourQty = (rand() % MAX_HARBOURS) + 1;
-
-
 }
 
-void ProcessGenerator::initializeMap(){
+void ProcessGenerator::initializeMap(MemoriaCompartida<int> &map){
     int sz = (this->harbourQty)+1;
-    this->map.crear(MAP, 'm', sz);
-    this->map.escribir(this->harbourQty, 0);
+    map.crear(MAP, 'm', sz);
+    map.escribir(this->harbourQty, 0);
     for(int i=1; i <= this->harbourQty; i++){
-        //escribo la distancia del puerto i al siguiente puerto:
+        //Write distance to next harbour(map) in shmem and save it
+        //in a vector in case I need it later:
         int distanceNextHarbour = (rand() % MAX_DST_HARBOURS)+1;
-        this->map.escribir(distanceNextHarbour, i);
+        this->dstToHarbours.push_back(distanceNextHarbour);
+        map.escribir(distanceNextHarbour, i);
     }
 }
 
 pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
     pid_t pid = 0;
-    this->initializeMap();
+
+    MemoriaCompartida<int> map;
+    initializeMap(map);
 
     for (int i=0; i < quantity; i++){
         pid = fork();
@@ -36,13 +35,11 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
         if (pid==0){
             srand(i);
             int starting_hb = (rand() % this->harbourQty);
-            Ship ship(this->map, starting_hb, capacity);
+            Ship ship(map, starting_hb, capacity);
             ship.sail();
+            return 0;
         }else{
             this->processes.push_back(pid);
-        }
-        if (pid==0){
-            exit(0);
         }
     }
     return pid;
@@ -56,11 +53,9 @@ pid_t ProcessGenerator::spawnHarbours(){
         if (pid==0){
             Harbour hb(i);
             hb.openHarbour();
+            return 0;
         }else{
             this->processes.push_back(pid);
-        }
-        if (pid==0){
-            exit(0);
         }
     }
     return pid;
@@ -75,6 +70,7 @@ int ProcessGenerator::beginSimulation(){
         sleep(5);
     }
     cout << "Signaling all child processes to end\n";
+    int totalProcesses = this->processes.size();
     while(!this->processes.empty()){
         //signal all child processes to end in orderly fashion:
         pid_t pid = this->processes.back();
@@ -82,7 +78,7 @@ int ProcessGenerator::beginSimulation(){
         kill(pid, SIGINT);
     }
     cout << "Waiting for all child processes to end\n";
-    for (size_t i=0; i<this->processes.size(); i++){
+    for (size_t i=0; i<totalProcesses; i++){
         //wait for all child processes to end:
         wait(&status);
     }
@@ -90,4 +86,7 @@ int ProcessGenerator::beginSimulation(){
     return 0;
 }
 
-ProcessGenerator::~ProcessGenerator(){}
+ProcessGenerator::~ProcessGenerator(){
+    this->dstToHarbours.clear();
+    this->processes.clear();
+}

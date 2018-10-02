@@ -24,6 +24,9 @@ Harbour::Harbour(int id):id(id){
 
 void Harbour::openHarbour(){
     cout << "Harbour " << this->id << " is now open!\n";
+    while (this->running()){
+        sleep(5);
+    }
 }
 
 Harbour::~Harbour(){

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string.h>
 
+
 #include "Fifos/FifoEscritura.h"
 #include "Fifos/FifoLectura.h"
 
@@ -12,7 +13,9 @@ using namespace std;
 #ifndef HARBOUR_H
 #define HARBOUR_H
 
-class Harbour {
+#include "Process.h"
+
+class Harbour : public Process{
     int id;
     FifoEscritura *exit;
     FifoLectura *entrance;
