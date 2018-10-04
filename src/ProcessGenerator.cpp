@@ -70,7 +70,7 @@ int ProcessGenerator::beginSimulation(){
         sleep(5);
     }
     cout << "Signaling all child processes to end\n";
-    int totalProcesses = this->processes.size();
+    size_t totalProcesses = this->processes.size();
     while(!this->processes.empty()){
         //signal all child processes to end in orderly fashion:
         pid_t pid = this->processes.back();

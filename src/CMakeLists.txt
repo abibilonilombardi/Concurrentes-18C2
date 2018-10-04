@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(LakeConcus)
 
-add_compile_options(-Wall -Wextra -Wpedantic -g --std=c++11 )
+add_compile_options(-Wall -Wextra -Wpedantic -g -lstdc++ --std=c++11 )
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
@@ -11,6 +11,7 @@ add_subdirectory(Fifos)
 add_subdirectory(Handlers)
 add_subdirectory(Logger)
 add_subdirectory(Pipes)
+add_subdirectory(Semaphore)
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE HDRS *.h)
