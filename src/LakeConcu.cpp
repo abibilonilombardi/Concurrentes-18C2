@@ -13,7 +13,6 @@
 
 using namespace std;
 
-
 int main(int argc, char *argv[]){
     int shipQty = atoi(argv[1]);
     int shipCty = atoi(argv[2]);

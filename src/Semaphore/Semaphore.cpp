@@ -13,13 +13,13 @@ void Semaphore::initialize(int value){
         msg += string(strerror(errno));
         throw(msg);
     }
-    //Initialize semaphore 0 from set with id 'setId'
-    //to value 'value'.
     union semun {
         int val;
         struct semid_ds *buf;
         unsigned short  *array;
     } initval;
+    //Initialize semaphore 0 from set with id 'setId'
+    //to value 'value'.
     initval.val = value;
     if (semctl(this->setId, 0, SETVAL, initval) < 0){
         std::string msg = string("Error initializing semaphore at semctl!");
