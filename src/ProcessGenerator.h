@@ -28,6 +28,7 @@ public:
     ~ProcessGenerator();
     pid_t spawnShips(int qty, int capacity);
     pid_t spawnHarbours();
+    pid_t spawnPassengers();
     int beginSimulation();
 
 };

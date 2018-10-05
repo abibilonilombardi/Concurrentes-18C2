@@ -1,7 +1,8 @@
 #include "ProcessGenerator.h"
 
-#define MAX_HARBOURS 32
-#define MAX_DST_HARBOURS 10
+#define MAX_HARBOURS 32 //max amount of harbours total.
+#define MAX_DST_HARBOURS 10 //max distance between harbours.
+#define MAX_PASSENGERS 50 //max amount of passengers total.
 #define MAP "/bin/bash"
 
 
@@ -61,13 +62,40 @@ pid_t ProcessGenerator::spawnHarbours(){
     return pid;
 }
 
+pid_t ProcessGenerator::spawnPassengers(){
+    pid_t pid = 0;
+    //TODO:aca seria ideal hacer un wrapper
+    //para acceder a la data del pasajero i
+    MemoriaCompartida<int> passangerData;
+    //inicializar memoria compartida según
+    for (int i=1; i <= MAX_PASSENGERS; i++){
+        pid = fork();
+        if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
+        if (pid==0){
+            //While simulation is running keep
+            //generating a passenger with id i???
+            //j=0
+            //while (this->running()){
+            //Worker w(i+j);
+            //w.travel();
+            //j+=MAX_PASSENGERS;
+            //}
+            return 0;
+        }else{
+            this->processes.push_back(pid);
+        }
+    }
+    return pid;
+}
+
 int ProcessGenerator::beginSimulation(){
     int status;
+
     while (this->running()){
-        //spawn people processes...
+        //spawn passanger processes...
         cout << "Parent process " << getpid() << " still alive!\n";
         cout << "Spawn people process\n";
-        sleep(5);
+        //spawnPassengers();
     }
     cout << "Signaling all child processes to end\n";
     size_t totalProcesses = this->processes.size();
