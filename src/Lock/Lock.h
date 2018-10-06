@@ -13,11 +13,15 @@ class Lock {
 private:
     struct flock lock;
     int fd;
+    bool isInternFile;
 public:
+    Lock(const std::string& file);
     Lock(int fileDescriptor);
     ~Lock();   
 private:
     void initializeFlock(); 
+    void openFile(const std::string file);
+    void closeFile();
 };
 
 

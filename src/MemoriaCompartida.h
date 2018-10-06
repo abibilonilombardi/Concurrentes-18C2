@@ -147,7 +147,7 @@ template <class T> void MemoriaCompartida<T>::escribir(const T& dato, size_t pos
 		std::string mensaje = std::string("Attempted to write beyond shared memory limit!") + std::string(strerror(errno));
 		throw mensaje;
 	}
-	*(this->ptrDatos + pos) = dato;
+	this->ptrDatos[pos] = dato;
 }
 
 template <class T> T MemoriaCompartida<T>::leer(size_t pos) const {
@@ -155,7 +155,7 @@ template <class T> T MemoriaCompartida<T>::leer(size_t pos) const {
 		std::string mensaje = std::string("Attempted to read beyond shared memory limit!") + std::string(strerror(errno));
 		throw mensaje;
 	}
-	return *(this->ptrDatos + pos);
+	return this->ptrDatos[pos];
 }
 
 template <class T> int MemoriaCompartida<T> :: cantidadProcesosAdosados() const {

@@ -2,9 +2,12 @@
 #ifndef SHMMAP_H
 #define SHMMAP_H
 
-class SharedMemoryMap: public MemoriaCompartida<int> {
+class SharedMemoryMap: protected MemoriaCompartida<int> {
+private:
+    int harbourQty;
 public:
     SharedMemoryMap(int harbourQty);
+    void initialize();
     int totalHarbours();
     int distanceNextHarbour(int currentHb);
 };
