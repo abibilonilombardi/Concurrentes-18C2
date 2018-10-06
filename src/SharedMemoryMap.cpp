@@ -1,9 +1,9 @@
-#include "MemoriaCompartidaMapa.h"
+#include "SharedMemoryMap.h"
 #define MAP "/bin/bash"
 
 #define MAX_DST_HARBOURS 10 //max distance between harbours.
 
-MemoriaCompartidaMapa::MemoriaCompartidaMapa(int harbourQty):
+SharedMemoryMap::SharedMemoryMap(int harbourQty):
 MemoriaCompartida(){
     int sz = harbourQty+1;
     this->crear(MAP, 'm', sz);
@@ -16,10 +16,10 @@ MemoriaCompartida(){
     }
 }
 
-int MemoriaCompartidaMapa::totalHarbours(){
+int SharedMemoryMap::totalHarbours(){
     return this->leer(0);
 }
 
-int MemoriaCompartidaMapa::distanceNextHarbour(int currentHb){
+int SharedMemoryMap::distanceNextHarbour(int currentHb){
     return this->leer(currentHb+1);
 }

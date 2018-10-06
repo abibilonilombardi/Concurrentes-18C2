@@ -6,7 +6,7 @@
 #include <time.h>
 #include <vector>
 
-#include "MemoriaCompartidaMapa.h"
+#include "SharedMemoryMap.h"
 #include "Ship.h"
 #include "Process.h"
 #include "Harbour.h"

@@ -26,9 +26,7 @@ ProcessGenerator::ProcessGenerator():Process(),harbourQty(0){
 pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
     pid_t pid = 0;
 
-    //MemoriaCompartida<int> map;
-    //initializeMap(map);
-    MemoriaCompartidaMapa map(this->harbourQty);
+    SharedMemoryMap map(this->harbourQty);
 
     for (int i=0; i < quantity; i++){
         pid = fork();
@@ -96,6 +94,7 @@ int ProcessGenerator::beginSimulation(){
         cout << "Parent process " << getpid() << " still alive!\n";
         cout << "Spawn people process\n";
         //spawnPassengers();
+        sleep(3);
     }
     cout << "Signaling all child processes to end\n";
     size_t totalProcesses = this->processes.size();
