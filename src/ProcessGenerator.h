@@ -6,10 +6,12 @@
 #include <time.h>
 #include <vector>
 
+#include "SharedMemoryPassenger.h"
 #include "SharedMemoryMap.h"
 #include "Ship.h"
 #include "Process.h"
 #include "Harbour.h"
+#include "Worker.h"
 
 using namespace std;
 

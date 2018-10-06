@@ -64,20 +64,15 @@ pid_t ProcessGenerator::spawnPassengers(){
     pid_t pid = 0;
     //TODO:aca seria ideal hacer un wrapper
     //para acceder a la data del pasajero i
-    MemoriaCompartida<int> passangerData;
-    //inicializar memoria compartida según
-    for (int i=1; i <= MAX_PASSENGERS; i++){
+    SharedMemoryPassenger passengersMem("passengers_data.bin", MAX_PASSENGERS);
+    //Instanciar inspectores y pasarles la referencia de la memoria
+    for (int i=0; i <= MAX_PASSENGERS; i++){
         pid = fork();
         if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
         if (pid==0){
-            //While simulation is running keep
-            //generating a passenger with id i???
-            //j=0
-            //while (this->running()){
-            //Worker w(i+j);
-            //w.travel();
-            //j+=MAX_PASSENGERS;
-            //}
+            //tirar random de 0 a 1 para ver si es turista o worker
+            Worker w(i, passengersMem, this->harbourQty);
+            w.travel();
             return 0;
         }else{
             this->processes.push_back(pid);
@@ -93,7 +88,7 @@ int ProcessGenerator::beginSimulation(){
         //spawn passanger processes...
         cout << "Parent process " << getpid() << " still alive!\n";
         cout << "Spawn people process\n";
-        //spawnPassengers();
+        spawnPassengers();
         sleep(3);
     }
     cout << "Signaling all child processes to end\n";
