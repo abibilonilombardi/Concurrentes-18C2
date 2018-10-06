@@ -3,7 +3,7 @@
 #ifndef TOURIST_H
 #define TOURIST_H
 
-class Worker : public Passenger {
+class Tourist : public Passenger {
 public:
     void travel();
 };

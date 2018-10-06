@@ -1,5 +1,5 @@
 #include "Tourist.h"
 
-void Worker::travel(){
-    
+void Tourist::travel(){
+
 }

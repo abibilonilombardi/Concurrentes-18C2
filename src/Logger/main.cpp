@@ -9,7 +9,7 @@
 
 using namespace std;
 
-int main () {
+/*int main () {
 
     Logger* logger = Logger::getInstance();
 
@@ -28,4 +28,4 @@ int main () {
     Logger::destroy();
 
 	return 0;
-}
+}*/

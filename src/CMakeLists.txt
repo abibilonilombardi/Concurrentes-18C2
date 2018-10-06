@@ -9,6 +9,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/..)
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 add_subdirectory(Fifos)
 add_subdirectory(Handlers)
+add_subdirectory(Lock)
 add_subdirectory(Logger)
 add_subdirectory(Pipes)
 add_subdirectory(Semaphore)
@@ -18,4 +19,4 @@ file(GLOB_RECURSE HDRS *.h)
 
 # add the executable
 add_executable(LakeConcu LakeConcu.cpp ${SRCS} ${HDRS})
-target_link_libraries(LakeConcu Fifos Logger Handlers Pipes)
+target_link_libraries(LakeConcu Fifos Handlers Lock Logger Pipes Semaphore)
