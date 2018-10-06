@@ -24,18 +24,29 @@ void Logger::fdCheking(){
     }
 }
 
-void Logger::log(std::string eventDescription){
-    int messegeSize = eventDescription.length(); // chequear que sea un int y no de otro tipo
-
+void Logger::log(const std::string& eventDescription){
     Lock mylock(fd);
+
+    std::string logMessage =  getCurrentTime() + " PID: " + std::to_string(getpid()) + " - " + eventDescription;
+
+    int messegeSize = logMessage.length();
+    
     std::cout<< "el proceso "<< getpid() << " tomo el log " << std::endl;
-    ssize_t writedBytes = write(fd, eventDescription.c_str(), messegeSize);
+
+    ssize_t writedBytes = write(fd, logMessage.c_str(), messegeSize);
     while( writedBytes < messegeSize){
-        writedBytes = write(fd, eventDescription.c_str() + writedBytes , eventDescription.length() - writedBytes);
+        writedBytes = write(fd, logMessage.c_str() + writedBytes , messegeSize - writedBytes);
     }
 
     std::cout<< "el proceso "<< getpid() << " escribio en el log" << std::endl;
 }
+
+std::string Logger::getCurrentTime(){
+    char buff[20];
+    strftime (buff, sizeof(buff), "%Y/%m/%d %H:%M:%S", localtime(&now));
+    return std::string(buff);
+}
+
 
 void Logger::destroy(){
     fd = close(fd);

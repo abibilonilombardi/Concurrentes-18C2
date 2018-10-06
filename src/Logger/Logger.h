@@ -23,10 +23,11 @@ private:
 public:
     static Logger* getInstance();
     static void destroy();
-    void log(std::string eventDescription);
+    void log(const std::string& eventDescription);
 private:
     Logger();
     void fdCheking();
+    std::string getCurrentTime();
 };
 
 
