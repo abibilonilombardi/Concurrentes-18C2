@@ -3,30 +3,20 @@
 #define MAX_HARBOURS 32 //max amount of harbours total.
 #define MAX_PASSENGERS 50 //max amount of passengers total.
 
-
-
-ProcessGenerator::ProcessGenerator():Process(),harbourQty(0){
+ProcessGenerator::ProcessGenerator():Process(),
+harbourQty(0){
     srand(1);//TODO:srand(time(NULL));
     this->harbourQty = (rand() % MAX_HARBOURS) + 1;
 }
 
-/*void ProcessGenerator::initializeMap(MemoriaCompartida<int> &map){
-    int sz = (this->harbourQty)+1;
-    map.crear(MAP, 'm', sz);
-    map.escribir(this->harbourQty, 0);
-    for(int i=1; i <= this->harbourQty; i++){
-        //Write distance to next harbour(map) in shmem and save it
-        //in a vector in case I need it later:
-        int distanceNextHarbour = (rand() % MAX_DST_HARBOURS)+1;
-        this->dstToHarbours.push_back(distanceNextHarbour);
-        map.escribir(distanceNextHarbour, i);
-    }
-}*/
-
 pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
     pid_t pid = 0;
 
+    SharedMemoryShip::setShipCapacity(capacity);
+
     SharedMemoryMap map(this->harbourQty);
+    map.initialize();
+
 
     for (int i=0; i < quantity; i++){
         pid = fork();
@@ -34,7 +24,7 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
         if (pid==0){
             srand(i);
             int starting_hb = (rand() % this->harbourQty);
-            Ship ship(map, starting_hb, capacity);
+            Ship ship(i, map, starting_hb, capacity);
             ship.sail();
             return 0;
         }else{

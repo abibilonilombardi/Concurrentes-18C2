@@ -2,15 +2,34 @@
 
 using namespace std;
 
-Ship::Ship(SharedMemoryMap &map, int harbour, int capacity):
+string Ship::getShmName(int shipId){
+    return string("shmship")+to_string(shipId)+string(".bin");
+}
+
+Ship::Ship(int id, SharedMemoryMap &map, int harbour, int capacity):
 Process(),
+id(id),
 map(map),
 harbour(harbour),
-capacity(capacity){
+capacity(capacity),
+fdShip(-1){
     this->totalHarbours = map.totalHarbours();
-    if (harbour>=this->totalHarbours){
-        std::string mensaje = std::string("Starting point beyond harbour map!") + "\n";
+    this->fdShip = open(Ship::getShmName(id).c_str(), O_RDWR|O_CREAT, S_IRGRP|S_IWGRP);
+
+    if (fdShip < 0 || harbour>=this->totalHarbours){
+        close(this->fdShip);
+        delete this->shmship;
+        //TODO:log
+        std::string mensaje = std::string("Error at ship creation! Invalid parameters!\n");
 		throw mensaje;
+    }
+    try{
+        this->shmship = new SharedMemoryShip(Ship::getShmName(id));
+    }catch(char const* error){
+        close(this->fdShip);
+        delete this->shmship;
+        //TODO:log
+        throw error;
     }
 }
 
@@ -27,4 +46,8 @@ void Ship::sail(){
     }
 }
 
-Ship::~Ship(){}
+Ship::~Ship(){
+    close(this->fdShip);
+    delete this->shmship;
+    unlink(Ship::getShmName(this->id).c_str());
+}
