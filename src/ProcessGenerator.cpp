@@ -17,7 +17,6 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
     SharedMemoryMap map(this->harbourQty);
     map.initialize();
 
-
     for (int i=0; i < quantity; i++){
         pid = fork();
         if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;

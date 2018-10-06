@@ -23,8 +23,6 @@ class ProcessGenerator : public Process{
     int harbourQty;
     vector<pid_t> processes;
 
-    void initializeMap(MemoriaCompartida<int> &m);
-
 public:
     ProcessGenerator();
     ~ProcessGenerator();

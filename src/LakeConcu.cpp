@@ -19,9 +19,9 @@ int main(int argc, char *argv[]){
 
     ProcessGenerator pc;
     //spawn harbour processes
-    if (pc.spawnHarbours() == 0){
-        return 0;
-    }
+    //if (pc.spawnHarbours() == 0){
+    //    return 0;
+    //}
     //spawn ship processes
     if (pc.spawnShips(shipQty, shipCty) == 0){
         return 0;

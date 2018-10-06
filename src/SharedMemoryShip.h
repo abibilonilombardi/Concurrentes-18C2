@@ -7,14 +7,15 @@ using namespace std;
 #ifndef SHMSHIP_H
 #define SHMSHIP_H
 
-class SharedMemoryShip: protected MemoriaCompartida<int> {
-    static int shipCty;
+class SharedMemoryShip: public MemoriaCompartida<int> {
+    static size_t shipCty;
 public:
-    SharedMemoryShip(const string &pathname);
-    //bool authorizedToSail(int shipId);
-    //void decommissionShip(int shipId);
-    //int removePassenger(int shipId, int passengerId);
-    //int addPassenger(int shipId, int passengerId);
+    SharedMemoryShip(const string &pathname, bool authorized);
+    void confiscateShip();
+    bool authorizedToSail();
+    bool confiscated();
+    bool removePassenger(int passengerId);
+    bool addPassenger(int passengerId);
     static void setShipCapacity(int shipCty);
 };
 
