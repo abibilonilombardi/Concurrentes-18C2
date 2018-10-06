@@ -14,13 +14,14 @@ Logger* Logger::getInstance(){
     fd = open("ShipsTrevelingSimulation.log", O_CREAT|O_WRONLY);
     instance->fdCheking();
     instance = new Logger();
+    return instance;
 }
 
 void Logger::fdCheking(){
     if (fd == -1){
         // TODO: definir nuestras excepciones o ver como las vamos a tratar
         // definir mensaje
-        //trow new std::execption(); 
+        //trow new std::execption();
     }
 }
 

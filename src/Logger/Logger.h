@@ -8,7 +8,7 @@
 #include <string>
 #include <ctime>
 
-#include "Lock.h"
+#include "Lock/Lock.h"
 
 
 // TODO: VER DONDE DECARAMOS EL NOMBRE DEL ARCHIVO DE LOG
@@ -18,7 +18,7 @@ class Logger {
 private:
     // static const char* LOG_FILE_NAME;
     static Logger* instance;
-    static int fd; 
+    static int fd;
     time_t now;
 public:
     static Logger* getInstance();

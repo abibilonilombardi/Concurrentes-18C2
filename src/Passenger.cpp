@@ -7,12 +7,14 @@ originHarbour(originHarbour),
 destinationHarbour(destinationHarbour){
     srand(1);//TODO:srand(time(NULL))
     this->hasTicket = rand() % 2;
-    this->travel = Semaphore(string("/tmp/pass")+string(id));
+    string path = string("/tmp/pass")+to_string(id);
+    this->semTravel = new Semaphore(path, 'p');
     //Can't travel unless you've boarded a ship:
-    this->travel.initialize(0);
+    this->semTravel->initialize(0);
     //TODO: write to shm passenger data.
 }
 
 Passenger::~Passenger(){
     //Free id?
+    delete this->semTravel;
 }

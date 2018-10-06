@@ -1,9 +1,8 @@
 #include "ProcessGenerator.h"
 
 #define MAX_HARBOURS 32 //max amount of harbours total.
-#define MAX_DST_HARBOURS 10 //max distance between harbours.
 #define MAX_PASSENGERS 50 //max amount of passengers total.
-#define MAP "/bin/bash"
+
 
 
 ProcessGenerator::ProcessGenerator():Process(),harbourQty(0){
@@ -11,7 +10,7 @@ ProcessGenerator::ProcessGenerator():Process(),harbourQty(0){
     this->harbourQty = (rand() % MAX_HARBOURS) + 1;
 }
 
-void ProcessGenerator::initializeMap(MemoriaCompartida<int> &map){
+/*void ProcessGenerator::initializeMap(MemoriaCompartida<int> &map){
     int sz = (this->harbourQty)+1;
     map.crear(MAP, 'm', sz);
     map.escribir(this->harbourQty, 0);
@@ -22,13 +21,14 @@ void ProcessGenerator::initializeMap(MemoriaCompartida<int> &map){
         this->dstToHarbours.push_back(distanceNextHarbour);
         map.escribir(distanceNextHarbour, i);
     }
-}
+}*/
 
 pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
     pid_t pid = 0;
 
-    MemoriaCompartida<int> map;
-    initializeMap(map);
+    //MemoriaCompartida<int> map;
+    //initializeMap(map);
+    MemoriaCompartidaMapa map(this->harbourQty);
 
     for (int i=0; i < quantity; i++){
         pid = fork();
@@ -115,6 +115,5 @@ int ProcessGenerator::beginSimulation(){
 }
 
 ProcessGenerator::~ProcessGenerator(){
-    this->dstToHarbours.clear();
     this->processes.clear();
 }

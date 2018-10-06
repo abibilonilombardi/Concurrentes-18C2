@@ -6,7 +6,7 @@
 #include <time.h>
 #include <vector>
 
-#include "MemoriaCompartida.h"
+#include "MemoriaCompartidaMapa.h"
 #include "Ship.h"
 #include "Process.h"
 #include "Harbour.h"
@@ -18,7 +18,6 @@ using namespace std;
 
 class ProcessGenerator : public Process{
     int harbourQty;
-    vector<int> dstToHarbours;
     vector<pid_t> processes;
 
     void initializeMap(MemoriaCompartida<int> &m);

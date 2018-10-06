@@ -10,10 +10,10 @@ using namespace std;
 
 class Passenger : public Process{
     int id;
-    bool hasTicket;
     int originHarbour;
     int destinationHarbour;
-    Semaphore travel;
+    Semaphore *semTravel;
+    bool hasTicket;
 public:
     Passenger(int id, int originHarbour, int destinationHarbour);
     virtual void travel() = 0;
