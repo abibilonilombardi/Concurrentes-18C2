@@ -8,9 +8,6 @@
 #include <string>
 #include <ctime>
 
-#include "Lock/Lock.h"
-
-
 // TODO: VER DONDE DECARAMOS EL NOMBRE DEL ARCHIVO DE LOG
 // TODO: DOCUMENTAR
 

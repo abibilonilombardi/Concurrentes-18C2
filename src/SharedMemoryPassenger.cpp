@@ -24,21 +24,23 @@ maxPassengers(maxPassengers),
 pathname(pathname){
     this->fd = open(pathname.c_str(), O_RDWR|O_CREAT, S_IRGRP|S_IWGRP);
     this->crear(pathname, 'p', maxPassengers * FIELDS);
-    LockFile l(SharedMemoryPassenger::shmLockName());
-    l.tomarLock();
+    ExclusiveLock l(SharedMemoryPassenger::shmLockName());
+    //l.tomarLock();
     for(size_t i=0; i<this->size(); i++){
         //initialize shm in -1;
         this->escribir(FREE, i);
     }
-    l.liberarLock();
+    //l.liberarLock();
+    l.unlock();
 }
 
 int SharedMemoryPassenger::addPassenger(int location, int nextStop, bool hasTicket){
-    LockFile l(SharedMemoryPassenger::shmLockName());
-    l.tomarLock();
+    ExclusiveLock l(SharedMemoryPassenger::shmLockName());
+    //l.tomarLock();
     int passengerId = getFreeId();
     if (passengerId < 0){
-        l.liberarLock();
+        //l.liberarLock();
+        l.unlock();
         return passengerId;
     }
     size_t startingPos = getStartingPosition(passengerId);
@@ -47,17 +49,19 @@ int SharedMemoryPassenger::addPassenger(int location, int nextStop, bool hasTick
     this->escribir(nextStop, startingPos + STOP_OFFSET);
     this->escribir(hasTicket, startingPos + TICKET_OFFSET);
     this->escribir(OCCUPIED, startingPos + FREE_ID);
-    l.liberarLock();
+    //l.liberarLock();
+    l.unlock();
     return passengerId;
 }
 
 void SharedMemoryPassenger::updateLocation(int passengerId, int location){
     size_t startingPos = getStartingPosition(passengerId);
     size_t pos = startingPos + LOCATION_OFFSET;
-    LockFile l(SharedMemoryPassenger::shmLockName());
-    l.tomarLock();
+    ExclusiveLock l(SharedMemoryPassenger::shmLockName());
+    //l.tomarLock();
     this->escribir(location, pos);
-    l.liberarLock();
+    //l.liberarLock();
+    l.unlock();
 }
 
 int SharedMemoryPassenger::getFreeId(){
@@ -71,10 +75,11 @@ int SharedMemoryPassenger::getFreeId(){
 
 void SharedMemoryPassenger::freePassengerId(int passengerId){
     //Mark this id position as free:
-    LockFile l(SharedMemoryPassenger::shmLockName());
-    l.tomarLock();
+    ExclusiveLock l(SharedMemoryPassenger::shmLockName());
+    //l.tomarLock();
     this->escribir(FREE,getStartingPosition(passengerId)+FREE_ID);
-    l.liberarLock();
+    //l.liberarLock();
+    l.unlock();
 }
 
 
@@ -83,10 +88,11 @@ int SharedMemoryPassenger::getLocation(int passengerId){
     size_t pos = startingPos + LOCATION_OFFSET;
     //LockFile lectura
     int loc = 0;
-    LockFile l(SharedMemoryPassenger::shmLockName());
-    l.tomarLock();
+    ExclusiveLock l(SharedMemoryPassenger::shmLockName());
+    //l.tomarLock();
     loc = this->leer(pos);
-    l.liberarLock();
+    //l.liberarLock();
+    l.unlock();
     return loc;
 }
 
@@ -94,20 +100,22 @@ void SharedMemoryPassenger::updateNextStop(int passengerId, int nextStop){
     //lock
     size_t startingPos = getStartingPosition(passengerId);
     size_t pos = startingPos + STOP_OFFSET;
-    LockFile l(SharedMemoryPassenger::shmLockName());
-    l.tomarLock();
+    ExclusiveLock l(SharedMemoryPassenger::shmLockName());
+    //l.tomarLock();
     this->escribir(nextStop, pos);
-    l.liberarLock();
+    //l.liberarLock();
+    l.unlock();
 }
 
 int SharedMemoryPassenger::getNextStop(int passengerId){
     size_t startingPos = getStartingPosition(passengerId);
     size_t pos = startingPos + STOP_OFFSET;
     //lock lectura
-    LockFile l(SharedMemoryPassenger::shmLockName());
-    l.tomarLock();
+    ExclusiveLock l(SharedMemoryPassenger::shmLockName());
+    //l.tomarLock();
     int ns = this->leer(pos);
-    l.liberarLock();
+    //l.liberarLock();
+    l.unlock();
     return ns;
 }
 
@@ -115,10 +123,11 @@ bool SharedMemoryPassenger::hasTicket(int passengerId){
     size_t startingPos = getStartingPosition(passengerId);
     size_t pos = startingPos + TICKET_OFFSET;
     //lock lectura
-    LockFile l(SharedMemoryPassenger::shmLockName());
-    l.tomarLock();
+    ExclusiveLock l(SharedMemoryPassenger::shmLockName());
+    //l.tomarLock();
     bool hasTicket = this->leer(pos);
-    l.liberarLock();
+    //l.liberarLock();
+    l.unlock();
     return hasTicket;
 }
 

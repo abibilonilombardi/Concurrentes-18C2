@@ -1,5 +1,5 @@
 #include "MemoriaCompartida.h"
-#include "Lock/LockFile.h"
+#include "Lock/ExclusiveLock.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
