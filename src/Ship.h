@@ -5,19 +5,24 @@
 
 #include "Harbour.h"
 #include "SharedMemoryMap.h"
+#include "SharedMemoryShip.h"
 #include "Process.h"
 
 #ifndef SHIP_H
 #define SHIP_H
 
 class Ship : public Process{
+    int id;
     SharedMemoryMap &map;
     int harbour, capacity;
     int totalHarbours;
+    int fdShip;
+    SharedMemoryShip *shmship;
 
 public:
-    Ship(SharedMemoryMap &map, int harbour,int capacity);
+    Ship(int id, SharedMemoryMap &map, int harbour,int capacity);
     void sail();
+    static string getShmName(int shipId);
     ~Ship();
 };
 

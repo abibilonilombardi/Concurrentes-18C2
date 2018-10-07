@@ -2,6 +2,7 @@
 #include <string.h>
 #include "Process.h"
 #include "Semaphore/Semaphore.h"
+#include "SharedMemoryPassenger.h"
 
 using namespace std;
 
@@ -9,13 +10,15 @@ using namespace std;
 #define PASSENGER_H
 
 class Passenger : public Process{
+protected:
     int id;
-    int originHarbour;
-    int destinationHarbour;
+    SharedMemoryPassenger &sharedMem;
     Semaphore *semTravel;
-    bool hasTicket;
+    //bool hasTicket;
+    //int originHarbour;
+    //int destinationHarbour;
 public:
-    Passenger(int id, int originHarbour, int destinationHarbour);
+    Passenger(int id, SharedMemoryPassenger &sharedMem);
     virtual void travel() = 0;
     ~Passenger();
 };
