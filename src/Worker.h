@@ -8,7 +8,7 @@
 class Worker : public Passenger {
 	int maxPassengers;
 public:
-	Worker(size_t id, SharedMemoryPassenger &sharedMem, int maxPassengers, int maxHarbours);
+	Worker(SharedMemoryPassenger &sharedMem, int maxHarbours);
     void travel();
 };
 #endif //WORKER_H

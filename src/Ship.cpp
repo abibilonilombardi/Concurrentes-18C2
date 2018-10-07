@@ -43,13 +43,13 @@ void Ship::sail(){
         int dstNextHarbour = map.distanceNextHarbour(this->harbour);
         //cout << "I'm Ship " << getpid() << " leaving for harbour "<< this->harbour+1 << " at distance " <<  dstNextHarbour <<"!\n";
 
-        string auth = to_string(this->shmship->authorizedToSail());
+        /*string auth = to_string(this->shmship->authorizedToSail());
         cout << "I'm Ship " << getpid() << " starts authorized " << auth << "\n";
         string conf = this->shmship->confiscated()? "YES":"NO";
         cout << "I'm Ship " << getpid() << " starts confiscated " << conf << "\n";
         this->shmship->confiscateShip();
         conf = this->shmship->confiscated()? "YES":"NO";
-        cout << "I'm Ship " << getpid() << " ends confiscated " << conf << "\n";
+        cout << "I'm Ship " << getpid() << " ends confiscated " << conf << "\n";*/
         //Viajar.
         sleep(5);//TODO:hacerlo proporcional a dstNextHarbour
         this->harbour = nextHarbour;

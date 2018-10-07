@@ -11,6 +11,8 @@
 
 #include "SharedMemoryPassenger.h"
 #include "SharedMemoryMap.h"
+#include "Logger/Logger.h"
+#include "Semaphore/Semaforo.h"
 #include "Ship.h"
 #include "Process.h"
 #include "Harbour.h"
@@ -30,7 +32,7 @@ public:
     ~ProcessGenerator();
     pid_t spawnShips(int qty, int capacity);
     pid_t spawnHarbours();
-    pid_t spawnPassengers();
+    pid_t spawnPassenger(SharedMemoryPassenger &sharedMem);
     int beginSimulation();
 
 };

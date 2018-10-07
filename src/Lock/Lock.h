@@ -8,18 +8,20 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-
+#include <string.h>
 class Lock {
 private:
     struct flock lock;
     int fd;
+    std::string fileName;
     bool isInternFile;
 public:
     Lock(const std::string& file);
+    Lock(const std::string& file, size_t start, size_t end);
     Lock(int fileDescriptor);
-    ~Lock();   
+    ~Lock();
 private:
-    void initializeFlock(); 
+    void initializeFlock(size_t start, size_t end);
     void openFile(const std::string file);
     void closeFile();
 };

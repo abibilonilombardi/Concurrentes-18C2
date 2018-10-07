@@ -1,7 +1,8 @@
 #include "ProcessGenerator.h"
 
+
 #define MAX_HARBOURS 32 //max amount of harbours total.
-#define MAX_PASSENGERS 1 //max amount of passengers total.
+#define MAX_PASSENGERS 3 //max amount of passengers total.
 
 ProcessGenerator::ProcessGenerator():Process(),
 harbourQty(0){
@@ -49,63 +50,69 @@ pid_t ProcessGenerator::spawnHarbours(){
     return pid;
 }
 
-pid_t ProcessGenerator::spawnPassengers(){
+pid_t ProcessGenerator::spawnPassenger(SharedMemoryPassenger &passengersMem){
     pid_t pid = 0;
-    //TODO:aca seria ideal hacer un wrapper
-    //para acceder a la data del pasajero i
-    SharedMemoryPassenger passengersMem("passengers_data.bin", MAX_PASSENGERS);
     //Instanciar inspectores y pasarles la referencia de la memoria
     try{
-        for (size_t i=0; i <= MAX_PASSENGERS; i++){
-            pid = fork();
-            if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
-            if (pid==0){
-                //tirar random de 0 a 1 para ver si es turista o worker
-                Worker w(i, passengersMem, MAX_PASSENGERS, this->harbourQty);
-                w.travel();
-                return 0;
-            }else{
-                this->processes.insert(pid);
-            }
+        pid = fork();
+        if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
+        if (pid==0){
+            //tirar random de 0 a 1 para ver si es turista o worker
+            Worker w(passengersMem, this->harbourQty);
+            w.travel();
+            return 0;
+        }else{
+            this->processes.insert(pid);
         }
-        return pid;
-    }catch(const char *error){
+    }catch(string error){
         cout << "ERROR " << error << "\n";
     }
-    return 0;
+    return pid;
 }
 
 int ProcessGenerator::beginSimulation(){
     int status;
+    //Logger *l = Logger::getInstance();
 
     //spawn passanger processes...
-    cout << "Parent process " << getpid() << " still alive!\n";
-    cout << "Spawn people process\n";
-    if(spawnPassengers()==0){
-        return 0;
-    }
-    int pass=0;
-    while(this->running() && pass<MAX_PASSENGERS){
-        pid_t pid = wait(&status);
-        this->processes.erase(pid);
-        pass++;
-    }
+    //l->log("Spawn people process\n");
+    try{
+        Semaforo s("/bin/ls",MAX_PASSENGERS);
 
-    cout << "Signaling all child processes to end\n";
+        //Create shared memory segment for passengers.
+        SharedMemoryPassenger passengersMem(SharedMemoryPassenger::shmFileName(), MAX_PASSENGERS);
+        while(this->running()){
+            s.p();
+            if(this->running()){
+                if(spawnPassenger(passengersMem)==0){
+                    s.v();
+                    return 0;
+                }
+            }
+        }
+        s.eliminar();
 
-    std::set<int>::iterator it;
-    for (it=this->processes.begin(); it!=this->processes.end(); ++it){
-        //signal all child processes to end in orderly fashion:
-        kill(*it, SIGINT);
+        //l->log("Signaling all child processes to end\n");
+        cout << "Signaling all child processes to end\n";
+        std::set<int>::iterator it;
+        for (it=this->processes.begin(); it!=this->processes.end(); ++it){
+            //signal all child processes to end in orderly fashion:
+            kill(*it, SIGINT);
+        }
+        //l->log("Waiting for all child processes to end\n");
+        cout << "Waiting for all child processes to end\n";
+        size_t sz = this->processes.size();
+        for (size_t i=0; i < sz; i++){
+            //wait for all child processes to end:
+            pid_t pid = wait(&status);
+            this->processes.erase(pid);
+        }
+
+        //l->log("All child processes ended, now exiting main loop...\n");
+        cout << "All child processes ended, now exiting main loop...\n";
+    }catch(string error){
+        cout << "ERROR " << error << "\n";
     }
-    cout << "Waiting for all child processes to end\n";
-    size_t sz = this->processes.size();
-    for (size_t i=0; i < sz; i++){
-        //wait for all child processes to end:
-        pid_t pid = wait(&status);
-        this->processes.erase(pid);
-    }
-    cout << "All child processes ended, now exiting main loop...\n";
     return 0;
 }
 

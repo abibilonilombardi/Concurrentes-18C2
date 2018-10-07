@@ -1,1 +1,1 @@
-add_library(Lock Lock.cpp)
+add_library(Lock LockFile.cpp)
