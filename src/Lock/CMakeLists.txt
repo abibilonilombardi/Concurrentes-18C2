@@ -1,1 +1,1 @@
-add_library(Lock ExclusiveLock.cpp)
+add_library(Lock ExclusiveLock.cpp SharedLock.cpp)
