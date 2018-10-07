@@ -1,5 +1,5 @@
-#ifndef LOCK_H_
-#define LOCK_H_
+#ifndef EXCLUSIVELOCK_H_
+#define EXCLUSIVELOCK_H_
 
 #include <iostream>  // para debuguear
 
@@ -9,15 +9,16 @@
 #include <unistd.h>
 
 
-class Lock {
+class ExclusiveLock {
 private:
     struct flock lock;
     int fd;
-    bool isInternFile;
+    bool isInternalFile;
 public:
-    Lock(const std::string& file);
-    Lock(int fileDescriptor);
-    ~Lock();   
+    ExclusiveLock(const std::string& file);
+    ExclusiveLock(int fileDescriptor);
+    void unlock();
+    ~ExclusiveLock();   
 private:
     void initializeFlock(); 
     void openFile(const std::string file);
@@ -25,4 +26,4 @@ private:
 };
 
 
-#endif /* LOCK_H_ */
+#endif /* EXCLUSIVELOCK_H_ */
