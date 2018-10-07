@@ -12,14 +12,13 @@ using namespace std;
 class Passenger : public Process{
 protected:
     int id;
-    int originHarbour;
-    int destinationHarbour;
-    Semaphore *semTravel;
-    bool hasTicket;
     SharedMemoryPassenger &sharedMem;
-
+    Semaphore *semTravel;
+    //bool hasTicket;
+    //int originHarbour;
+    //int destinationHarbour;
 public:
-    Passenger(int id, SharedMemoryPassenger &sharedMem, int maxHarbours);
+    Passenger(int id, SharedMemoryPassenger &sharedMem);
     virtual void travel() = 0;
     ~Passenger();
 };

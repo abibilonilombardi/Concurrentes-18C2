@@ -26,7 +26,7 @@ fdShip(-1){
     try{
         srand(time(NULL));
         bool authorized = rand() % 2;
-        this->shmship = new SharedMemoryShip(Ship::getShmName(id), false);
+        this->shmship = new SharedMemoryShip(Ship::getShmName(id), authorized);
     }catch(char const* error){
         close(this->fdShip);
         delete this->shmship;

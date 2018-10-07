@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <time.h>
-#include <vector>
+#include <set>
 #include <error.h>
 
 #include "SharedMemoryPassenger.h"
@@ -23,7 +23,7 @@ using namespace std;
 
 class ProcessGenerator : public Process{
     int harbourQty;
-    vector<pid_t> processes;
+    set<pid_t> processes;
 
 public:
     ProcessGenerator();

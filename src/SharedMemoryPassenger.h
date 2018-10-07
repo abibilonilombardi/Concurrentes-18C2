@@ -10,7 +10,8 @@ class SharedMemoryPassenger: public MemoriaCompartida<int> {
 private:
 	int fd;
 	size_t getStartingPosition(int passengerId);
-	std::string pathname;	
+	size_t maxPassengers;
+	std::string pathname;
 public:
     SharedMemoryPassenger(std::string pathname, int maxPassengers);
     void addPassenger(int passengerId, int location, int nextStop, bool hasTicket);

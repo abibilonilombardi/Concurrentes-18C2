@@ -4,8 +4,10 @@
 #define STOP_OFFSET 2
 #define TICKET_OFFSET 3
 
-SharedMemoryPassenger::SharedMemoryPassenger(std::string pathname, int maxPassengers):pathname(pathname), 
-MemoriaCompartida(){
+SharedMemoryPassenger::SharedMemoryPassenger(std::string pathname, int maxPassengers):
+MemoriaCompartida(),
+maxPassengers(maxPassengers),
+pathname(pathname){
     this->fd = open(pathname.c_str(), O_RDWR|O_CREAT, S_IRGRP|S_IWGRP);
     this->crear(pathname, 'p', maxPassengers * FIELDS);
 }
@@ -55,7 +57,7 @@ bool SharedMemoryPassenger::hasTicket(int passengerId){
 
 
 size_t SharedMemoryPassenger::getStartingPosition(int passengerId){
-    return passengerId + FIELDS * (passengerId % FIELDS);
+    return passengerId % this->maxPassengers;//+ FIELDS * (passengerId % FIELDS);
 }
 
 SharedMemoryPassenger::~SharedMemoryPassenger(){

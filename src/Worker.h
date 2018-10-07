@@ -6,9 +6,9 @@
 #define WORKER_H
 
 class Worker : public Passenger {
+	int maxPassengers;
 public:
-	Worker(int id, SharedMemoryPassenger &sharedMem, int maxHarbours);
+	Worker(size_t id, SharedMemoryPassenger &sharedMem, int maxPassengers, int maxHarbours);
     void travel();
-    ~Worker();
 };
 #endif //WORKER_H

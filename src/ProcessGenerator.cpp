@@ -1,7 +1,7 @@
 #include "ProcessGenerator.h"
 
 #define MAX_HARBOURS 32 //max amount of harbours total.
-#define MAX_PASSENGERS 50 //max amount of passengers total.
+#define MAX_PASSENGERS 1 //max amount of passengers total.
 
 ProcessGenerator::ProcessGenerator():Process(),
 harbourQty(0){
@@ -27,7 +27,7 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
             ship.sail();
             return 0;
         }else{
-            this->processes.push_back(pid);
+            this->processes.insert(pid);
         }
     }
     return pid;
@@ -43,7 +43,7 @@ pid_t ProcessGenerator::spawnHarbours(){
             hb.openHarbour();
             return 0;
         }else{
-            this->processes.push_back(pid);
+            this->processes.insert(pid);
         }
     }
     return pid;
@@ -55,43 +55,55 @@ pid_t ProcessGenerator::spawnPassengers(){
     //para acceder a la data del pasajero i
     SharedMemoryPassenger passengersMem("passengers_data.bin", MAX_PASSENGERS);
     //Instanciar inspectores y pasarles la referencia de la memoria
-    for (int i=0; i <= MAX_PASSENGERS; i++){
-        pid = fork();
-        if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
-        if (pid==0){
-            //tirar random de 0 a 1 para ver si es turista o worker
-            Worker w(i, passengersMem, this->harbourQty);
-            w.travel();
-            return 0;
-        }else{
-            this->processes.push_back(pid);
+    try{
+        for (size_t i=0; i <= MAX_PASSENGERS; i++){
+            pid = fork();
+            if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
+            if (pid==0){
+                //tirar random de 0 a 1 para ver si es turista o worker
+                Worker w(i, passengersMem, MAX_PASSENGERS, this->harbourQty);
+                w.travel();
+                return 0;
+            }else{
+                this->processes.insert(pid);
+            }
         }
+        return pid;
+    }catch(const char *error){
+        cout << "ERROR " << error << "\n";
     }
-    return pid;
+    return 0;
 }
 
 int ProcessGenerator::beginSimulation(){
     int status;
 
-    while (this->running()){
-        //spawn passanger processes...
-        cout << "Parent process " << getpid() << " still alive!\n";
-        cout << "Spawn people process\n";
-        spawnPassengers();
-        sleep(3);
+    //spawn passanger processes...
+    cout << "Parent process " << getpid() << " still alive!\n";
+    cout << "Spawn people process\n";
+    if(spawnPassengers()==0){
+        return 0;
     }
+    int pass=0;
+    while(this->running() && pass<MAX_PASSENGERS){
+        pid_t pid = wait(&status);
+        this->processes.erase(pid);
+        pass++;
+    }
+
     cout << "Signaling all child processes to end\n";
-    size_t totalProcesses = this->processes.size();
-    while(!this->processes.empty()){
+
+    std::set<int>::iterator it;
+    for (it=this->processes.begin(); it!=this->processes.end(); ++it){
         //signal all child processes to end in orderly fashion:
-        pid_t pid = this->processes.back();
-        this->processes.pop_back();
-        kill(pid, SIGINT);
+        kill(*it, SIGINT);
     }
     cout << "Waiting for all child processes to end\n";
-    for (size_t i=0; i<totalProcesses; i++){
+    size_t sz = this->processes.size();
+    for (size_t i=0; i < sz; i++){
         //wait for all child processes to end:
-        wait(&status);
+        pid_t pid = wait(&status);
+        this->processes.erase(pid);
     }
     cout << "All child processes ended, now exiting main loop...\n";
     return 0;
