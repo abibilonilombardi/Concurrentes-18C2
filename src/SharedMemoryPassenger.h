@@ -13,7 +13,7 @@ private:
 	size_t maxPassengers;
 	std::string pathname;
 public:
-    SharedMemoryPassenger(std::string pathname, int maxPassengers);
+    SharedMemoryPassenger(const std::string pathname, int maxPassengers);
     void addPassenger(int passengerId, int location, int nextStop, bool hasTicket);
     void updateLocation(int passengerId, int location);
     int getLocation(int passengerId);

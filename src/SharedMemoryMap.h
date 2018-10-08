@@ -8,6 +8,8 @@ private:
 public:
     SharedMemoryMap(int harbourQty);
     void initialize();
+    void addHarbourPid(pid_t harbourPid, int harbourId);
+    int getHarbourPid(int harbourId);
     int totalHarbours();
     int distanceNextHarbour(int currentHb);
 };

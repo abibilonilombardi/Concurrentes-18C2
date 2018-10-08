@@ -31,7 +31,7 @@ void testLocks(pid_t pid){
     }
 }
 
-int main () {
+/*int main () {
 
     pid_t pid = getpid();
 
@@ -44,4 +44,4 @@ int main () {
     testLocks(getpid());
 
 	return 0;
-}
+}*/

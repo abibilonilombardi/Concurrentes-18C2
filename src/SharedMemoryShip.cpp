@@ -19,6 +19,10 @@ SharedMemoryShip::SharedMemoryShip(const string &pathname, bool authorized){
     }
 }
 
+SharedMemoryShip::SharedMemoryShip(const string &pathname){
+    this->crear(pathname, 's', SharedMemoryShip::shipCty + 2);//Guarda con donde se usa por el shipCty
+}
+
 bool SharedMemoryShip::authorizedToSail(){
     return this->leer(SharedMemoryShip::shipCty)!=0;
 }

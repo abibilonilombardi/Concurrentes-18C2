@@ -17,16 +17,20 @@ int main(int argc, char *argv[]){
     int shipQty = atoi(argv[1]);
     int shipCty = atoi(argv[2]);
 
-    ProcessGenerator pc;
-    //spawn harbour processes
-    //if (pc.spawnHarbours() == 0){
-    //    return 0;
-    //}
-    //spawn ship processes
-    if (pc.spawnShips(shipQty, shipCty) == 0){
+    try{
+        ProcessGenerator pc;
+        //spawn harbour processes
+        if (pc.spawnHarbours() == 0){
+            return 0;
+        }
+        //spawn ship processes
+        if (pc.spawnShips(shipQty, shipCty) == 0){
+            return 0;
+        }
+        //begin simulation (spawn people processes)
+        pc.beginSimulation();
         return 0;
+    }catch(std::string error){
+        cout << "Error: " << error << std::endl;
     }
-    //begin simulation (spawn people processes)
-    pc.beginSimulation();
-    return 0;
 }

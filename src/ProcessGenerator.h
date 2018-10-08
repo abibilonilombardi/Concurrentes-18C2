@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <set>
-#include <error.h>
+#include <errno.h>
 
 #include "SharedMemoryPassenger.h"
 #include "SharedMemoryMap.h"

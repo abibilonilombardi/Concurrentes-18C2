@@ -9,7 +9,7 @@
 
 using namespace std;
 
-int main () {
+/*int main () {
 
     Logger* logger = Logger::getInstance();
 
@@ -27,4 +27,4 @@ int main () {
     Logger::destroy();
     cout << "pid: "<< getpid()<<" MURIO" << endl; 
 	return 0;
-}
+}*/

@@ -19,7 +19,6 @@ Harbour::Harbour(int id):Process(),id(id){
     //cualquier caso.
     this->exit = new FifoEscritura(Harbour::exitName(id));
     this->entrance = new FifoLectura(Harbour::entranceName(id));
-
 }
 
 void Harbour::openHarbour(){

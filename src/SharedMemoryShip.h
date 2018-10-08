@@ -11,6 +11,7 @@ class SharedMemoryShip: public MemoriaCompartida<int> {
     static size_t shipCty;
 public:
     SharedMemoryShip(const string &pathname, bool authorized);
+    SharedMemoryShip(const string &pathname);
     void confiscateShip();
     bool authorizedToSail();
     bool confiscated();

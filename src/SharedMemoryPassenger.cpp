@@ -4,7 +4,7 @@
 #define STOP_OFFSET 2
 #define TICKET_OFFSET 3
 
-SharedMemoryPassenger::SharedMemoryPassenger(std::string pathname, int maxPassengers):
+SharedMemoryPassenger::SharedMemoryPassenger(const std::string pathname, int maxPassengers):
 MemoriaCompartida(),
 maxPassengers(maxPassengers),
 pathname(pathname){

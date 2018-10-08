@@ -4,15 +4,11 @@
 #define MAX_DST_HARBOURS 10 //max distance between harbours.
 
 SharedMemoryMap::SharedMemoryMap(int harbourQty):
-MemoriaCompartida(),
-harbourQty(harbourQty){
+MemoriaCompartida(){
     int sz = harbourQty+1;
     this->crear(MAP, 'm', sz);
-}
-
-void SharedMemoryMap::initialize(){
-    this->escribir(this->harbourQty, 0);
-    for(int i=1; i <= this->harbourQty; i++){
+    this->escribir(harbourQty, 0);
+    for(int i=1; i <= harbourQty; i++){
         //Write distance to next harbour(map) in shmem and save it
         //in a vector in case I need it later:
         int distanceNextHarbour = (rand() % MAX_DST_HARBOURS)+1;

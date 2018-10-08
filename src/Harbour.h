@@ -14,6 +14,7 @@ using namespace std;
 #define HARBOUR_H
 
 #include "Process.h"
+#include "SharedMemoryMap.h"
 
 class Harbour : public Process{
     int id;
