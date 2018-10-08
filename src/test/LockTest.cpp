@@ -35,8 +35,8 @@ void testLocks(pid_t pid){
 
     pid_t pid = getpid();
 
-
-    for (int i; i<100; i++){
+    
+    for (int i=0; i<100; i++){
         if (pid!=0)
             pid = fork();
     }

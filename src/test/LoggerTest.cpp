@@ -15,7 +15,7 @@ using namespace std;
 
     pid_t pid = getpid();
 
-    for (int i; i<10; i++){
+    for (int i = 0; i<10; i++){
         if (pid!=0)
             pid = fork();
     }
