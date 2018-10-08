@@ -1,6 +1,6 @@
 #include "ProcessGenerator.h"
 
-#define MAX_HARBOURS 32 //max amount of harbours total.
+#define MAX_HARBOURS 10 //max amount of harbours total.
 #define MAX_PASSENGERS 1 //max amount of passengers total.
 
 ProcessGenerator::ProcessGenerator():Process(),

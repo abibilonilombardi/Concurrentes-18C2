@@ -15,12 +15,14 @@ using namespace std;
 
 class Harbour{
     int id;
+    int fd;
     int distanceNext;
     FifoLectura *entrance;
 public:
     Harbour(int id);
     int distanceNextHarbour();
     static string entranceName(int harbour_id);
+    static string entranceLockName(int harbour_id);
     ~Harbour();
 };
 
