@@ -7,10 +7,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <set>
+#include <vector>
 #include <error.h>
 
 #include "SharedMemoryPassenger.h"
-#include "SharedMemoryMap.h"
 #include "Logger/Logger.h"
 #include "Semaphore/Semaforo.h"
 #include "Ship.h"
@@ -24,8 +24,9 @@ using namespace std;
 #define PROCGEN_H
 
 class ProcessGenerator : public Process{
-    int harbourQty;
+    size_t harbourQty;
     set<pid_t> processes;
+    vector<Harbour*> harbours;
 
 public:
     ProcessGenerator();

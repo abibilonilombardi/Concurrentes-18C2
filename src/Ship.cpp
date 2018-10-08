@@ -6,17 +6,17 @@ string Ship::getShmName(int shipId){
     return string("shmship")+to_string(shipId)+string(".bin");
 }
 
-Ship::Ship(int id, SharedMemoryMap &map, int harbour, int capacity):
+Ship::Ship(int id, vector<Harbour*> &map, size_t harbour, int capacity):
 Process(),
 id(id),
 map(map),
 harbour(harbour),
 capacity(capacity),
 fdShip(-1){
-    this->totalHarbours = map.totalHarbours();
+    size_t totalHarbours = map.size();
     this->fdShip = open(Ship::getShmName(id).c_str(), O_RDWR|O_CREAT, S_IRGRP|S_IWGRP);
 
-    if (fdShip < 0 || harbour>=this->totalHarbours){
+    if (fdShip < 0 || harbour>=totalHarbours){
         close(this->fdShip);
         delete this->shmship;
         //TODO:log
@@ -38,9 +38,9 @@ fdShip(-1){
 
 void Ship::sail(){
     while(this->running()){
-        int nextHarbour = (this->harbour+1) % this->totalHarbours;
+        int nextHarbour = (this->harbour+1) % this->map.size();
 
-        int dstNextHarbour = map.distanceNextHarbour(this->harbour);
+        int dstNextHarbour = map[this->harbour]->distanceNextHarbour();
         //cout << "I'm Ship " << getpid() << " leaving for harbour "<< this->harbour+1 << " at distance " <<  dstNextHarbour <<"!\n";
 
         /*string auth = to_string(this->shmship->authorizedToSail());
@@ -52,7 +52,7 @@ void Ship::sail(){
         cout << "I'm Ship " << getpid() << " ends confiscated " << conf << "\n";*/
         //Viajar.
         sleep(5);//TODO:hacerlo proporcional a dstNextHarbour
-        this->harbour = nextHarbour;
+        this->harbour++;
         //Subir/bajar pasajeros etc...
     }
 }

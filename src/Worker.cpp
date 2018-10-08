@@ -14,14 +14,18 @@ Passenger(sharedMem){
 
 
 void Worker::travel(){
-
-    //Get origin harbour FIFO name
-    //string hb = Harbour::entranceName(this->originHarbour);
-    //TODO:Open harbour FIFO to Write
-    //and then proceed to write PID
-    //this->travel.p(); //Lock until arrival.
-	cout << "Passenger with id " << this->id << " is traveling!\n";
-    sleep(10); //spend 8hs working...
-
-
+	try{
+		cout << "Passenger with id " << this->id << " is traveling from " << this->locationStart << " to " << this->locationEnd << endl;
+		//Get harbour FIFO name, for harbour at locationStart:
+		string hb = Harbour::entranceName(this->locationStart);
+		//Now open it:
+		//FifoEscritura entrance(hb);
+		//entrance.abrir();
+		//Write my id:
+		//entrance.escribir(static_cast<const void*>(&this->id),sizeof(int));
+		//TODO: lock semaphore until I arrive
+	    sleep(8); //spend 8hs working...
+	}catch(string error){
+		cerr << "ERROR " << error <<endl;
+	}
 }

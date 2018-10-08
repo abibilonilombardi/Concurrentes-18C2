@@ -4,8 +4,6 @@
 #include <iostream>
 #include <string.h>
 
-
-#include "Fifos/FifoEscritura.h"
 #include "Fifos/FifoLectura.h"
 
 using namespace std;
@@ -15,14 +13,13 @@ using namespace std;
 
 #include "Process.h"
 
-class Harbour : public Process{
+class Harbour{
     int id;
-    FifoEscritura *exit;
+    int distanceNext;
     FifoLectura *entrance;
 public:
     Harbour(int id);
-    void openHarbour();
-    static string exitName(int harbour_id);
+    int distanceNextHarbour();
     static string entranceName(int harbour_id);
     ~Harbour();
 };
