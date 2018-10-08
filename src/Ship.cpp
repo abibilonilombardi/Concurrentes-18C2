@@ -6,28 +6,25 @@ string Ship::getShmName(int shipId){
     return string("shmship")+to_string(shipId)+string(".bin");
 }
 
-Ship::Ship(int id, vector<Harbour*> &map, size_t harbour, int capacity):
-Process(),
-id(id),
-map(map),
-harbour(harbour),
-capacity(capacity),
-fdShip(-1){
+Ship::Ship(int id, vector<Harbour*> &map, size_t harbour, int capacity):Process(),
+id(id), map(map), harbour(harbour), capacity(capacity), fdShip(-1){
     size_t totalHarbours = map.size();
-    this->fdShip = open(Ship::getShmName(id).c_str(), O_RDWR|O_CREAT, S_IRGRP|S_IWGRP);
+    
+    this->fdShip = open(Ship::getShmName(id).c_str(), O_RDWR|O_CREAT, S_IRGRP|S_IWGRP); //alerta falta sinconizacion?
 
     if (fdShip < 0 || harbour>=totalHarbours){
         close(this->fdShip);
         delete this->shmship;
         //TODO:log
-        std::string mensaje = std::string("Error at ship creation! Invalid parameters!\n");
-		throw mensaje;
+		throw "Error at ship creation! Invalid parameters!\n";
     }
+
     try{
         srand(time(NULL));
         bool authorized = rand() % 2;
         this->shmship = new SharedMemoryShip(Ship::getShmName(id), authorized);
-    }catch(char const* error){
+    }
+    catch(char const* error){ //TODO: ver si con el destructor ya es suficiente y no necesito catchearlo aca
         close(this->fdShip);
         delete this->shmship;
         //TODO:log
@@ -41,7 +38,7 @@ void Ship::sail(){
         int nextHarbour = (this->harbour+1) % this->map.size();
 
         int dstNextHarbour = map[this->harbour]->distanceNextHarbour();
-        //cout << "I'm Ship " << getpid() << " leaving for harbour "<< this->harbour+1 << " at distance " <<  dstNextHarbour <<"!\n";
+        cout << "I'm Ship " << getpid() << " leaving for harbour "<< nextHarbour << " at distance " <<  dstNextHarbour <<"!\n";
 
         /*string auth = to_string(this->shmship->authorizedToSail());
         cout << "I'm Ship " << getpid() << " starts authorized " << auth << "\n";

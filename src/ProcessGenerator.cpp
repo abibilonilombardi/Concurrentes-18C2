@@ -3,8 +3,7 @@
 #define MAX_HARBOURS 10 //max amount of harbours total.
 #define MAX_PASSENGERS 1 //max amount of passengers total.
 
-ProcessGenerator::ProcessGenerator():Process(),
-harbourQty(0){
+ProcessGenerator::ProcessGenerator():Process(){
     srand(1);//TODO:srand(time(NULL));
     this->harbourQty = (rand() % MAX_HARBOURS) + 1;
     for(size_t i=0; i < this->harbourQty; i++){
@@ -18,7 +17,7 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
 
     for (int i=0; i < quantity; i++){
         pid = fork();
-        if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
+        if (pid < 0){ throw "Fallo fork de creacion de barco"; } //TODO
         if (pid==0){
             srand(i);
             int starting_hb = (rand() % this->harbourQty);
@@ -59,20 +58,20 @@ int ProcessGenerator::beginSimulation(){
     //spawn passanger processes...
     //l->log("Spawn people process\n");
     try{
-        Semaforo s("/bin/ls",MAX_PASSENGERS);
+        Semaphore s(MAX_PASSENGERS, "/bin/ls",'A');
 
         //Create shared memory segment for passengers.
         SharedMemoryPassenger passengersMem(SharedMemoryPassenger::shmFileName(), MAX_PASSENGERS);
         while(this->running()){
-            s.p();
+            s.wait();
             if(this->running()){
                 if(spawnPassenger(passengersMem)==0){
-                    s.v();
+                    s.signal();
                     return 0;
                 }
             }
         }
-        s.eliminar();
+        s.remove();
 
         //l->log("Signaling all child processes to end\n");
         cout << "Signaling all child processes to end\n";
