@@ -7,6 +7,8 @@
 #include "Harbour.h"
 #include "SharedMemoryShip.h"
 #include "Process.h"
+#include "Lock/ExclusiveLock.h"
+
 
 #ifndef SHIP_H
 #define SHIP_H

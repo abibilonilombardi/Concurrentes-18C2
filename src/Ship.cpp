@@ -42,18 +42,27 @@ void Ship::sail(){
 
         int dstNextHarbour = map[this->harbour]->distanceNextHarbour();
         //cout << "I'm Ship " << getpid() << " leaving for harbour "<< this->harbour+1 << " at distance " <<  dstNextHarbour <<"!\n";
+        //Lock harbour so no other ships can approach it:
+        ExclusiveLock lockHarbour(Harbour::harbourLockName(this->harbour));
+        //string entranceName = Harbour::entranceName(this->harbour);
+        //LockEscritura lockEntrance(entranceName);
+        //write id in lockEntrance to mark arrival
+        //lockEntrance.unlock();
 
-        /*string auth = to_string(this->shmship->authorizedToSail());
-        cout << "I'm Ship " << getpid() << " starts authorized " << auth << "\n";
-        string conf = this->shmship->confiscated()? "YES":"NO";
-        cout << "I'm Ship " << getpid() << " starts confiscated " << conf << "\n";
-        this->shmship->confiscateShip();
-        conf = this->shmship->confiscated()? "YES":"NO";
-        cout << "I'm Ship " << getpid() << " ends confiscated " << conf << "\n";*/
-        //Viajar.
+        //unload passengers
+        //load new passengers
+
+        //LockEscritura lockExit(entranceName);
+        //write -1 in lockExit to mark exit
+        //lockExit.unlock();
+        //Lock harbour other ships can approach it:
+        lockHarbour.unlock();
+        //check if ship was confiscated and if so exit process
+
+
+        //Travel to next harbour:
         sleep(5);//TODO:hacerlo proporcional a dstNextHarbour
-        this->harbour++;
-        //Subir/bajar pasajeros etc...
+        this->harbour = nextHarbour;
     }
 }
 

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <tuple>
 #include "Process.h"
 #include "SharedMemoryPassenger.h"
 
@@ -18,6 +19,7 @@ protected:
 	bool hasTicket;
 public:
     Passenger(SharedMemoryPassenger &sharedMem);
+    static tuple getSemaphore(int passengerId);
     virtual void travel() = 0;
     ~Passenger();
 };
