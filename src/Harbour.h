@@ -12,12 +12,15 @@ using namespace std;
 #define HARBOUR_H
 
 #include "Process.h"
+#include "SharedMemoryMap.h"
 
 class Harbour{
+private:
     int id;
     int fdEntrance, fdHarbour;
     int distanceNext;
     FifoLectura *entrance;
+    void writeInHarbourFile(int fd, int value);
 public:
     Harbour(int id);
     int distanceNextHarbour();

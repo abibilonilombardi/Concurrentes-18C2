@@ -4,6 +4,7 @@
 
 #define MAX_DST_HARBOURS 10 //max distance between harbours.
 #define BUFFSIZE 1
+#define NO_SHIP -1
 
 string Harbour::entranceName(int harbour_id){
     ostringstream os;
@@ -27,15 +28,18 @@ Harbour::Harbour(int id):id(id){
     this->entrance = new FifoLectura(Harbour::entranceName(id));
     //Open harbour for incoming passangers:
     this->distanceNext = (rand() % MAX_DST_HARBOURS)+1;
-    this->fdEntrance = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY);
+    this->fdEntrance = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY);    
     if (this->fdEntrance < 0){
+        std::cout << "fdEntrance: " << fdEntrance << std::endl;
         delete this->entrance;
         std::string mensaje = std::string("Error at Harbour creation!");
         throw mensaje;
     }
-
+    //writeInHarbourFile(fdEntrance, NO_SHIP);
+    close(this->fdEntrance);
     this->fdHarbour = open(Harbour::harbourLockName(id).c_str(), O_CREAT|O_WRONLY);
     if (this->fdHarbour < 0){
+        std::cout << "fdHarbour: " << fdHarbour << std::endl;
         delete this->entrance;
         throw "Error at Harbour creation! " + string(strerror(errno));
     }
@@ -45,6 +49,14 @@ Harbour::Harbour(int id):id(id){
 
 int Harbour::distanceNextHarbour(){
     return this->distanceNext;
+}
+
+void Harbour::writeInHarbourFile(int fd, int value){
+    ssize_t writedBytes = 0;
+    while( writedBytes < (ssize_t)sizeof(value)){
+        writedBytes += write(fd, to_string(value).c_str() + writedBytes , sizeof(value) - writedBytes);
+        if(writedBytes == -1){throw "Error hip::writeInHarbourFile(value) =" + to_string(value);}
+    }
 }
 
 Harbour::~Harbour(){

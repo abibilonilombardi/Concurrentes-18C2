@@ -7,8 +7,9 @@
 #include <stdlib.h>
 #include <time.h>
 #include <set>
+#include <errno.h>
 #include <vector>
-#include <error.h>
+//#include <error.h>
 
 #include "SharedMemoryPassenger.h"
 #include "Logger/Logger.h"

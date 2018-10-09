@@ -10,6 +10,8 @@
 
 //TODO:chequear si estos dos tienen que ser distintos...
 
+size_t SharedMemoryPassenger::maxPassengers = 0;
+
 string SharedMemoryPassenger::shmFileName(){
     static const string s("passengers_data.bin");
     return s;
@@ -19,9 +21,8 @@ string SharedMemoryPassenger::shmLockName(){
     return string("passengers.bin");
 }
 
-SharedMemoryPassenger::SharedMemoryPassenger(std::string pathname, int maxPassengers):
+SharedMemoryPassenger::SharedMemoryPassenger(const std::string pathname, int maxPassengers):
 MemoriaCompartida(),
-maxPassengers(maxPassengers),
 pathname(pathname){
     this->fd = open(pathname.c_str(), O_RDWR|O_CREAT, 0777);
     if (this->fd == -1){ throw "No se pudo abrir el archivo de la shared memory " + std::string(strerror(errno));}
@@ -34,6 +35,11 @@ pathname(pathname){
         this->escribir(FREE, i);
     }
     l.unlock();
+}
+
+SharedMemoryPassenger::SharedMemoryPassenger(const std::string pathname):
+pathname(pathname){
+    this->crear(pathname, 'p', SharedMemoryPassenger::maxPassengers * FIELDS);
 }
 
 int SharedMemoryPassenger::addPassenger(int location, int nextStop, bool hasTicket){

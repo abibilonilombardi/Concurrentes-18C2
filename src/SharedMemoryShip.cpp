@@ -19,6 +19,10 @@ SharedMemoryShip::SharedMemoryShip(const string &pathname, bool authorized){
     }
 }
 
+SharedMemoryShip::SharedMemoryShip(const string &pathname){
+    this->crear(pathname, 's', SharedMemoryShip::shipCty + 2);//Guarda con donde se usa por el shipCty
+}
+
 bool SharedMemoryShip::authorizedToSail(){
     return this->leer(SharedMemoryShip::shipCty)!=0;
 }
@@ -31,6 +35,23 @@ void SharedMemoryShip::confiscateShip(){
 
 bool SharedMemoryShip::confiscated(){
     return this->leer(SharedMemoryShip::shipCty+1)!=0;
+}
+
+std::vector<int> SharedMemoryShip::getPassengers(){
+    std::vector<int> passengerIds;
+    //LOCK
+    for(size_t i = 0; i < SharedMemoryShip::shipCty; i++){
+        int passengerId = this->leer(i);
+        passengerIds.push_back(passengerId);
+    }
+    return passengerIds;
+}
+
+void SharedMemoryShip::updatePassengers(std::vector<int> &passengerIds){
+    //LOCK
+    for(size_t i = 0; i < passengerIds.size(); i++){
+        this->escribir(passengerIds[i], i);
+    }
 }
 
 bool SharedMemoryShip::removePassenger(int passengerId){
