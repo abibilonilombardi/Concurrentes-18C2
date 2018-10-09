@@ -8,7 +8,7 @@ using namespace std;
 #define SHMSHIP_H
 
 class SharedMemoryShip: public MemoriaCompartida<int> {
-    static size_t shipCty;
+    static size_t shipCty; 
 public:
     SharedMemoryShip(const string &pathname, bool authorized);
     SharedMemoryShip(const string &pathname);

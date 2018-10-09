@@ -16,7 +16,7 @@ using namespace std;
 
 class Harbour{
     int id;
-    int fd;
+    int fdEntrance, fdHarbour;
     int distanceNext;
     FifoLectura *entrance;
 public:
@@ -24,6 +24,8 @@ public:
     int distanceNextHarbour();
     static string entranceName(int harbour_id);
     static string entranceLockName(int harbour_id);
+    static string harbourLockName(int harbour_id);
+
     ~Harbour();
 };
 

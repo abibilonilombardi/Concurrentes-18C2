@@ -1,6 +1,7 @@
 #include "MemoriaCompartida.h"
 #include "Lock/ExclusiveLock.h"
 #include "Lock/SharedLock.h"
+#include "Harbour.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>

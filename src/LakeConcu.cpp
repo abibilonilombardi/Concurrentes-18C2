@@ -14,6 +14,10 @@
 using namespace std;
 
 int main(int argc, char *argv[]){
+    if (argc != 3){
+        // return -1;
+    }
+
     int shipQty = atoi(argv[1]);
     int shipCty = atoi(argv[2]);
 

@@ -1,7 +1,7 @@
 #include "Passenger.h"
 #include "Fifos/FifoEscritura.h"
-#include "Fifos/FifoLectura.h"
 #include "Harbour.h"
+#include "Logger/Logger.h"
 
 #include <string.h>
 #include <iostream>
@@ -10,7 +10,6 @@
 #define WORKER_H
 
 class Worker : public Passenger {
-	int maxPassengers;
 public:
 	Worker(SharedMemoryPassenger &sharedMem, int maxHarbours);
     void travel();

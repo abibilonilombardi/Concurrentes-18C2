@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
+#include <tuple>
+
 #include "Process.h"
+#include "Semaphore/Semaphore.h"
 #include "SharedMemoryPassenger.h"
 
 using namespace std;
@@ -12,12 +15,13 @@ class Passenger : public Process{
 protected:
     int id;
     SharedMemoryPassenger &sharedMem;
-    //Semaphore *semTravel;
+    Semaphore *semTravel;
     int locationStart;
 	int locationEnd;
 	bool hasTicket;
 public:
     Passenger(SharedMemoryPassenger &sharedMem);
+    static tuple<string,char> getSemaphore(int passengerId);
     virtual void travel() = 0;
     ~Passenger();
 };
