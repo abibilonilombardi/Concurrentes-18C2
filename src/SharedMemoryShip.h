@@ -15,6 +15,8 @@ public:
     void confiscateShip();
     bool authorizedToSail();
     bool confiscated();
+    std::vector<int> getPassengers();
+    void updatePassengers(std::vector<int> &passengerIds);
     bool removePassenger(int passengerId);
     bool addPassenger(int passengerId);
     static void setShipCapacity(int shipCty);

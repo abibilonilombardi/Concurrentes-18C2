@@ -21,13 +21,8 @@ private:
 
 	int getFreeId();
 public:
-<<<<<<< HEAD
-    SharedMemoryPassenger(const std::string pathname, int maxPassengers);
-    void addPassenger(int passengerId, int location, int nextStop, bool hasTicket);
-=======
     SharedMemoryPassenger(std::string pathname, int maxPassengers);
     int addPassenger(int location, int nextStop, bool hasTicket);
->>>>>>> f8896e799d75d137f4eec9640133ebeef41e6fb3
     void updateLocation(int passengerId, int location);
     int getLocation(int passengerId);
 

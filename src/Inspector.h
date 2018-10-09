@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "Process.h"
-#include "Semaphore/Semaphore.h"
-#include "SharedMemoryPassenger.h"
+#include "Ship.h"
+#include "SharedMemoryShip.h"
 
 using namespace std;
 
@@ -12,14 +13,10 @@ using namespace std;
 class Inspector: public Process{
 protected:
     int id;
-    SharedMemoryPassenger &sharedMem;
-    Semaphore *semTravel;
-    //bool hasTicket;
-    //int originHarbour;
-    //int destinationHarbour;
+
 public:
-    Inspector(SharedMemoryPassenger &sharedMem);
-    void inspect();
+    Inspector();
+    virtual void inspect(SharedMemoryShip &sharedMemoryShip, SharedMemoryPassenger &sharedMemoryPassenger) = 0;
     void behave(int maxHarbours);
     ~Inspector();
 };
