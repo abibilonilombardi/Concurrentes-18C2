@@ -1,4 +1,6 @@
 #include "Harbour.h"
+#include "errno.h"
+#include "string.h"
 
 #define MAX_DST_HARBOURS 10 //max distance between harbours.
 #define BUFFSIZE 1
@@ -31,14 +33,14 @@ Harbour::Harbour(int id):id(id){
         std::string mensaje = std::string("Error at Harbour creation!");
         throw mensaje;
     }
-    close(this->fdHarbour);
+
     this->fdHarbour = open(Harbour::harbourLockName(id).c_str(), O_CREAT|O_WRONLY);
     if (this->fdHarbour < 0){
         delete this->entrance;
-        std::string mensaje = std::string("Error at Harbour creation!");
-        throw mensaje;
+        throw "Error at Harbour creation! " + string(strerror(errno));
     }
     close(this->fdHarbour);
+    cout<<" SE CREO EL HARBOUR " << id << endl;
 }
 
 int Harbour::distanceNextHarbour(){

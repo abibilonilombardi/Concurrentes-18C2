@@ -27,13 +27,14 @@ class ProcessGenerator : public Process{
     size_t harbourQty;
     set<pid_t> processes;
     vector<Harbour*> harbours;
+    SharedMemoryPassenger* passengersMem;
 
 public:
     ProcessGenerator();
     ~ProcessGenerator();
     pid_t spawnShips(int qty, int capacity);
     pid_t spawnHarbours();
-    pid_t spawnPassenger(SharedMemoryPassenger &sharedMem);
+    pid_t spawnPassenger();
     int beginSimulation();
 
 };

@@ -8,26 +8,43 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <iostream>
+#include <cstring>
 
 #include "ProcessGenerator.h"
 
 using namespace std;
 
 int main(int argc, char *argv[]){
-    if (argc != 3){
-        // return -1;
-    }
-
-    int shipQty = atoi(argv[1]);
-    int shipCty = atoi(argv[2]);
-
-    ProcessGenerator pc;
+    int shipQty, shipCty;
     
-    //spawn ship processes
-    if (pc.spawnShips(shipQty, shipCty) == 0){
+    try{
+        if (argc == 3){
+            shipQty = atoi(argv[1]);
+            shipCty = atoi(argv[2]);
+        }
+        else{
+            shipQty = 3;
+            shipCty = 5;
+            // return -1;
+        }
+
+        ProcessGenerator pc;
+
+        //spawn ship processes
+        if (pc.spawnShips(shipQty, shipCty) == 0){
+            return 0;
+        }
+        //begin simulation (spawn people processes)
+        pc.beginSimulation();
+        
+        std::cout<< "El proceso: "<< getpid() << " ha finalizado correctamente"<< std::endl;
         return 0;
+
+    }catch(string error){
+        cout<< error<<endl;
+
     }
-    //begin simulation (spawn people processes)
-    pc.beginSimulation();
-    return 0;
+    catch(char* error){
+        cout<< error<<endl;
+    }
 }

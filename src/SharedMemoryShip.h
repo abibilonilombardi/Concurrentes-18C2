@@ -17,6 +17,7 @@ public:
     bool removePassenger(int passengerId);
     bool addPassenger(int passengerId);
     static void setShipCapacity(int shipCty);
+    ~SharedMemoryShip();
 };
 
 #endif //SHMSHIP_H

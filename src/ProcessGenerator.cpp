@@ -1,27 +1,42 @@
 #include "ProcessGenerator.h"
+#include "Logger/LogMessages.h"
 
 #define MAX_HARBOURS 10 //max amount of harbours total.
 #define MAX_PASSENGERS 1 //max amount of passengers total.
 
-ProcessGenerator::ProcessGenerator():Process(){
+
+ProcessGenerator::ProcessGenerator():Process() {
     srand(1);//TODO:srand(time(NULL));
+    
     this->harbourQty = (rand() % MAX_HARBOURS) + 1;
+
+    cout<<this->harbourQty<<endl;
     for(size_t i=0; i < this->harbourQty; i++){
         this->harbours.push_back(new Harbour(i));
+        cout<< " va a entrar al logger"<< i<<endl;
+        Logger::getInstance().log(CREACION_PUERTO_EXITO(i));
     }
+
+    this->passengersMem = new SharedMemoryPassenger(SharedMemoryPassenger::shmFileName(), MAX_PASSENGERS);
+    
+    cout<< "termina de crearse ProcessGenerator"<<endl;
 }
 
 pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
-    pid_t pid = 0;
     SharedMemoryShip::setShipCapacity(capacity);
+    pid_t pid = 0;
 
+    cout<< "antes del FOT" << endl;
     for (int i=0; i < quantity; i++){
         pid = fork();
         if (pid < 0){ throw "Fallo fork de creacion de barco"; } //TODO
         if (pid==0){
+            cout<< "   if (pid==0)    " << endl;
             srand(i);
             int starting_hb = (rand() % this->harbourQty);
-            Ship ship(i, this->harbours, starting_hb, capacity);
+            Ship ship(i, this->harbours, starting_hb, capacity, *this->passengersMem);
+            cout<< "barco" << i << " se creo "<< this->passengersMem << endl;
+            Logger::getInstance().log(CREACION_BARCO_EXITO(i));
             ship.sail();
             return 0;
         }else{
@@ -31,7 +46,7 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
     return pid;
 }
 
-pid_t ProcessGenerator::spawnPassenger(SharedMemoryPassenger &passengersMem){
+pid_t ProcessGenerator::spawnPassenger(){
     pid_t pid = 0;
     //Instanciar inspectores y pasarles la referencia de la memoria
     try{
@@ -39,16 +54,18 @@ pid_t ProcessGenerator::spawnPassenger(SharedMemoryPassenger &passengersMem){
         if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
         if (pid==0){
             //tirar random de 0 a 1 para ver si es turista o worker
-            Worker w(passengersMem, this->harbourQty);
+            Worker w(*this->passengersMem, this->harbourQty);
+            Logger::getInstance().log("Pasajero creado con exitoS");
             w.travel();
             return 0;
         }else{
             this->processes.insert(pid);
         }
+        return pid;
     }catch(string error){
-        cout << "ERROR " << error << "\n";
+        throw error + "es aca vieja";
     }
-    return pid;
+    cout<< "termina spawnPassenger"<<endl;
 }
 
 int ProcessGenerator::beginSimulation(){
@@ -58,14 +75,14 @@ int ProcessGenerator::beginSimulation(){
     //spawn passanger processes...
     //l->log("Spawn people process\n");
     try{
-        Semaphore s(MAX_PASSENGERS, "/bin/ls",'A');
+        Semaphore s(MAX_PASSENGERS, "/bin/ls",'A'); //???? no se si quiere esto o o A++? 
 
         //Create shared memory segment for passengers.
-        SharedMemoryPassenger passengersMem(SharedMemoryPassenger::shmFileName(), MAX_PASSENGERS);
+        // SharedMemoryPassenger passengersMem(SharedMemoryPassenger::shmFileName(), MAX_PASSENGERS);
         while(this->running()){
             s.wait();
             if(this->running()){
-                if(spawnPassenger(passengersMem)==0){
+                if(spawnPassenger()==0){
                     s.signal();
                     return 0;
                 }
@@ -91,18 +108,19 @@ int ProcessGenerator::beginSimulation(){
 
         //l->log("All child processes ended, now exiting main loop...\n");
         cout << "All child processes ended, now exiting main loop...\n";
+        return 0;
     }catch(string error){
-        cout << "ERROR " << error << "\n";
+        throw error;
     }
-    return 0;
 }
 
 ProcessGenerator::~ProcessGenerator(){
+    cout<< "ProcessGenerator::~ProcessGenerator()" <<endl;
+
     this->processes.clear();
     vector<Harbour*>::iterator it;
     for (it=this->harbours.begin(); it!=this->harbours.end(); ++it){
-        Harbour * hb = this->harbours.back();
-        delete hb;
-        this->harbours.pop_back();
+        delete(*it);       
     }
+    delete(this->passengersMem);
 }

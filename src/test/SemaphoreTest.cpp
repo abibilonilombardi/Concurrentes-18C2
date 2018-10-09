@@ -1,17 +1,17 @@
-#include <iostream>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/wait.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+// #include <iostream>
+// #include <unistd.h>
+// #include <stdlib.h>
+// #include <sys/wait.h>
+// #include <sys/ipc.h>
+// #include <sys/shm.h>
+// #include <sys/types.h>
+// #include <sys/wait.h>
 
-#include "../Semaphore/Semaphore.h"
+// #include "../Semaphore/Semaphore.h"
 
-using namespace std;
+// using namespace std;
 
-int calcularRandom ();
+// int calcularRandom ();
 
 // int main () {
 //     // const std::string FILEFTOK("/bin/bash");
@@ -74,8 +74,8 @@ int calcularRandom ();
 //     }
 // }
 
-int calcularRandom () {
-	srand ( time(NULL) );
-	int resultado = rand() % 10 + 1;
-	return resultado;
-}
+// int calcularRandom () {
+// 	srand ( time(NULL) );
+// 	int resultado = rand() % 10 + 1;
+// 	return resultado;
+// }

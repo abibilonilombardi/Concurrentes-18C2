@@ -14,11 +14,10 @@
 class Logger {
 private:
     static std::string LOG_FILE_NAME;
-    static Logger* instance;
     static int fd;
     time_t now;
 public:
-    static Logger* getInstance();
+    static Logger& getInstance();
     static void destroy();
     void log(const std::string& eventDescription);
 private:

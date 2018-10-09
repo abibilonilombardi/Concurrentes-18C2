@@ -11,19 +11,23 @@
 //TODO:chequear si estos dos tienen que ser distintos...
 
 string SharedMemoryPassenger::shmFileName(){
-    return string("passengers_data.bin");
+    static const string s("passengers_data.bin");
+    return s;
 }
 
 string SharedMemoryPassenger::shmLockName(){
-    return string("/bin/cat");
+    return string("passengers.bin");
 }
 
 SharedMemoryPassenger::SharedMemoryPassenger(std::string pathname, int maxPassengers):
 MemoriaCompartida(),
 maxPassengers(maxPassengers),
 pathname(pathname){
-    this->fd = open(pathname.c_str(), O_RDWR|O_CREAT, S_IRGRP|S_IWGRP);
+    this->fd = open(pathname.c_str(), O_RDWR|O_CREAT, 0777);
+    if (this->fd == -1){ throw "No se pudo abrir el archivo de la shared memory " + std::string(strerror(errno));}
+    std::cout<< " FD shared memo PAS "<< this->fd <<std::endl;
     this->crear(pathname, 'p', maxPassengers * FIELDS);
+
     ExclusiveLock l(SharedMemoryPassenger::shmLockName());
     for(size_t i=0; i<this->size(); i++){
         //initialize shm in -1;
@@ -119,6 +123,8 @@ size_t SharedMemoryPassenger::getStartingPosition(int passengerId){
 }
 
 SharedMemoryPassenger::~SharedMemoryPassenger(){
+    cout <<" Destructor  SharedMemoryPassenger"<<endl;
     close(this->fd);
     unlink(this->pathname.c_str());
 }
+

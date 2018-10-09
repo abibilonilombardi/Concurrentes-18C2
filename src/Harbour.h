@@ -26,6 +26,11 @@ public:
     static string harbourLockName(int harbour_id);
 
     ~Harbour();
+
+    //TODO: borrarlo es solo para debugger
+    int getid() {
+        return this->id;
+    }
 };
 
 #endif //HARBOUR_H

@@ -9,6 +9,8 @@
 #include <iostream>
 #include <errno.h>
 
+#define LOG(str) std::cout<< __FILE__ <<":" << __LINE__ << ": " << str << std::endl
+
 template <class T> class MemoriaCompartida {
 
 private:
@@ -30,6 +32,9 @@ public:
 	void escribir(const T& dato, size_t pos);
 	T leer(size_t pos) const;
 	size_t size();
+
+	// TODO: barrar, solo lo uso para debbuger
+	int getMemId(){return shmId;}
 };
 
 template <class T> MemoriaCompartida<T>::MemoriaCompartida():shmId(0),ptrDatos(NULL),memsize(0){
@@ -43,9 +48,11 @@ template <class T> void MemoriaCompartida<T>::crear(const std::string& archivo, 
 
 		if (this->shmId > 0) {
 			void* tmpPtr = shmat(this->shmId, NULL, 0);
+
 			if (tmpPtr != (void*) -1) {
 				this->memsize = memsize;
 				this->ptrDatos = static_cast<T*> (tmpPtr);
+				std::cout << "ATTACH "<< tmpPtr <<" ID:"<< this->shmId <<std::endl; 
 			}else{
 				std::string mensaje = std::string("Error at shmat(): ") + std::string(strerror(errno));
 				throw mensaje;
@@ -117,15 +124,17 @@ template <class T> MemoriaCompartida<T>::MemoriaCompartida(const MemoriaComparti
 
 template <class T> MemoriaCompartida<T>::~MemoriaCompartida(){
 	int errorDt = shmdt(static_cast<void*> (this->ptrDatos));
-
+	std::cout << "DETTACH "<< static_cast<void*> (this->ptrDatos)<<" ID:"<< this->shmId  <<std::endl; 
 	if (errorDt != -1){
 		int procAdosados = this->cantidadProcesosAdosados();
 		if (procAdosados == 0) {
 			shmctl(this->shmId, IPC_RMID, NULL);
 		}
 	}else{
-		std::cerr << "Error en shmdt(): " << strerror(errno) << std::endl;
+		LOG(strerror(errno));
+		throw "strerror(errno)";
 	}
+
 }
 
 template <class T> MemoriaCompartida<T>& MemoriaCompartida<T>::operator= (const MemoriaCompartida& origen){

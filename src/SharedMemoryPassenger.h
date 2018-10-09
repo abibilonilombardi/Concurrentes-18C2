@@ -1,3 +1,6 @@
+#ifndef SHMPASSENGER_H
+#define SHMPASSENGER_H
+
 #include "MemoriaCompartida.h"
 #include "Lock/ExclusiveLock.h"
 #include "Lock/SharedLock.h"
@@ -10,8 +13,6 @@
 
 using namespace std;
 
-#ifndef SHMPASSENGER_H
-#define SHMPASSENGER_H
 
 class SharedMemoryPassenger: public MemoriaCompartida<int> {
 private:
