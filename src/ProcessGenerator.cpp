@@ -53,6 +53,8 @@ pid_t ProcessGenerator::spawnPassenger(SharedMemoryPassenger &passengersMem){
 
 int ProcessGenerator::beginSimulation(){
     int status;
+    ShipInspector inspector;
+    inspector.behave(MAX_HARBOURS);
     //Logger *l = Logger::getInstance();
 
     //spawn passanger processes...
