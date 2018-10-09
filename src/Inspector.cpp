@@ -24,6 +24,7 @@ void Inspector::behave(int maxHarbours){
     	}
     	ExclusiveLock l(fd);
     	read(fd, buffer, 1);
+    	std::cout << "Archivo muelle: " << *buffer << std::endl;
     	if(*buffer != -1){
     		//si lo que hay en el archivo es == a -1 chau
     		//si no deberia acceder al archivo de memoria comp del barco
