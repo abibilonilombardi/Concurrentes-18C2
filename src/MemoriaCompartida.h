@@ -52,7 +52,7 @@ template <class T> void MemoriaCompartida<T>::crear(const std::string& archivo, 
 			if (tmpPtr != (void*) -1) {
 				this->memsize = memsize;
 				this->ptrDatos = static_cast<T*> (tmpPtr);
-				std::cout << "ATTACH "<< tmpPtr <<" ID:"<< this->shmId <<std::endl; 
+				// std::cout << "ATTACH "<< tmpPtr <<" ID:"<< this->shmId <<std::endl; 
 			}else{
 				std::string mensaje = std::string("Error at shmat(): ") + std::string(strerror(errno));
 				throw mensaje;
@@ -124,7 +124,7 @@ template <class T> MemoriaCompartida<T>::MemoriaCompartida(const MemoriaComparti
 
 template <class T> MemoriaCompartida<T>::~MemoriaCompartida(){
 	int errorDt = shmdt(static_cast<void*> (this->ptrDatos));
-	std::cout << "DETTACH "<< static_cast<void*> (this->ptrDatos)<<" ID:"<< this->shmId  <<std::endl; 
+	// std::cout << "DETTACH "<< static_cast<void*> (this->ptrDatos)<<" ID:"<< this->shmId  <<std::endl; 
 	if (errorDt != -1){
 		int procAdosados = this->cantidadProcesosAdosados();
 		if (procAdosados == 0) {

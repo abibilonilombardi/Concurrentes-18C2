@@ -26,7 +26,7 @@ MemoriaCompartida(),
 pathname(pathname){
     this->fd = open(pathname.c_str(), O_RDWR|O_CREAT, 0777);
     if (this->fd == -1){ throw "No se pudo abrir el archivo de la shared memory " + std::string(strerror(errno));}
-    std::cout<< " FD shared memo PAS "<< this->fd <<std::endl;
+    // std::cout<< " FD shared memo PAS "<< this->fd <<std::endl;
     this->crear(pathname, 'p', maxPassengers * FIELDS);
 
     ExclusiveLock l(SharedMemoryPassenger::shmLockName());
@@ -129,7 +129,7 @@ size_t SharedMemoryPassenger::getStartingPosition(int passengerId){
 }
 
 SharedMemoryPassenger::~SharedMemoryPassenger(){
-    cout <<" Destructor  SharedMemoryPassenger"<<endl;
+    cout <<"SharedMemoryPassenger::~SharedMemoryPassenger() " <<endl;
     close(this->fd);
     unlink(this->pathname.c_str());
 }

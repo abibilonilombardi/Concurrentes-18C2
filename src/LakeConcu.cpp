@@ -23,7 +23,7 @@ int main(int argc, char *argv[]){
             shipCty = atoi(argv[2]);
         }
         else{
-            shipQty = 3;
+            shipQty = 1;
             shipCty = 5;
             // return -1;
         }
@@ -35,9 +35,9 @@ int main(int argc, char *argv[]){
             return 0;
         }
         //begin simulation (spawn people processes)
-        pc.beginSimulation();
+        // pc.beginSimulation();
         
-        std::cout<< "El proceso: "<< getpid() << " ha finalizado correctamente"<< std::endl;
+        // std::cout<< "El proceso: "<< getpid() << " ha finalizado correctamente"<< std::endl;
         return 0;
 
     }catch(string error){

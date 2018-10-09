@@ -10,10 +10,10 @@ ProcessGenerator::ProcessGenerator():Process() {
     
     this->harbourQty = (rand() % MAX_HARBOURS) + 1;
 
-    cout<<this->harbourQty<<endl;
+    cout<<"Cantidad de "<<this->harbourQty<<endl;
     for(size_t i=0; i < this->harbourQty; i++){
         this->harbours.push_back(new Harbour(i));
-        cout<< " va a entrar al logger"<< i<<endl;
+        // cout<< " va a entrar al logger"<< i<<endl;
         Logger::getInstance().log(CREACION_PUERTO_EXITO(i));
     }
 
@@ -26,17 +26,15 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
     SharedMemoryShip::setShipCapacity(capacity);
     pid_t pid = 0;
 
-    cout<< "antes del FOT" << endl;
     for (int i=0; i < quantity; i++){
         pid = fork();
         if (pid < 0){ throw "Fallo fork de creacion de barco"; } //TODO
         if (pid==0){
-            cout<< "   if (pid==0)    " << endl;
             srand(i);
             int starting_hb = (rand() % this->harbourQty);
             Ship ship(i, this->harbours, starting_hb, capacity, *this->passengersMem);
-            cout<< "barco" << i << " se creo "<< this->passengersMem << endl;
-            Logger::getInstance().log(CREACION_BARCO_EXITO(i));
+            cout<< getpid() <<"Barco" << i << " se creo con la Memoria"<< this->passengersMem << endl;
+            // Logger::getInstance().log(CREACION_BARCO_EXITO(i));
             ship.sail();
             return 0;
         }else{
@@ -63,9 +61,8 @@ pid_t ProcessGenerator::spawnPassenger(){
         }
         return pid;
     }catch(string error){
-        throw error + "es aca vieja";
+        throw error + " ProcessGenerator::spawnPassenger() ";
     }
-    cout<< "termina spawnPassenger"<<endl;
 }
 
 int ProcessGenerator::beginSimulation(){
@@ -115,7 +112,7 @@ int ProcessGenerator::beginSimulation(){
 }
 
 ProcessGenerator::~ProcessGenerator(){
-    cout<< "ProcessGenerator::~ProcessGenerator()" <<endl;
+    cout<< getpid() <<"ProcessGenerator::~ProcessGenerator()" <<endl;
 
     this->processes.clear();
     vector<Harbour*>::iterator it;

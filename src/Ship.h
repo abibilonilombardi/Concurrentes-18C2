@@ -24,14 +24,17 @@ class Ship : public Process{
 public:
     Ship(int id, vector<Harbour*> &map, size_t harbour,int capacity, SharedMemoryPassenger& shmPassenger);
     void sail();
-    void arrivalAnnouncement();
-    void subirPeople();
-    void bajarPeople();
     static string getShmName(int shipId); //private?
     ~Ship();
+    
 private:
     void freeResources();
     void initialize();
+    void arrivalAnnouncement();
+    void departureAnnouncement();
+    void writeInHarbourFile(int fd,int value);
+    void loadPeople();
+    void unloadPeople();
 };
 
 #endif //SHIP_H

@@ -28,7 +28,7 @@ Harbour::Harbour(int id):id(id){
     this->entrance = new FifoLectura(Harbour::entranceName(id));
     //Open harbour for incoming passangers:
     this->distanceNext = (rand() % MAX_DST_HARBOURS)+1;
-    this->fdEntrance = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY);    
+    this->fdEntrance = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY, 0666);
     if (this->fdEntrance < 0){
         std::cout << "fdEntrance: " << fdEntrance << std::endl;
         delete this->entrance;
@@ -44,7 +44,7 @@ Harbour::Harbour(int id):id(id){
         throw "Error at Harbour creation! " + string(strerror(errno));
     }
     close(this->fdHarbour);
-    cout<<" SE CREO EL HARBOUR " << id << endl;
+    // cout<<" SE CREO EL HARBOUR " << id << endl;
 }
 
 int Harbour::distanceNextHarbour(){

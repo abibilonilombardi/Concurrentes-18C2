@@ -85,5 +85,5 @@ bool SharedMemoryShip::addPassenger(int passengerId){
 }
 
 SharedMemoryShip::~SharedMemoryShip(){
-    cout<< "Destructor SharedMemory ship -->";
+    cout<< "SharedMemoryShip::~SharedMemoryShip() -->";
 }

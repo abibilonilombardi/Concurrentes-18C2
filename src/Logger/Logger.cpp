@@ -27,10 +27,11 @@ void Logger::log(const std::string& eventDescription){
     
     std::string logMessage =  getCurrentTime() + " PID: " + std::to_string(getpid()) + " - " + eventDescription;
     int messegeSize = logMessage.length();
-    ssize_t writedBytes = write(fd, logMessage.c_str(), messegeSize);
 
+    ssize_t writedBytes = 0;
     while( writedBytes < messegeSize){
-        writedBytes = write(fd, logMessage.c_str() + writedBytes , messegeSize - writedBytes);
+        writedBytes += write(fd, logMessage.c_str() + writedBytes , messegeSize - writedBytes);
+        if(writedBytes == -1){throw "Error Logger::log(const std::string& eventDescription) =" + eventDescription;}
     }
     mylock.unlock();
 }

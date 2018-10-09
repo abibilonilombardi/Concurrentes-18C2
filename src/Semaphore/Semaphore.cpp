@@ -70,9 +70,7 @@ int Semaphore::getId(){
 
 void Semaphore::remove(){
     semctl(this->setId, 0, IPC_RMID);
-    cout<<"murio el guacho YO"<<endl;
 }
 
 Semaphore::~Semaphore(){
-    cout<<"murio el guacho SCOPE"<<endl;
 }
