@@ -19,4 +19,4 @@ file(GLOB_RECURSE HDRS *.h)
 
 # add the executable
 add_executable(LakeConcu LakeConcu.cpp ${SRCS} ${HDRS})
-target_link_libraries(LakeConcu Fifos Handlers Lock Logger Pipes Semaphore)
+target_link_libraries(LakeConcu Lock Fifos Handlers Lock Logger Pipes Semaphore)

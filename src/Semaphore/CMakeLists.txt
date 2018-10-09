@@ -1,1 +1,1 @@
-add_library(Semaphore Semaphore.cpp)
+add_library(Semaphore Semaforo.cpp)

@@ -1,37 +1,40 @@
 #include "Harbour.h"
 
-string Harbour::exitName(int harbour_id){
-    ostringstream os;
-    os << "FIFORD_" << harbour_id;
-    return os.str();
-}
+#define MAX_DST_HARBOURS 10 //max distance between harbours.
+#define BUFFSIZE 1
 
 string Harbour::entranceName(int harbour_id){
     ostringstream os;
-    os << "FIFOWR_" << harbour_id;
+    os << "FIFOPUERTO_" << harbour_id;
     return os.str();
 }
 
-
-Harbour::Harbour(int id):Process(),id(id){
-    //Primero abro el FIFO de escritura para
-    //que el barco se quede bloqueado allí en
-    //cualquier caso.
-    this->exit = new FifoEscritura(Harbour::exitName(id));
-    this->entrance = new FifoLectura(Harbour::entranceName(id));
+string Harbour::entranceLockName(int harbour_id){
+    ostringstream os;
+    os << "lock_" << harbour_id << ".bin";
+    return os.str();
 }
 
-void Harbour::openHarbour(){
-    cout << "Harbour " << this->id << " is now open!\n";
-    while (this->running()){
-        sleep(5);
+Harbour::Harbour(int id):id(id){
+    this->entrance = new FifoLectura(Harbour::entranceName(id));
+    //Open harbour for incoming passangers:
+    this->distanceNext = (rand() % MAX_DST_HARBOURS)+1;
+    this->fd = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY);
+    if (this->fd < 0){
+        delete this->entrance;
+        std::string mensaje = std::string("Error at Harbour creation!");
+        throw mensaje;
     }
+}
+
+int Harbour::distanceNextHarbour(){
+    return this->distanceNext;
 }
 
 Harbour::~Harbour(){
     //TODO:cerrar los FIFOS, y hacer el unlink.
-    this->exit->eliminar();
     this->entrance->eliminar();
-    delete this->exit;
     delete this->entrance;
+    close(this->fd);
+    unlink(Harbour::entranceLockName(this->id).c_str());
 }

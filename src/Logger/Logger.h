@@ -13,7 +13,7 @@
 
 class Logger {
 private:
-    // static const char* LOG_FILE_NAME;
+    static std::string LOG_FILE_NAME;
     static Logger* instance;
     static int fd;
     time_t now;

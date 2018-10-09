@@ -20,11 +20,11 @@ using namespace std;
             pid = fork();
     }
 
-    cout << "pid: "<< getpid() << endl; 
+    cout << "pid: "<< getpid() << endl;
     logger->log(CREACION_BARCO_EXITO);
 
 
     Logger::destroy();
-    cout << "pid: "<< getpid()<<" MURIO" << endl; 
+    cout << "pid: "<< getpid()<<" MURIO" << endl;
 	return 0;
 }*/

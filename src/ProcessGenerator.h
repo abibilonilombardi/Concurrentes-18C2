@@ -8,9 +8,12 @@
 #include <time.h>
 #include <set>
 #include <errno.h>
+#include <vector>
+//#include <error.h>
 
 #include "SharedMemoryPassenger.h"
-#include "SharedMemoryMap.h"
+#include "Logger/Logger.h"
+#include "Semaphore/Semaforo.h"
 #include "Ship.h"
 #include "Process.h"
 #include "Harbour.h"
@@ -22,15 +25,16 @@ using namespace std;
 #define PROCGEN_H
 
 class ProcessGenerator : public Process{
-    int harbourQty;
+    size_t harbourQty;
     set<pid_t> processes;
+    vector<Harbour*> harbours;
 
 public:
     ProcessGenerator();
     ~ProcessGenerator();
     pid_t spawnShips(int qty, int capacity);
     pid_t spawnHarbours();
-    pid_t spawnPassengers();
+    pid_t spawnPassenger(SharedMemoryPassenger &sharedMem);
     int beginSimulation();
 
 };

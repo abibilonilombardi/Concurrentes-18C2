@@ -18,9 +18,9 @@ public:
     SharedLock(const std::string& file);
     SharedLock(int fileDescriptor);
     void unlock();
-    ~SharedLock();   
+    ~SharedLock();
 private:
-    void initializeFlock(); 
+    void initializeFlock();
     void openFile(const std::string file);
     void closeFile();
 };

@@ -5,10 +5,9 @@
 
 Logger* Logger::instance = NULL;
 int Logger::fd = -1;
-// char* Logger::LOG_FILE_NAME = "ShipsTrevelingSimulation.log";
+std::string Logger::LOG_FILE_NAME = "ShipsTrevelingSimulation.log";
 
-Logger::Logger () {
-}
+Logger::Logger () {}
 
 Logger* Logger::getInstance(){
     if (instance){
@@ -32,7 +31,7 @@ void Logger::fdCheking(){
 
 void Logger::log(const std::string& eventDescription){
     ExclusiveLock mylock(fd);
-    
+
     std::cout << " FD: "<< fd <<"el proceso "<< getpid()<< " escribe " << std::endl;
     std::string logMessage =  getCurrentTime() + " PID: " + std::to_string(getpid()) + " - " + eventDescription;
     int messegeSize = logMessage.length();
@@ -43,7 +42,7 @@ void Logger::log(const std::string& eventDescription){
     }
 
     sleep(1);
-    
+
     writedBytes = write(fd, logMessage.c_str(), messegeSize);
     while( writedBytes < messegeSize){
         writedBytes = write(fd, logMessage.c_str() + writedBytes , messegeSize - writedBytes);
@@ -59,6 +58,6 @@ std::string Logger::getCurrentTime(){
 
 
 void Logger::destroy(){
-    fd = close(fd);
     instance->fdCheking();
+    delete instance;
 }

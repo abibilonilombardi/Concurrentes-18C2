@@ -19,14 +19,14 @@ void ExclusiveLock::closeFile(){
     fd = close(fd);
     if(fd == -1){
         //exception
-    }      
+    }
 }
 
 ExclusiveLock::ExclusiveLock(int fileDescriptor):isInternalFile(false){
     initializeFlock();
     fd = fileDescriptor;
     fcntl(fd,F_SETLKW, &lock);
-    std::cout << "ExclusiveLock el proceso "<< getpid() << " TOMO lock " << std::endl;
+    //std::cout << "ExclusiveLock el proceso "<< getpid() << " TOMO lock " << std::endl;
 }
 
 ExclusiveLock::ExclusiveLock(const std::string& file):isInternalFile(true){
@@ -37,7 +37,7 @@ ExclusiveLock::ExclusiveLock(const std::string& file):isInternalFile(true){
 
 void ExclusiveLock::unlock(){
     lock.l_type = F_UNLCK;
-    std::cout << "ExclusiveLock el proceso "<< getpid() << " LIBERO lock " << std::endl;
+    //std::cout << "ExclusiveLock el proceso "<< getpid() << " LIBERO lock " << std::endl;
     fcntl(fd, F_SETLK, &lock);
 }
 
