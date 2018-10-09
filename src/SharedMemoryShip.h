@@ -1,6 +1,7 @@
 #include "MemoriaCompartida.h"
 //#include "Lock/Lock.h"
 #include <string.h>
+#include <vector>
 
 using namespace std;
 

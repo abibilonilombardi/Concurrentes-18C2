@@ -10,18 +10,20 @@
 
 //TODO:chequear si estos dos tienen que ser distintos...
 
+size_t SharedMemoryPassenger::maxPassengers = 0;
+
 string SharedMemoryPassenger::shmFileName(){
     return string("passengers_data.bin");
 }
 
 string SharedMemoryPassenger::shmLockName(){
-    return string("/bin/cat");
+    return string("passengers.bin");
 }
 
 SharedMemoryPassenger::SharedMemoryPassenger(const std::string pathname, int maxPassengers):
 MemoriaCompartida(),
-maxPassengers(maxPassengers),
 pathname(pathname){
+    SharedMemoryPassenger::maxPassengers = maxPassengers;
     this->fd = open(pathname.c_str(), O_RDWR|O_CREAT, S_IRGRP|S_IWGRP);
     this->crear(pathname, 'p', maxPassengers * FIELDS);
     ExclusiveLock l(SharedMemoryPassenger::shmLockName());
@@ -30,6 +32,11 @@ pathname(pathname){
         this->escribir(FREE, i);
     }
     l.unlock();
+}
+
+SharedMemoryPassenger::SharedMemoryPassenger(const std::string pathname):
+pathname(pathname){
+    this->crear(pathname, 'p', SharedMemoryPassenger::maxPassengers * FIELDS);
 }
 
 int SharedMemoryPassenger::addPassenger(int location, int nextStop, bool hasTicket){

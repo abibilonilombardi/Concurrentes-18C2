@@ -15,10 +15,12 @@ using namespace std;
 #include "SharedMemoryMap.h"
 
 class Harbour{
+private:
     int id;
     int fdEntrance, fdHarbour;
     int distanceNext;
     FifoLectura *entrance;
+    void writeInHarbourFile(int fd, int value);
 public:
     Harbour(int id);
     int distanceNextHarbour();

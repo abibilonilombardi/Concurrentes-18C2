@@ -1,3 +1,6 @@
+rm -f *.bin
+rm -f FIFOPUERTO*
+
 if [ -d "/build" ]
 then
 	# if build directory exists

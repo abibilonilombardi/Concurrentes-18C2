@@ -17,12 +17,13 @@ class SharedMemoryPassenger: public MemoriaCompartida<int> {
 private:
 	int fd;
 	size_t getStartingPosition(int passengerId);
-	size_t maxPassengers;
+	static size_t maxPassengers;
 	std::string pathname;
 
 	int getFreeId();
 public:
-    SharedMemoryPassenger(std::string pathname, int maxPassengers);
+    SharedMemoryPassenger(const std::string pathname, int maxPassengers);
+    SharedMemoryPassenger(const std::string pathname);
     int addPassenger(int location, int nextStop, bool hasTicket);
     void updateLocation(int passengerId, int location);
     int getLocation(int passengerId);

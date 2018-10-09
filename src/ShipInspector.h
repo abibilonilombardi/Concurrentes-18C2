@@ -1,3 +1,5 @@
+#include "Inspector.h"
+
 using namespace std;
 
 #ifndef SHIP_INSPECTOR_H
@@ -6,7 +8,7 @@ using namespace std;
 class ShipInspector: public Inspector{
 public:
     ShipInspector();
-    void inspect(SharedMemoryShip &sharedMemoryShip, SharedMemoryPassenger &sharedMemoryPassenger);
+    void inspect(int harbourToInspect, SharedMemoryShip &sharedMemoryShip, SharedMemoryPassenger &sharedMemoryPassenger);
     ~ShipInspector();
 };
 
