@@ -1,6 +1,5 @@
 #include "Passenger.h"
 #include "Fifos/FifoEscritura.h"
-#include "Fifos/FifoLectura.h"
 #include "Harbour.h"
 #include "Logger/Logger.h"
 

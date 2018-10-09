@@ -8,13 +8,13 @@ Passenger(sharedMem){
     int start = rand() % ( int(maxHarbours/2) + 1 ) ; //generate random between [0, maxHarbours/2)
     int end = int(maxHarbours/2) + rand() % ((maxHarbours + 1) - int(maxHarbours/2)); //generate random between [maxHarbours/2, maxHarbours)
     //pick random destinations between start and end:
-    for(size_t i=hbA+1; i<hbB;i++){
+    for(int i=start+1; i<end;i++){
         if ((rand()%2)==1){
             this->destinations.push_back(i);
         }
     }
     this->hasTicket = rand() % 2;
-    l->log("Passenger with id " +string(this->id) + " created!");
+    l->log("Passenger with id " +to_string(this->id) + " created!");
 }
 
 void Tourist::travel(){
@@ -28,8 +28,8 @@ void Tourist::travel(){
             if ((rand()%2)==1){
                 //walk
                 sleep(5); //TODO: make this proportional to the distnace
-                this->sharedMem.updateLocation(end);
-                l->log("Tourist with id " +string(this->id) + " walked from " + string(start)+ " to "+ string(end));
+                this->sharedMem.updateLocation(this->id, end);
+                l->log("Tourist with id " +to_string(this->id) + " walked from " + to_string(start)+ " to "+ to_string(end));
             }else{
                 //Get harbour FIFO name, for harbour at start:
                 string hb = Harbour::entranceName(start);
@@ -39,15 +39,15 @@ void Tourist::travel(){
                 //Write my id:
                 entrance.escribir(static_cast<const void*>(&this->id),sizeof(int));
                 entrance.cerrar();
-                l->log("Tourist with id " +string(this->id) + " queued at " + string(start));
+                l->log("Tourist with id " +to_string(this->id) + " queued at " + to_string(start));
                 //lock semaphore until I arrive
-                this->semTravel.wait();
+                this->semTravel->wait();
                 int loc = this->sharedMem.getLocation(this->id);
                 if (loc != end){
-                    l->log("Tourist with id " +string(this->id) + " was forced to get off at harbour " + string(loc));
-                    return 0;
+                    l->log("Tourist with id " +to_string(this->id) + " was forced to get off at harbour " + to_string(loc));
+                    return;
                 }else{
-                    l->log("Tourist with id " +string(this->id) + " arrived at harbour " + string(end));
+                    l->log("Tourist with id " +to_string(this->id) + " arrived at harbour " + to_string(end));
                     if ((rand()%2)==1){
                         //Tourist decides they want to visit the area:
                         sleep((rand()%10));
@@ -55,13 +55,11 @@ void Tourist::travel(){
                 }
                 start = end;
             }
-            l->log("Tourist with id " +string(this->id) + " arrived at destination!");
-            return 0;
+            l->log("Tourist with id " +to_string(this->id) + " arrived at destination!");
         }
 
 	}catch(string error){
-		l->log("ERROR! " + "Tourist with id " +string(this->id) + " :"+ string(strerror(errno)));
+		l->log("ERROR! Tourist with id " +to_string(this->id) + " :"+ string(strerror(errno)));
 		cerr << "ERROR! " << string(strerror(errno));
 	}
-	return 0;
 }

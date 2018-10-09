@@ -12,7 +12,7 @@
 
 #include "SharedMemoryPassenger.h"
 #include "Logger/Logger.h"
-#include "Semaphore/Semaforo.h"
+#include "Semaphore/Semaphore.h"
 #include "Ship.h"
 #include "Process.h"
 #include "Harbour.h"

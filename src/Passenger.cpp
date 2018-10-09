@@ -10,13 +10,13 @@ sharedMem(sharedMem)
     //this->semTravel->initialize(0);
     //Write passenger data to shared memory:
     this->id = this->sharedMem.addPassenger(this->locationStart, this->locationEnd, this->hasTicket);
-    tuple s = Passenger::getSemaphore(this->id);
+    tuple<string,char> s = Passenger::getSemaphore(this->id);
     //initialize passenger semaphore at 0:
-    //this->semTravel = new Semaphore(s.get<0>(s), s.get<1>(s),0);
+    this->semTravel = new Semaphore(0, get<0>(s), get<1>(s));
 }
 
 tuple<string,char> Passenger::getSemaphore(int passengerId){
-    return make_tuple("passenger"+string(passengerId)+".bin",'p')
+    return make_tuple("passenger"+to_string(passengerId)+".bin",'p');
 }
 
 

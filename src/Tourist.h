@@ -1,4 +1,8 @@
 #include "Passenger.h"
+#include "Logger/Logger.h"
+#include "Harbour.h"
+#include "Fifos/FifoEscritura.h"
+
 #include <vector>
 
 using namespace std;
@@ -10,6 +14,7 @@ class Tourist : public Passenger {
 private:
     std::vector<int> destinations;
 public:
+    Tourist(SharedMemoryPassenger &sharedMem, int maxHarbours);
     void travel();
 };
 
