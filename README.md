@@ -12,7 +12,7 @@ A detailed explanation of the design and functional requirements can be found at
 
 Run the script 'build.sh' located in the project's root directory. An executable file 'LakeConcu' will be generated at the root directory.
 
-## Ejecución
+## Run
 
 Navigate to project's root directory and introduce the following command:
 
