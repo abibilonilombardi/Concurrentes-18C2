@@ -13,10 +13,12 @@ void ShipInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemory
     		//cambiar ubicacion actual
     		sharedMemoryPassenger.updateLocation(passengerIds[i], harbourToInspect);
     		//borrar de mem de barco al tipo
+    		passengerIds[i] = -1;
     		//hacerlo mas lindo
     		sharedMemoryShip.removePassenger(passengerIds[i]);
     		//v al semaforo de pasajero
     	}
+    	sharedMemoryShip.updatePassengers(passengerIds);
     }
 }
 
