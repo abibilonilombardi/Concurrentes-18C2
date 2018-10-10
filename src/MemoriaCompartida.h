@@ -131,8 +131,8 @@ template <class T> MemoriaCompartida<T>::~MemoriaCompartida(){
 			shmctl(this->shmId, IPC_RMID, NULL);
 		}
 	}else{
-		LOG(strerror(errno));
-		throw "strerror(errno)";
+		std::string mensaje = std::string(strerror(errno));
+		throw mensaje;
 	}
 
 }

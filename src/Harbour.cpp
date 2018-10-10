@@ -32,16 +32,16 @@ Harbour::Harbour(int id):id(id){
     if (this->fdEntrance < 0){
         std::cout << "fdEntrance: " << fdEntrance << std::endl;
         delete this->entrance;
-        std::string mensaje = std::string("Error at Harbour creation!");
+        std::string mensaje = "Error at Harbour creation!";
         throw mensaje;
     }
-    //writeInHarbourFile(fdEntrance, NO_SHIP);
+    writeInHarbourFile(fdEntrance, NO_SHIP);
     close(this->fdEntrance);
     this->fdHarbour = open(Harbour::harbourLockName(id).c_str(), O_CREAT|O_WRONLY);
     if (this->fdHarbour < 0){
         std::cout << "fdHarbour: " << fdHarbour << std::endl;
         delete this->entrance;
-        throw "Error at Harbour creation! " + string(strerror(errno));
+        throw std::string("Error at Harbour creation! ") + string(strerror(errno));
     }
     close(this->fdHarbour);
     // cout<<" SE CREO EL HARBOUR " << id << endl;
@@ -53,9 +53,10 @@ int Harbour::distanceNextHarbour(){
 
 void Harbour::writeInHarbourFile(int fd, int value){
     ssize_t writedBytes = 0;
+    cout << "Value a escribir: " << value << endl;
     while( writedBytes < (ssize_t)sizeof(value)){
-        writedBytes += write(fd, to_string(value).c_str() + writedBytes , sizeof(value) - writedBytes);
-        if(writedBytes == -1){throw "Error hip::writeInHarbourFile(value) =" + to_string(value);}
+        writedBytes += write(fd, (char *)&value + writedBytes , sizeof(value) - writedBytes);
+        if(writedBytes == -1){throw std::string("Error hip::writeInHarbourFile(value) =") + to_string(value);}
     }
 }
 

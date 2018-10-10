@@ -35,16 +35,19 @@ int main(int argc, char *argv[]){
             return 0;
         }
         //begin simulation (spawn people processes)
-        // pc.beginSimulation();
+        pc.beginSimulation();
         
         // std::cout<< "El proceso: "<< getpid() << " ha finalizado correctamente"<< std::endl;
         return 0;
 
-    }catch(string error){
+    }catch(const string &error){
         cout<< error<<endl;
 
     }
     catch(char* error){
         cout<< error<<endl;
+    }
+    catch(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > error){
+        cout << "Error mistico: " << error << endl;
     }
 }

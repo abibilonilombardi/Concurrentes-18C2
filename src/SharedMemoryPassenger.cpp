@@ -129,7 +129,6 @@ size_t SharedMemoryPassenger::getStartingPosition(int passengerId){
 }
 
 SharedMemoryPassenger::~SharedMemoryPassenger(){
-    cout <<"SharedMemoryPassenger::~SharedMemoryPassenger() " <<endl;
     close(this->fd);
     unlink(this->pathname.c_str());
 }

@@ -14,9 +14,6 @@ using namespace std;
 #define INSPECTOR_H
 
 class Inspector: public Process{
-protected:
-    int id;
-
 public:
     Inspector();
     virtual void inspect(int harbourToInspect, SharedMemoryShip &sharedMemoryShip, SharedMemoryPassenger &sharedMemoryPassenger) = 0;

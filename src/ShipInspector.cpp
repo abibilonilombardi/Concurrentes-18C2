@@ -5,6 +5,7 @@ ShipInspector::ShipInspector(): Inspector(){
 }
 
 void ShipInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemoryShip, SharedMemoryPassenger &sharedMemoryPassenger){
+	std::cout << "Entro al inspect " << std::endl;
 	if (!sharedMemoryShip.authorizedToSail()){
     	sharedMemoryShip.confiscateShip();        	
     	std::vector<int> passengerIds = sharedMemoryShip.getPassengers();

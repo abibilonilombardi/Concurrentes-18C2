@@ -18,6 +18,7 @@
 #include "Process.h"
 #include "Harbour.h"
 #include "Worker.h"
+#include "ShipInspector.h"
 
 using namespace std;
 

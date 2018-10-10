@@ -13,10 +13,10 @@ ProcessGenerator::ProcessGenerator():Process() {
     cout<<"Cantidad de "<<this->harbourQty<<endl;
     for(size_t i=0; i < this->harbourQty; i++){
         this->harbours.push_back(new Harbour(i));
-        // cout<< " va a entrar al logger"<< i<<endl;
+        cout<< " va a entrar al logger"<< i<<endl;
         Logger::getInstance().log(CREACION_PUERTO_EXITO(i));
     }
-
+    cout<< " va a crear la memoria"<<endl;
     this->passengersMem = new SharedMemoryPassenger(SharedMemoryPassenger::shmFileName(), MAX_PASSENGERS);
     
     cout<< "termina de crearse ProcessGenerator"<<endl;
@@ -67,6 +67,8 @@ pid_t ProcessGenerator::spawnPassenger(){
 
 int ProcessGenerator::beginSimulation(){
     int status;
+    ShipInspector inspector;
+    inspector.behave(MAX_HARBOURS);
     //Logger *l = Logger::getInstance();
 
     //spawn passanger processes...

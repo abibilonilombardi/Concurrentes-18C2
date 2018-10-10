@@ -51,7 +51,7 @@ void Ship::sail(){
         int nextHarbour = (this->harbour+1) % this->map.size();
 
         int dstNextHarbour = map.at(this->harbour)->distanceNextHarbour();
-        cout << getpid()<<" I'm Ship " << getpid() << " leaving for harbour "<< to_string(nextHarbour) << " at distance " <<  to_string(dstNextHarbour) <<"!\n";
+        //cout << getpid()<<" I'm Ship " << getpid() << " leaving for harbour "<< to_string(nextHarbour) << " at distance " <<  to_string(dstNextHarbour) <<"!\n";
         
         sleep(dstNextHarbour); 
         
@@ -59,11 +59,10 @@ void Ship::sail(){
         //unload passengers (update their locations and Unblock semaphores)
         
         ExclusiveLock lockHarbour(Harbour::harbourLockName(this->harbour));
-        cout<<getpid()<< " Ship" << to_string(this->id)<< " ENTRA AL PUERTO "<< to_string(this->harbour) <<endl;
         
-        // ExclusiveLock lockEntrance(Harbour::entranceName(this->harbour));
+        ExclusiveLock lockEntrance(Harbour::entranceName(this->harbour));
         // this->arrivalAnnouncement();
-        // lockEntrance.unlock();
+        lockEntrance.unlock();
 
         //Unblock SIGALRM
         //while (vble_cambiada por SIGALRM){
@@ -75,11 +74,11 @@ void Ship::sail(){
         
         // this->loadPeople();
         
-        // ExclusiveLock lockExit(Harbour::entranceName(this->harbour));
+        ExclusiveLock lockExit(Harbour::entranceName(this->harbour));
         // this->departureAnnouncement();
-        // lockExit.unlock();
+        lockExit.unlock();
         
-        cout<< getpid()<<" Ship" << to_string(this->id)<< " SALE DEL PUERTO "<< to_string(this->harbour) <<endl;
+        //cout<< getpid()<<" Ship" << to_string(this->id)<< " SALE DEL PUERTO "<< to_string(this->harbour) <<endl;
         lockHarbour.unlock();
         //check if ship was confiscated and if so exit process
         this->harbour = nextHarbour;
@@ -108,9 +107,9 @@ void Ship::departureAnnouncement(){
 
 void Ship::writeInHarbourFile(int fd, int value){
     ssize_t writedBytes = 0;
-    while((size_t)writedBytes < sizeof(value)){
-        writedBytes += write(fd, to_string(value).c_str() + writedBytes , sizeof(int) - writedBytes);
-        if(writedBytes == -1){throw "Error hip::writeInHarbourFile(value) =" + to_string(value);}
+    while( writedBytes < (ssize_t)sizeof(value)){
+        writedBytes += write(fd, (char *)&value + writedBytes , sizeof(value) - writedBytes);
+        if(writedBytes == -1){throw std::string("Error hip::writeInHarbourFile(value) =") + to_string(value);}
     }
 }
 
