@@ -10,7 +10,7 @@ void ExclusiveLock::initializeFlock(){
 }
 
 void ExclusiveLock::openFile(const std::string file){
-    this->fd = open(file.c_str(), O_CREAT|O_WRONLY, 0777);
+    this->fd = open(file.c_str(), O_CREAT|O_WRONLY, 0644);
     if (this->fd == -1) {
         // std::cout<<"ExclusiveLock::openFile " << file << "  " << this->fd << std::string(strerror(errno))<<std::endl;
         throw "ExclusiveLock::openFile file: " + file + " " + std::string(strerror(errno));

@@ -30,7 +30,7 @@ int main(int argc, char *argv[]){
 
         ProcessGenerator pc;
 
-        //spawn ship processes
+        // spawn ship processes
         if (pc.spawnShips(shipQty, shipCty) == 0){
             return 0;
         }
@@ -46,5 +46,8 @@ int main(int argc, char *argv[]){
     }
     catch(char* error){
         cout<< error<<endl;
+    }
+    catch(char const * error){
+        cout << "Catch vacio " << error << endl;
     }
 }

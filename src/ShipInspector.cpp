@@ -23,6 +23,7 @@ void ShipInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemory
 	    		tuple<string,char> semTuple = Passenger::getSemaphore(passengerIds[i]);
 	    		Semaphore *passSemaphore = new Semaphore(0, get<0>(semTuple), get<1>(semTuple));
 	    		passSemaphore->signal();
+	    		delete passSemaphore;
 	    	}
     	}
     	sharedMemoryShip.updatePassengers(passengerIds);

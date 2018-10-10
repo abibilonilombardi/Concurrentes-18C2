@@ -3,6 +3,7 @@
 
 Semaphore::Semaphore(const int &initialValue, const string& pathname, const char letter):initialValue(initialValue){
     this->checkingInitialValue();
+    creat(pathname.c_str(), 0644);
     this->key = createKey(pathname, letter);
 
     //lockeo la creacion e inicializacion para que sea atomica
@@ -16,9 +17,10 @@ Semaphore::Semaphore(const int &initialValue, const string& pathname, const char
 }
 
 key_t Semaphore::createKey(const string& pathname, const char letter){
+    std::cout << "Pathname: " << pathname << std::endl;
     this->key = ftok(pathname.c_str(), letter);
     if (this->key == -1){
-        throw "no pudo crear la clave del semaforo";
+        throw "No pudo crear la clave del semaforo para el pathname: " + pathname;
     }
     return this->key;
 }

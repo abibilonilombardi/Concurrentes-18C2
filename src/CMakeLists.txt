@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(LakeConcus)
 
-add_compile_options(-Wall -Wextra -Wpedantic -Werror -Wno-error=terminate -g -lstdc++ --std=c++11 )
+add_compile_options(-Wall -Wextra -Wpedantic -g -lstdc++ --std=c++11 )
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/..)
 

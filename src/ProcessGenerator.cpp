@@ -10,7 +10,7 @@ ProcessGenerator::ProcessGenerator():Process() {
     
     this->harbourQty = (rand() % MAX_HARBOURS) + 1;
 
-    cout<<"Cantidad de "<<this->harbourQty<<endl;
+    cout<<"Cantidad de harbours: "<<this->harbourQty<<endl;
     for(size_t i=0; i < this->harbourQty; i++){
         this->harbours.push_back(new Harbour(i));
         cout<< " va a entrar al logger"<< i<<endl;
@@ -31,9 +31,10 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
         if (pid < 0){ throw "Fallo fork de creacion de barco"; } //TODO
         if (pid==0){
             srand(i);
-            int starting_hb = (rand() % this->harbourQty);
+            // int starting_hb = (rand() % this->harbourQty);
+            int starting_hb = 1;
             Ship ship(i, this->harbours, starting_hb, capacity, *this->passengersMem);
-            cout<< getpid() <<"Barco" << i << " se creo con la Memoria"<< this->passengersMem << endl;
+            cout<< getpid() <<"Barco" << i << " se creo con la Memoria"<< this->passengersMem << "para el harbour: " << starting_hb << endl;
             // Logger::getInstance().log(CREACION_BARCO_EXITO(i));
             ship.sail();
             return 0;
@@ -70,13 +71,13 @@ pid_t ProcessGenerator::spawnPassenger(){
 int ProcessGenerator::beginSimulation(){
     int status;
     ShipInspector inspector;
-    inspector.behave(MAX_HARBOURS);
+    // inspector.behave(MAX_HARBOURS);
     //Logger *l = Logger::getInstance();
 
     //spawn passanger processes...
     //l->log("Spawn people process\n");
     try{
-        Semaphore s(MAX_PASSENGERS, "/bin/ls",'A'); //???? no se si quiere esto o o A++? 
+        Semaphore s(MAX_PASSENGERS, "/bin/cat",'A'); //???? no se si quiere esto o o A++? 
 
         //Create shared memory segment for passengers.
         // SharedMemoryPassenger passengersMem(SharedMemoryPassenger::shmFileName(), MAX_PASSENGERS);

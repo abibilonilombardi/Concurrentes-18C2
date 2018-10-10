@@ -19,7 +19,7 @@ void Inspector::behave(int maxHarbours){
             std::cout << "max harbours: " << maxHarbours << std::endl;
             int harbourToInspect = 1;
         	//Accede a archivo de lock
-        	int fd = open(Harbour::entranceLockName(harbourToInspect).c_str(), O_CREAT|O_RDWR, 0777);
+        	int fd = open(Harbour::entranceLockName(harbourToInspect).c_str(), O_CREAT|O_RDWR, 0644);
         	if(fd < 0){
         		throw std::string("File error ") + std::string(strerror(errno));
         	}
@@ -49,6 +49,20 @@ void Inspector::behave(int maxHarbours){
         throw error;
     } 
 }
+
+// void Inspector::unloadShipPassenger(int passengerId, int harbourToInspect, SharedMemoryPassenger &sharedMemoryPassenger){
+//     //cambiar ubicacion actual
+//     sharedMemoryPassenger.updateLocation(passengerIds[i], harbourToInspect);
+//     //borrar de mem de barco al tipo
+//     passengerIds[i] = NO_PASSENGER;
+//     //hacerlo mas lindo
+//     // sharedMemoryShip.removePassenger(passengerIds[i]);
+//     //v al semaforo de pasajero
+//     tuple<string,char> semTuple = Passenger::getSemaphore(passengerIds[i]);
+//     Semaphore passSemaphore = new Semaphore(0, get<0>(semTuple), get<1>(semTuple));
+//     passSemaphore.signal();
+//     delete passSemaphore;
+// }
 
 Inspector::~Inspector(){
     //Free id?
