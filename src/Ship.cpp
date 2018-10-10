@@ -2,11 +2,14 @@
 #include "Lock/ExclusiveLock.h"
 #include "Fifos/FifoEscritura.h"
 #include "Fifos/FifoLectura.h"
+#include "Logger/Logger.h"
 #include "errno.h"
 #include <unistd.h>
 
 
 using namespace std;
+
+const int SIGALRM_= 14;
 
 string Ship::getShmName(int shipId){
     return string("shmship")+to_string(shipId)+string(".bin");
@@ -17,6 +20,8 @@ id(id), map(map), harbour(harbour), capacity(capacity), fdShip(-1), shmPassenger
     this->initialize();
     srand(time(NULL));
     cout<< getpid()<<" Se termino de crear el barco "<<to_string(this->id)<<endl;
+
+    SignalHandler::getInstance()->registrarHandler(SIGALRM, &this->sigint_handler);
 }
 
 void Ship::freeResources(){
@@ -58,21 +63,19 @@ void Ship::sail(){
         ExclusiveLock lockHarbour(Harbour::harbourLockName(this->harbour));
         cout<<getpid()<< " Ship" << to_string(this->id)<< " ENTRA AL PUERTO "<< to_string(this->harbour) <<endl;
         
-        ExclusiveLock lockEntrance(Harbour::entranceName(this->harbour));
+        ExclusiveLock lockEntrance(Harbour::entranceLockName(this->harbour));
         this->arrivalAnnouncement();
         lockEntrance.unlock();
 
-        //Unblock SIGALRM
+        this->unblockSigAlarm();
         //while (vble_cambiada por SIGALRM){
-        //load new passengers
+        this->loadPeople();
         //}
-        //Block SIGALRM!!
+        this->blockSigAlarm();
         
         // this->unloadPeople();
         
-        // this->loadPeople();
-        
-        ExclusiveLock lockExit(Harbour::entranceName(this->harbour));
+        ExclusiveLock lockExit(Harbour::entranceLockName(this->harbour));
         this->departureAnnouncement();
         lockExit.unlock();
         
@@ -90,7 +93,7 @@ void Ship::sail(){
 }
 
 void Ship::arrivalAnnouncement(){
-    int fd = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY, 0666);
+    int fd = open(Harbour::entranceName(id).c_str(), O_CREAT|O_WRONLY, 0666);
     if (fd < 0){
         throw "No se puede anunciar el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) + strerror(errno) ;
     }
@@ -101,7 +104,7 @@ void Ship::arrivalAnnouncement(){
 
 void Ship::departureAnnouncement(){
     const int DEPARTUREVALUE = -1;
-    int fd = open(Harbour::entranceLockName(id).c_str(), O_WRONLY, 0666);
+    int fd = open(Harbour::entranceName(id).c_str(), O_WRONLY, 0666);
     if (fd < 0){
         throw "No se puede anunciar partida el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) ;
     }
@@ -113,17 +116,19 @@ void Ship::departureAnnouncement(){
 void Ship::writeInHarbourFile(int fd, int value){
     ssize_t writedBytes = 0;
     while( writedBytes < (ssize_t)sizeof(value)){
-        writedBytes += write(fd, (char *)&value + writedBytes , sizeof(value) - writedBytes);
+        writedBytes += write(fd, (char*)&value + writedBytes , sizeof(value) - writedBytes);
         if(writedBytes == -1){throw std::string("Error hip::writeInHarbourFile(value) =") + to_string(value);}
 }
-
+}
 
 void Ship::unloadPeople(){
-    FifoLectura fl(); 
+    // FifoLectura fl(); 
     // pero aca el hardboud deberia tener un lfifo de escritura y not
 }
 
 void Ship::loadPeople(){
+    setDepartureAlarm();
+
     FifoEscritura fe(Harbour::entranceLockName(this->harbour)); // es atomica
     
     int i = 0;
@@ -143,42 +148,39 @@ Ship::~Ship(){
 }
 
 
-// void Ship::blockSigAlarm() {
-//     const int SIGALRM_= 14;
-// 	sigset_t sa;
-// 	sigemptyset ( &sa );
-// 	sigaddset ( &sa, SIGALRM_ );
-// 	sigprocmask ( SIG_BLOCK,&sa,NULL );
+void Ship::blockSigAlarm() {
+	sigset_t sa;
+	sigemptyset ( &sa );
+	sigaddset ( &sa, SIGALRM_ );
+	sigprocmask ( SIG_BLOCK,&sa,NULL );
+}
+
+void Ship::unblockSigAlarm() {
+	sigset_t sa;
+	sigemptyset ( &sa );
+	sigaddset ( &sa, SIGALRM_ );
+	sigprocmask (SIG_UNBLOCK,&sa,NULL );
+}
+
+void Ship::setDepartureAlarm(){  //LLAMAR ANTES DE LEER EL FIFO PARA DEFINIRLE EL TIEMPO MAXIMO
+    unsigned int time = alarm(5);
+    cout<< "se activo la alarma del barco "<<this->id<<"  puerto "<<this->harbour << " TIEMPO"<< time<<endl;
+    Logger::getInstance().log("Se activo la alarma");
+}
+
+// void Ship::rangAlamr(int signum){
+//     if (signum == SIGALRM_){
+//         this->alarmRang = true;
+//     }
 // }
 
-// void Ship::blockSigAlarm() {
-//     const int SIGALRM_= 14;
-// 	sigset_t sa;
-// 	sigemptyset ( &sa );
-// 	sigaddset ( &sa, SIGALRM_ );
-// 	sigprocmask ( SIG_UNBCK,&sa,NULL );
+// void Ship::setAlarmAction(){
+// struct sigaction sa;
+    
+//     memset(&sa, 0, sizeof(sa));
+//     sa.sa_handler = t.rangAlamr;
+//     sigemptyset ( &sa.sa_mask );	
+//     sigaddset ( &sa.sa_mask,SIGALRM_ );
+    
+//     sigaction (SIGALRM_, &sa, 0);
 // }
-
-// void accionDeReemplazo(int senial){
-    
-//         if (senial == SIGINT){
-//             cout << "CAMBIA COMPORTAMIENTO" << endl;
-//             // corte = false;
-//             break;
-//         }
-//     }
-    
-//     // SI QUIERO REDEFINIR UN COMPORTAMIENTO TENGO QUE USAR EL SIGACION
-//     void  redefinirAccion( int signum) {
-//         if (signum != SIGKILL and signum != SIGSTOP){ 
-    
-//         struct sigaction sa;
-    
-//         memset(&sa, 0, sizeof(sa));
-//         sa.sa_handler = accionDeReemplazo;
-//         sigemptyset ( &sa.sa_mask );	// inicializa la mascara de seniales a bloquear durante la ejecucion del handler como vacio
-//         sigaddset ( &sa.sa_mask,signum );
-        
-//         sigaction ( signum, &sa, 0);	// cambiar accion de la senial
-//     }
-//     }
