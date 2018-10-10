@@ -16,7 +16,7 @@ public:
     void confiscateShip();
     bool authorizedToSail();
     bool confiscated();
-    std::vector<int> getPassengers();
+    std::vector<int> getPassengers(); //no los elimina
     void updatePassengers(std::vector<int> &passengerIds);
     bool removePassenger(int passengerId);
     bool addPassenger(int passengerId);
