@@ -34,7 +34,6 @@ void Ship::initialize(){
     
     this->fdShip = open(Ship::getShmName(id).c_str(), 0777|O_CREAT|O_WRONLY|O_TRUNC); 
     
-    cout<< getpid()<<" barco "<< id<< " abrio su  archivo "<< this->fdShip <<endl;
     if (fdShip < 0 ){
         //TODO:log
         throw "Error al abrir el archivo" + string(strerror(errno));
@@ -42,8 +41,6 @@ void Ship::initialize(){
 
     bool authorized = rand() % 2;
     this->shmship = new SharedMemoryShip(Ship::getShmName(id), authorized);       
-
-    cout<<getpid()<< "barco memoria compartida"<<this->shmship->getMemId() <<endl;
 }
 
 void Ship::sail(){
@@ -51,7 +48,7 @@ void Ship::sail(){
         int nextHarbour = (this->harbour+1) % this->map.size();
 
         int dstNextHarbour = map.at(this->harbour)->distanceNextHarbour();
-        //cout << getpid()<<" I'm Ship " << getpid() << " leaving for harbour "<< to_string(nextHarbour) << " at distance " <<  to_string(dstNextHarbour) <<"!\n";
+        // cout << getpid()<<" I'm Ship " << getpid() << " leaving for harbour "<< to_string(nextHarbour) << " at distance " <<  to_string(dstNextHarbour) <<"!\n";
         
         sleep(dstNextHarbour); 
         
@@ -61,7 +58,7 @@ void Ship::sail(){
         ExclusiveLock lockHarbour(Harbour::harbourLockName(this->harbour));
         
         ExclusiveLock lockEntrance(Harbour::entranceName(this->harbour));
-        // this->arrivalAnnouncement();
+        this->arrivalAnnouncement();
         lockEntrance.unlock();
 
         //Unblock SIGALRM
@@ -75,24 +72,30 @@ void Ship::sail(){
         // this->loadPeople();
         
         ExclusiveLock lockExit(Harbour::entranceName(this->harbour));
-        // this->departureAnnouncement();
+        this->departureAnnouncement();
         lockExit.unlock();
         
         //cout<< getpid()<<" Ship" << to_string(this->id)<< " SALE DEL PUERTO "<< to_string(this->harbour) <<endl;
         lockHarbour.unlock();
         //check if ship was confiscated and if so exit process
+        
+        if(this->shmship->confiscated()){
+            //TODO: LOG
+            exit(1); // cuando el barco lo confiscan muere
+        }
+        
         this->harbour = nextHarbour;
     }
 }
 
 void Ship::arrivalAnnouncement(){
-    int fd = open(Harbour::entranceLockName(id).c_str(), O_WRONLY, 0666);
+    int fd = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY, 0666);
     if (fd < 0){
-        throw "No se puede anunciar el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) ;
+        throw "No se puede anunciar el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) + strerror(errno) ;
     }
     this->writeInHarbourFile(fd,this->id);
     close(fd);
-    cout<<"Ship::arrivalAnnouncement()"<<endl;
+    // cout<<"Ship::arrivalAnnouncement()"<<endl;
 }
 
 void Ship::departureAnnouncement(){
@@ -103,6 +106,7 @@ void Ship::departureAnnouncement(){
     }
     this->writeInHarbourFile(fd, DEPARTUREVALUE);
     close(fd);
+    // cout<<"Ship::departureAnnouncement()"<<endl;
 }
 
 void Ship::writeInHarbourFile(int fd, int value){
@@ -137,3 +141,44 @@ Ship::~Ship(){
     this->freeResources(); 
     // unlink(Ship::getShmName(this->id).c_str());
 }
+
+
+// void Ship::blockSigAlarm() {
+//     const int SIGALRM_= 14;
+// 	sigset_t sa;
+// 	sigemptyset ( &sa );
+// 	sigaddset ( &sa, SIGALRM_ );
+// 	sigprocmask ( SIG_BLOCK,&sa,NULL );
+// }
+
+// void Ship::blockSigAlarm() {
+//     const int SIGALRM_= 14;
+// 	sigset_t sa;
+// 	sigemptyset ( &sa );
+// 	sigaddset ( &sa, SIGALRM_ );
+// 	sigprocmask ( SIG_UNBCK,&sa,NULL );
+// }
+
+// void accionDeReemplazo(int senial){
+    
+//         if (senial == SIGINT){
+//             cout << "CAMBIA COMPORTAMIENTO" << endl;
+//             // corte = false;
+//             break;
+//         }
+//     }
+    
+//     // SI QUIERO REDEFINIR UN COMPORTAMIENTO TENGO QUE USAR EL SIGACION
+//     void  redefinirAccion( int signum) {
+//         if (signum != SIGKILL and signum != SIGSTOP){ 
+    
+//         struct sigaction sa;
+    
+//         memset(&sa, 0, sizeof(sa));
+//         sa.sa_handler = accionDeReemplazo;
+//         sigemptyset ( &sa.sa_mask );	// inicializa la mascara de seniales a bloquear durante la ejecucion del handler como vacio
+//         sigaddset ( &sa.sa_mask,signum );
+        
+//         sigaction ( signum, &sa, 0);	// cambiar accion de la senial
+//     }
+//     }
