@@ -9,7 +9,7 @@ void SharedLock::initializeFlock(){
 }
 
 void SharedLock::openFile(const std::string file){
-    fd = open(file.c_str(), O_RDONLY);
+    fd = open(file.c_str(), O_RDONLY, 0644);
     if (fd == -1) {
         //exception
     }

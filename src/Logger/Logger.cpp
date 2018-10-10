@@ -11,7 +11,7 @@ Logger::Logger () {}
 Logger& Logger::getInstance(){
     static Logger instance;
     
-    fd = open("ShipsTrevelingSimulation.log", O_CREAT|O_WRONLY, 0666);
+    fd = open("ShipsTrevelingSimulation.log", O_APPEND|O_WRONLY, 0666);
     instance.fdCheking();
     return instance;
 }
@@ -25,7 +25,7 @@ void Logger::fdCheking(){
 void Logger::log(const std::string& eventDescription){
     ExclusiveLock mylock(fd);
     
-    std::string logMessage =  getCurrentTime() + " PID: " + std::to_string(getpid()) + " - " + eventDescription;
+    std::string logMessage =  getCurrentTime() + " PID: " + std::to_string(getpid()) + " - " + eventDescription + std::string("\n");
     int messegeSize = logMessage.length();
 
     ssize_t writedBytes = 0;
@@ -38,6 +38,7 @@ void Logger::log(const std::string& eventDescription){
 
 std::string Logger::getCurrentTime(){
     char buff[20];
+    time(&now);
     strftime (buff, sizeof(buff), "%Y/%m/%d %H:%M:%S", localtime(&now));
     return std::string(buff);
 }

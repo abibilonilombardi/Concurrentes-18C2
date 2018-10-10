@@ -8,15 +8,18 @@ Inspector::Inspector():Process(){
 
 void Inspector::behave(int maxHarbours){
     try{
+		//TODO BORRAR
+		if(maxHarbours==0){}//TODO BORRAR
+
     	srand(1);//TODO:srand(time(NULL));
     	int buffer;
-        std::cout << "ENTRO AL BEHAVE" << std::endl;
+        // std::cout << "ENTRO AL BEHAVE" << std::endl;
     	while(this->running()){
         	//int sleepTime = rand() % MAX_SLEEP_TIME;
         	//sleep(sleepTime);
             sleep(2);
         	// int harbourToInspect = rand() % maxHarbours;
-            std::cout << "max harbours: " << maxHarbours << std::endl;
+            // std::cout << "max harbours: " << maxHarbours << std::endl;
             int harbourToInspect = 1;
         	//Accede a archivo de lock
         	int fd = open(Harbour::entranceLockName(harbourToInspect).c_str(), O_CREAT|O_RDWR, 0644);
@@ -25,28 +28,28 @@ void Inspector::behave(int maxHarbours){
         	}
         	ExclusiveLock l(fd);
         	read(fd, &buffer, sizeof(int));
-        	std::cout << "Archivo muelle: " << buffer << std::endl;
+        	// std::cout << "Archivo muelle: " << buffer << std::endl;
         	if(buffer != -1){
         		//si lo que hay en el archivo es == a -1 chau
         		//si no deberia acceder al archivo de memoria comp del barco
-                std::cout << "Va a tomar lock del mem compartida de barco: " << Ship::getShmName(buffer) << std::endl;
+                // std::cout << "Va a tomar lock del mem compartida de barco: " << Ship::getShmName(buffer) << std::endl;
                 ExclusiveLock l_ship(Ship::getShmName(buffer));
     	        SharedMemoryShip sharedMemoryShip(Ship::getShmName(buffer));
     	        SharedMemoryPassenger sharedMemoryPassenger(SharedMemoryPassenger::shmFileName());
     	        inspect(harbourToInspect, sharedMemoryShip, sharedMemoryPassenger);
                 l_ship.unlock();
         	}  
-            cout << "Antes del unlock inspector" << endl;
+            // cout << "Antes del unlock inspector" << endl;
             l.unlock();
             close(fd);            
     	}
     }catch(string error){
         cout<< "Error del inspector: "<< error<<endl;
-        throw error;
+        throw string("inspector: ") +error;
     }
     catch(char* error){
         cout<< "Error del inspector: "<< error<<endl;
-        throw error;
+        throw string("inspector: ") +error;
     } 
 }
 

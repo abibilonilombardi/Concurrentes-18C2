@@ -35,7 +35,7 @@ ExclusiveLock::ExclusiveLock(int fileDescriptor):isInternalFile(false){
 }
 
 ExclusiveLock::ExclusiveLock(const std::string& file):isInternalFile(true){
-    std::cout << "Por lockear archivo: " << file << std::endl;
+    // std::cout << "Por lockear archivo: " << file << std::endl;
     openFile(file);
     initializeFlock();
     int result = fcntl(this->fd,F_SETLKW, &lock);

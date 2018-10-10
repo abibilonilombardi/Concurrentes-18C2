@@ -13,7 +13,7 @@ public:
     ~SIGINT_Handler() {}
 
     virtual int handleSignal(int signum) {
-        assert ( signum == SIGINT );
+        if( signum != SIGINT ){return -1;}
         this->gracefulQuit = 1;
         return 0;
     }

@@ -31,7 +31,7 @@ Harbour::Harbour(int id):id(id){
     this->fdEntrance = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY, 0666);
     std::cout << "Se crea archivo de harbour: " << Harbour::entranceLockName(id) << std::endl;
     if (this->fdEntrance < 0){
-        std::cout << "fdEntrance: " << fdEntrance << std::endl;
+        // std::cout << "fdEntrance: " << fdEntrance << std::endl;
         delete this->entrance;
         std::string mensaje = "Error at Harbour creation!";
         throw mensaje;
@@ -40,7 +40,7 @@ Harbour::Harbour(int id):id(id){
     close(this->fdEntrance);
     this->fdHarbour = open(Harbour::harbourLockName(id).c_str(), O_CREAT|O_WRONLY, 0666);
     if (this->fdHarbour < 0){
-        std::cout << "fdHarbour: " << fdHarbour << std::endl;
+        // std::cout << "fdHarbour: " << fdHarbour << std::endl;
         delete this->entrance;
         throw std::string("Error at Harbour creation! ") + string(strerror(errno));
     }

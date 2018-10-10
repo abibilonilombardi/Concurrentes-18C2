@@ -19,7 +19,7 @@ Passenger(sharedMem){
 
 void Tourist::travel(){
     Logger l = Logger::getInstance();
-	try{
+	// try{
         vector<int>::iterator it = this->destinations.begin();
         int start = *it, end = -1;
         this->destinations.erase(it); //erase first
@@ -58,8 +58,8 @@ void Tourist::travel(){
             l.log("Tourist with id " +to_string(this->id) + " arrived at destination!");
         }
 
-	}catch(string error){
-		l.log("ERROR! Tourist with id " +to_string(this->id) + " :"+ string(strerror(errno)));
-		cerr << "ERROR! " << string(strerror(errno));
-	}
+	// }catch(string error){
+	// 	l.log("ERROR! Tourist with id " +to_string(this->id) + " :"+ string(strerror(errno)));
+	// 	cerr << "ERROR! " << string(strerror(errno));
+	// }
 }
