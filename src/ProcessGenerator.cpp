@@ -65,6 +65,8 @@ pid_t ProcessGenerator::spawnPassenger(){
     }
 }
 
+//SpawnInspectors
+
 int ProcessGenerator::beginSimulation(){
     int status;
     ShipInspector inspector;

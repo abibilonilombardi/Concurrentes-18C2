@@ -14,6 +14,7 @@ void Inspector::behave(int maxHarbours){
     	while(this->running()){
         	//int sleepTime = rand() % MAX_SLEEP_TIME;
         	//sleep(sleepTime);
+            sleep(2);
         	int harbourToInspect = rand() % maxHarbours;
         	//Accede a archivo de lock
         	int fd = open(Harbour::entranceLockName(harbourToInspect).c_str(), O_CREAT|O_RDWR, 0777);
@@ -30,7 +31,8 @@ void Inspector::behave(int maxHarbours){
     	        SharedMemoryPassenger sharedMemoryPassenger(SharedMemoryPassenger::shmFileName());
     	        inspect(harbourToInspect, sharedMemoryShip, sharedMemoryPassenger);
         	}  
-            cout << "Antes del unlock inspector" << endl;  	
+            cout << "Antes del unlock inspector" << endl;
+            close(fd);            
             l.unlock();
     	}
     }catch(string error){
@@ -40,10 +42,7 @@ void Inspector::behave(int maxHarbours){
     catch(char* error){
         cout<< "Error del inspector: "<< error<<endl;
         throw error;
-    }
-    catch(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > &error){
-        cout << "Error mistico: " << error << endl;
-    }   
+    } 
 }
 
 Inspector::~Inspector(){

@@ -39,7 +39,6 @@ private:
     // void blockSigAlarm();
     // void unblockSigAlarm();
 
-}
 };
 
 #endif //SHIP_H

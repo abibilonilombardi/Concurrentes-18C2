@@ -94,6 +94,7 @@ void Ship::arrivalAnnouncement(){
         throw "No se puede anunciar el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) + strerror(errno) ;
     }
     this->writeInHarbourFile(fd,this->id);
+    std::cout << "LLego barco con id: " << this->id << "al puerto: " << this->harbour << std::endl;
     close(fd);
     // cout<<"Ship::arrivalAnnouncement()"<<endl;
 }
@@ -105,6 +106,7 @@ void Ship::departureAnnouncement(){
         throw "No se puede anunciar partida el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) ;
     }
     this->writeInHarbourFile(fd, DEPARTUREVALUE);
+    std::cout << "Salio barco con id: " << this->id << "del puerto: " << this->harbour << std::endl;
     close(fd);
     // cout<<"Ship::departureAnnouncement()"<<endl;
 }

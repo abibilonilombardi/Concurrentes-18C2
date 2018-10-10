@@ -47,7 +47,4 @@ int main(int argc, char *argv[]){
     catch(char* error){
         cout<< error<<endl;
     }
-    catch(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > error){
-        cout << "Error mistico: " << error << endl;
-    }
 }
