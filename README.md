@@ -19,4 +19,5 @@ Navigate to project's root directory and introduce the following command:
   **./LakeConcu N C**
 
   -**N**: positive integer that represents the number of ships the simulation will generate.
+  
   -**C**:positive integer that represents the number of passengers a given ship can carry at any given time.
