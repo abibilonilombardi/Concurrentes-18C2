@@ -23,7 +23,7 @@ int main(int argc, char *argv[]){
             shipCty = atoi(argv[2]);
         }
         else{
-            shipQty = 1;
+            shipQty = 3;
             shipCty = 5;
             // return -1;
         }

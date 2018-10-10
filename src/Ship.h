@@ -35,6 +35,11 @@ private:
     void writeInHarbourFile(int fd,int value);
     void loadPeople();
     void unloadPeople();
+
+    // void blockSigAlarm();
+    // void unblockSigAlarm();
+
+}
 };
 
 #endif //SHIP_H
