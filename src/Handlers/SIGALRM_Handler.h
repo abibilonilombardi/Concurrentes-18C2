@@ -6,24 +6,29 @@
 
 class SIGALRM_Handler : public EventHandler {
 private:
-	sig_atomic_t activeAlarm;
+	sig_atomic_t alarmValue;
 public:
-    SIGALRM_Handler():activeAlarm(0) {}
+    SIGALRM_Handler():alarmValue(0) {}
 
     ~SIGALRM_Handler() {}
 
     virtual int handleSignal(int signum) {
-        assert ( signum == SIGALRM );
-        this->activeAlarm = 1;
+        if( signum != SIGALRM ) {return -1;}
+        std::cout << "    --------------------------------------ALARM ---"<<endl;
+        this->alarmValue = 1;
         return 0;
     }
 
-    sig_atomic_t getActiveAlarm() const {
-        return this->activeAlarm;
+    sig_atomic_t getActiveAlarm()  const{
+        return this->alarmValue;
     }
 
-    void initilizeAlarm(){
-        this->activeAlarm = 0;
+    bool isActivate() {
+        return this->alarmValue == 1;
+    }
+
+    void restartAlarm() {
+        this->alarmValue = 0;
     }
 };
 

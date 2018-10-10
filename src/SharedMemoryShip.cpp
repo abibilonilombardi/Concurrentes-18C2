@@ -56,31 +56,32 @@ void SharedMemoryShip::updatePassengers(std::vector<int> &passengerIds){
 
 bool SharedMemoryShip::removePassenger(int passengerId){
     //TODO: mejorar esto...
-    try{
+    // try{
         for(size_t j=0; j<SharedMemoryShip::shipCty;j++){
             if (this->leer(j)==passengerId){
                 this->escribir(-1, j);
                 return true;
             }
         }
-    }catch(const char *error){
-        //log
-    }
+    // }catch(const char *error){
+    //     //log
+    //     trow err
+    // }
     return false;
 }
 
 bool SharedMemoryShip::addPassenger(int passengerId){
     //TODO: mejorar esto...
-    try{
+    // try{
         for(size_t j=0; j<SharedMemoryShip::shipCty;j++){
             if (this->leer(j)==-1){
                 this->escribir(passengerId, j);
                 return true;
             }
         }
-    }catch (const char *error){
-        //log
-    }
+    // }catch (const char *error){
+    //     //log
+    // }
     return false;
 }
 

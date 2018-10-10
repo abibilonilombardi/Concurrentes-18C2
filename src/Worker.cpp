@@ -44,5 +44,6 @@ void Worker::travel(){
 	}catch(string error){
 		Logger::getInstance().log("ERROR! Worker with id " +to_string(this->id) + " :"+  string(strerror(errno)));
 		cerr << "ERROR! " << string(strerror(errno));
+		throw string("Worker::travel()") + error;
 	}
 }

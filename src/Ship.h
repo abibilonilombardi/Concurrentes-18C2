@@ -22,7 +22,7 @@ class Ship : public Process{
     int fdShip;
     SharedMemoryShip *shmship;
     SharedMemoryPassenger& shmPassenger;
-    SIGALRM_Handler sigint_handler;
+    SIGALRM_Handler sigalrm_handler;
 
 public:
     Ship(int id, vector<Harbour*> &map, size_t harbour,int capacity, SharedMemoryPassenger& shmPassenger);

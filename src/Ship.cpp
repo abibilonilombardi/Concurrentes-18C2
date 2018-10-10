@@ -128,7 +128,7 @@ void Ship::departureAnnouncement(){
     this->writeInHarbourFile(fd, DEPARTUREVALUE);
     close(fd);
 
-    logMessage = string("SHIP: ") + to_string(this->id) + string(" DEPARTURE TO HARBOUR ") + to_string(this->harbour);
+    string logMessage = string("SHIP: ") + to_string(this->id) + string(" DEPARTURE TO HARBOUR ") + to_string(this->harbour);
     Logger::getInstance().log(logMessage);
 }
 
@@ -162,21 +162,49 @@ void Ship::loadPeople(){
 
     // int idPassenger = this->shmship->leer(i);
     
-    int idPassenger;
-    int currentNumberOfPassengers = this->shmship->getPassengers().size();
-    while (currentNumberOfPassengers < this->capacity){
-        lp.leer(&idPassenger, sizeof(int));
-        this->shmship->addPassenger(idPassenger);
+    int idPassenger = 0 ; //TODO: sacar puse para probar
+    //TODO: matar esto y hacerlo bien en sms
+    int currentNumberOfPassengers = 0;
+    for (unsigned int i = 0;i< this->shmship->getPassengers().size(); i++){
+        // cout<<this->shmship->getPassengers()[i]<<endl;
+        if (this->shmship->getPassengers()[i] >=0){currentNumberOfPassengers++;}
+    }
+    
+    logMessage = string("SHIP: ") + to_string(this->id) + string(" CURRENT NUMBER OF PASSENGERS ") + to_string(currentNumberOfPassengers);
+    cout<<logMessage<<endl;
+    Logger::getInstance().log(logMessage);
 
-        logMessage = string("PASSENGER: ") + to_string(idPassenger) + string(" GET ON SHIP ") + to_string(this->id);
-        cout<<logMessage<<endl;
-        Logger::getInstance().log(logMessage);
-        //TODO actualizar la posicion actual del pasajero en la memoria compartida de pasajeros
+    while ( idPassenger >= 0 && currentNumberOfPassengers < this->capacity){
+        // logMessage = string("SHIP: ") + to_string(this->id) + string(" STARTS LOADING PEOPLE AT HARBOUR ") + to_string(this->harbour);
+        // cout<<logMessage<<endl;
+        // Logger::getInstance().log(logMessage);
+
+        int leidos = lp.leer(&idPassenger, sizeof(int));
+        cout<<"leidos: "<<leidos<<endl;
+
+        if(sigalrm_handler.isActivate() ){
+            logMessage = string("SHIP: ") + to_string(idPassenger) + string(" ALARM SOUNDED AT HARBOUR ") + to_string(this->harbour);
+            cout<<logMessage<<endl;
+            Logger::getInstance().log(logMessage);
+
+            
+            break;
+        }
+        else{
+            this->shmship->addPassenger(idPassenger);
+            
+            logMessage = string("PASSENGER: ") + to_string(idPassenger) + string(" GET ON SHIP ") + to_string(this->id);
+            cout<<logMessage<<endl;
+            Logger::getInstance().log(logMessage);
+            //TODO actualizar la posicion actual del pasajero en la memoria compartida de pasajeros
+        }
+        sigalrm_handler.restartAlarm();
+        break;
     }
 
     lp.cerrar();
 
-    logMessage = string("SHIP: ") + to_string(idPassenger) + string(" FINISHED LOAD PEOPLE AT HARBOUR ") + to_string(this->harbour);
+    logMessage = string("SHIP: ") + to_string(this->id) + string(" FINISHED LOAD PEOPLE AT HARBOUR ") + to_string(this->harbour);
     cout<<logMessage<<endl;
     Logger::getInstance().log(logMessage);
 } 
@@ -204,7 +232,7 @@ void Ship::unblockSigAlarm() {
 
 void Ship::setDepartureAlarm(){  //LLAMAR ANTES DE LEER EL FIFO PARA DEFINIRLE EL TIEMPO MAXIMO
     // unsigned int time = 
-    alarm(15);
+    alarm(2);
     // cout<< "se activo la alarma del barco "<<this->id<<"  puerto "<<this->harbour << " TIEMPO"<< time<<endl;
     // Logger::getInstance().log("Se activo la alarma");
 }

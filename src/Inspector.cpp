@@ -45,11 +45,11 @@ void Inspector::behave(int maxHarbours){
     	}
     }catch(string error){
         cout<< "Error del inspector: "<< error<<endl;
-        throw error;
+        throw string("inspector: ") +error;
     }
     catch(char* error){
         cout<< "Error del inspector: "<< error<<endl;
-        throw error;
+        throw string("inspector: ") +error;
     } 
 }
 

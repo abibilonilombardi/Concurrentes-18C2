@@ -47,12 +47,14 @@ int main(int argc, char *argv[]){
 
     }catch(const string &error){
         cout<< error<<endl;
-
+        return -1;
     }
     catch(char* error){
         cout<< error<<endl;
+        return -1;
     }
     catch(char const* error){
         cout<< error<<endl;
+        return -1;
     }
 }

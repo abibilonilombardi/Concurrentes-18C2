@@ -3,6 +3,7 @@
 
 Semaphore::Semaphore(const int &initialValue, const string& pathname, const char letter):initialValue(initialValue){
     this->checkingInitialValue();
+    creat(pathname.c_str(), 0644);
     this->key = createKey(pathname, letter);
 
     //lockeo la creacion e inicializacion para que sea atomica

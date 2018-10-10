@@ -117,7 +117,7 @@ int ProcessGenerator::beginSimulation(){
         // cout << "All child processes ended, now exiting main loop...\n";
         return 0;
     }catch(string error){
-        throw error;
+        throw string( "ProcessGenerator::beginSimulation()" +error);
     }
 }
 
