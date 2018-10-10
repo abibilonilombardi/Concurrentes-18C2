@@ -7,6 +7,8 @@
 #include "SharedMemoryShip.h"
 #include "SharedMemoryPassenger.h"
 #include "Harbour.h"
+#include "Passenger.h"
+#include "Semaphore/Semaphore.h"
 
 using namespace std;
 
@@ -18,6 +20,7 @@ public:
     Inspector();
     virtual void inspect(int harbourToInspect, SharedMemoryShip &sharedMemoryShip, SharedMemoryPassenger &sharedMemoryPassenger) = 0;
     void behave(int maxHarbours);
+    void unloadShipPassenger(int passengerId, int harbourToInspect, SharedMemoryPassenger &sharedMemoryPassenger);
     ~Inspector();
 };
 

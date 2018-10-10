@@ -15,7 +15,9 @@ void Inspector::behave(int maxHarbours){
         	//int sleepTime = rand() % MAX_SLEEP_TIME;
         	//sleep(sleepTime);
             sleep(2);
-        	int harbourToInspect = rand() % maxHarbours;
+        	// int harbourToInspect = rand() % maxHarbours;
+            std::cout << "max harbours: " << maxHarbours << std::endl;
+            int harbourToInspect = 1;
         	//Accede a archivo de lock
         	int fd = open(Harbour::entranceLockName(harbourToInspect).c_str(), O_CREAT|O_RDWR, 0777);
         	if(fd < 0){
@@ -27,13 +29,16 @@ void Inspector::behave(int maxHarbours){
         	if(buffer != -1){
         		//si lo que hay en el archivo es == a -1 chau
         		//si no deberia acceder al archivo de memoria comp del barco
+                std::cout << "Va a tomar lock del mem compartida de barco: " << Ship::getShmName(buffer) << std::endl;
+                ExclusiveLock l_ship(Ship::getShmName(buffer));
     	        SharedMemoryShip sharedMemoryShip(Ship::getShmName(buffer));
     	        SharedMemoryPassenger sharedMemoryPassenger(SharedMemoryPassenger::shmFileName());
     	        inspect(harbourToInspect, sharedMemoryShip, sharedMemoryPassenger);
+                l_ship.unlock();
         	}  
             cout << "Antes del unlock inspector" << endl;
-            close(fd);            
             l.unlock();
+            close(fd);            
     	}
     }catch(string error){
         cout<< "Error del inspector: "<< error<<endl;

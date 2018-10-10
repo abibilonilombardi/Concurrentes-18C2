@@ -60,11 +60,16 @@ void Ship::sail(){
         // cout << "I'm Ship " << getpid() << " leaving for harbour "<< nextHarbour << " at distance " <<  dstNextHarbour <<"!\n";
         //unload passengers (update their locations and Unblock semaphores)
         
-        ExclusiveLock lockHarbour(Harbour::harbourLockName(this->harbour));
+        // cout << "Lockea harbour" << endl;
+        // ExclusiveLock lockHarbour(Harbour::harbourLockName(this->harbour));
         
+        cout << "Lockea archivo -1" << endl;
         ExclusiveLock lockEntrance(Harbour::entranceLockName(this->harbour));
         this->arrivalAnnouncement();
         lockEntrance.unlock();
+
+        cout << "Lockea mem barco" << endl;
+        ExclusiveLock lockShmShip(Ship::getShmName(this->id));
 
         this->unblockSigAlarm();
         //while (vble_cambiada por SIGALRM){
@@ -73,13 +78,15 @@ void Ship::sail(){
         this->blockSigAlarm();
         
         // this->unloadPeople();
+
+        lockShmShip.unlock();
         
         ExclusiveLock lockExit(Harbour::entranceLockName(this->harbour));
         this->departureAnnouncement();
         lockExit.unlock();
         
         //cout<< getpid()<<" Ship" << to_string(this->id)<< " SALE DEL PUERTO "<< to_string(this->harbour) <<endl;
-        lockHarbour.unlock();
+        // lockHarbour.unlock();
         //check if ship was confiscated and if so exit process
         
         if(this->shmship->confiscated()){
@@ -121,7 +128,7 @@ void Ship::writeInHarbourFile(int fd, int value){
         if(writedBytes == -1){throw std::string("Error hip::writeInHarbourFile(value) =") + to_string(value);}
     }
 }
-}
+
 
 void Ship::unloadPeople(){
     // FifoLectura fl(); 

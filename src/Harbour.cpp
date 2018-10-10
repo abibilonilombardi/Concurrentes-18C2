@@ -37,7 +37,7 @@ Harbour::Harbour(int id):id(id){
     }
     writeInHarbourFile(fdEntrance, NO_SHIP);
     close(this->fdEntrance);
-    this->fdHarbour = open(Harbour::harbourLockName(id).c_str(), O_CREAT|O_WRONLY);
+    this->fdHarbour = open(Harbour::harbourLockName(id).c_str(), O_CREAT|O_WRONLY, 0666);
     if (this->fdHarbour < 0){
         std::cout << "fdHarbour: " << fdHarbour << std::endl;
         delete this->entrance;
@@ -53,7 +53,6 @@ int Harbour::distanceNextHarbour(){
 
 void Harbour::writeInHarbourFile(int fd, int value){
     ssize_t writedBytes = 0;
-    cout << "Value a escribir: " << value << endl;
     while( writedBytes < (ssize_t)sizeof(value)){
         writedBytes += write(fd, (char *)&value + writedBytes , sizeof(value) - writedBytes);
         if(writedBytes == -1){throw std::string("Error hip::writeInHarbourFile(value) =") + to_string(value);}
