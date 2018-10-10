@@ -6,6 +6,7 @@
 
 
 ProcessGenerator::ProcessGenerator():Process() {
+    Logger::getInstance().log(" --- START TO CREATE HARBOURS ---"); 
     srand(1);//TODO:srand(time(NULL));
     
     this->harbourQty = (rand() % MAX_HARBOURS) + 1;
@@ -13,16 +14,17 @@ ProcessGenerator::ProcessGenerator():Process() {
     cout<<"Cantidad de "<<this->harbourQty<<endl;
     for(size_t i=0; i < this->harbourQty; i++){
         this->harbours.push_back(new Harbour(i));
-        cout<< " va a entrar al logger"<< i<<endl;
+        // cout<< " va a entrar al logger"<< i<<endl;
         Logger::getInstance().log(CREACION_PUERTO_EXITO(i));
     }
-    cout<< " va a crear la memoria"<<endl;
+    // cout<< " va a crear la memoria"<<endl;
     this->passengersMem = new SharedMemoryPassenger(SharedMemoryPassenger::shmFileName(), MAX_PASSENGERS);
     
     cout<< "termina de crearse ProcessGenerator"<<endl;
 }
 
 pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
+    Logger::getInstance().log(" --- START TO CREATE SHIPS ---"); 
     SharedMemoryShip::setShipCapacity(capacity);
     pid_t pid = 0;
 
@@ -33,7 +35,7 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
             srand(i);
             int starting_hb = (rand() % this->harbourQty);
             Ship ship(i, this->harbours, starting_hb, capacity, *this->passengersMem);
-            cout<< getpid() <<"Barco" << i << " se creo con la Memoria"<< this->passengersMem << endl;
+            // cout<< getpid() <<"Barco" << i << " se creo con la Memoria"<< this->passengersMem << endl;
             // Logger::getInstance().log(CREACION_BARCO_EXITO(i));
             ship.sail();
             return 0;
@@ -45,6 +47,7 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
 }
 
 pid_t ProcessGenerator::spawnPassenger(){
+    Logger::getInstance().log(" --- START TO CREATE PASSENGERS ---");  
     pid_t pid = 0;
     //Instanciar inspectores y pasarles la referencia de la memoria
     try{
@@ -68,6 +71,9 @@ pid_t ProcessGenerator::spawnPassenger(){
 //SpawnInspectors
 
 int ProcessGenerator::beginSimulation(){
+    Logger::getInstance().log(" --- BEGIN SIMULATION ---");    
+    
+
     int status;
     ShipInspector inspector;
     inspector.behave(MAX_HARBOURS);
@@ -92,14 +98,14 @@ int ProcessGenerator::beginSimulation(){
         s.remove();
 
         //l->log("Signaling all child processes to end\n");
-        cout << "Signaling all child processes to end\n";
+        // cout << "Signaling all child processes to end\n";
         std::set<int>::iterator it;
         for (it=this->processes.begin(); it!=this->processes.end(); ++it){
             //signal all child processes to end in orderly fashion:
             kill(*it, SIGINT);
         }
         //l->log("Waiting for all child processes to end\n");
-        cout << "Waiting for all child processes to end\n";
+        // cout << "Waiting for all child processes to end\n";
         size_t sz = this->processes.size();
         for (size_t i=0; i < sz; i++){
             //wait for all child processes to end:
@@ -108,7 +114,7 @@ int ProcessGenerator::beginSimulation(){
         }
 
         //l->log("All child processes ended, now exiting main loop...\n");
-        cout << "All child processes ended, now exiting main loop...\n";
+        // cout << "All child processes ended, now exiting main loop...\n";
         return 0;
     }catch(string error){
         throw error;

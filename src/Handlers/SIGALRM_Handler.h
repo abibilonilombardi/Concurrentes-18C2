@@ -14,7 +14,6 @@ public:
 
     virtual int handleSignal(int signum) {
         assert ( signum == SIGALRM );
-        std::cout << " Suena la alarma"<<endl;
         this->activeAlarm = 1;
         return 0;
     }

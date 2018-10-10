@@ -16,8 +16,13 @@ using namespace std;
 
 int main(int argc, char *argv[]){
     int shipQty, shipCty;
-    
     try{
+
+    int createLogFile = open("ShipsTrevelingSimulation.log", O_CREAT, 0666);
+    close(createLogFile);
+    
+    
+
         if (argc == 3){
             shipQty = atoi(argv[1]);
             shipCty = atoi(argv[2]);
@@ -45,6 +50,9 @@ int main(int argc, char *argv[]){
 
     }
     catch(char* error){
+        cout<< error<<endl;
+    }
+    catch(char const* error){
         cout<< error<<endl;
     }
 }
