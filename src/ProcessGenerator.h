@@ -28,8 +28,9 @@ using namespace std;
 class ProcessGenerator : public Process{
     size_t harbourQty;
     set<pid_t> processes;
+    
     vector<Harbour*> harbours;
-    SharedMemoryPassenger* passengersMem;
+    //SharedMemoryPassenger* passengersMem;
 
 public:
     ProcessGenerator();

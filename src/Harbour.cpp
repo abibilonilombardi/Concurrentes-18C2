@@ -52,10 +52,12 @@ int Harbour::distanceNextHarbour(){
 }
 
 void Harbour::writeInHarbourFile(int fd, int value){
-    ssize_t writedBytes = 0;
-    while( writedBytes < (ssize_t)sizeof(value)){
-        writedBytes += write(fd, (char *)&value + writedBytes , sizeof(value) - writedBytes);
-        if(writedBytes == -1){throw std::string("Error hip::writeInHarbourFile(value) =") + to_string(value);}
+    ssize_t writtenBytes = 0;
+    while( writtenBytes < (ssize_t)sizeof(value)){
+        writtenBytes += write(fd, (char *)&value + writtenBytes , sizeof(value) - writtenBytes);
+        if(writtenBytes == -1){
+            throw std::string("Error hip::writeInHarbourFile(value) =") + to_string(value);
+        }
     }
 }
 
