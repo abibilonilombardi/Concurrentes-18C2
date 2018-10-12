@@ -10,9 +10,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <set>
 
 using namespace std;
-
 
 class SharedMemoryPassenger: public MemoriaCompartida<int> {
 private:
@@ -33,6 +33,9 @@ public:
     void updateNextStop(int passengerId, int nextStop);
     int getNextStop(int passengerId);
     bool hasTicket(int passengerId);
+
+	void getPassangersForDestination(set<int> passengerList, int destination);
+
 	static string shmFileName();
 	static string shmLockName();
     ~SharedMemoryPassenger();

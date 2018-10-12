@@ -31,7 +31,10 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
 
     for (int i=0; i < quantity; i++){
         pid = fork();
-        if (pid < 0){ throw "Fallo fork de creacion de barco"; } //TODO
+        if (pid < 0){
+            Logger::getInstance().log("FORK FAILED AT ProcessGenerator::spawnShips()!");
+            throw "ProcessGenerator::spawnShips() failed at fork!";
+        }
         if (pid==0){
             srand(i);
             int starting_hb = (rand() % this->harbourQty);
@@ -55,6 +58,7 @@ pid_t ProcessGenerator::spawnPassenger(){
     try{
         pid = fork();
         if (pid < 0){
+            Logger::getInstance().log("FORK FAILED AT ProcessGenerator::spawnPassenger()!");
             throw "ProcessGenerator::spawnPassenger() failed at fork!";
         }
         if (pid==0){
@@ -73,8 +77,6 @@ pid_t ProcessGenerator::spawnPassenger(){
     }
 }
 
-//SpawnInspectors
-
 int ProcessGenerator::beginSimulation(){
     Logger::getInstance().log(" --- BEGIN SIMULATION ---");
 
@@ -82,32 +84,27 @@ int ProcessGenerator::beginSimulation(){
     int status;
     //ShipInspector inspector;
     //inspector.behave(MAX_HARBOURS);
-    //Logger *l = Logger::getInstance();
 
     //spawn passanger processes...
-    //l->log("Spawn people process\n");
     try{
         Semaphore s(MAX_PASSENGERS, "/bin/ls",'a'); //???? no se si quiere esto o o A++?
 
         while(this->running()){
             s.wait();
-            //if(this->running()){
-            if(spawnPassenger()==0){
-                s.signal();
-                return 0;
+            if(this->running()){
+                if(spawnPassenger()==0){
+                    s.signal();
+                    return 0;
+                }
             }
-            //}
         }
 
-
-        //l->log("Signaling all child processes to end\n");
         // cout << "Signaling all child processes to end\n";
         std::set<int>::iterator it;
         for (it=this->processes.begin(); it!=this->processes.end(); ++it){
             //signal all child processes to end in orderly fashion:
             kill(*it, SIGINT);
         }
-        //l->log("Waiting for all child processes to end\n");
         // cout << "Waiting for all child processes to end\n";
         size_t sz = this->processes.size();
         for (size_t i=0; i < sz; i++){
@@ -117,7 +114,6 @@ int ProcessGenerator::beginSimulation(){
         }
         s.remove();
 
-        //l->log("All child processes ended, now exiting main loop...\n");
         // cout << "All child processes ended, now exiting main loop...\n";
         return 0;
     }catch(string error){
@@ -126,7 +122,7 @@ int ProcessGenerator::beginSimulation(){
 }
 
 ProcessGenerator::~ProcessGenerator(){
-    cout<< getpid() <<"ProcessGenerator::~ProcessGenerator()" <<endl;
+    //cout<< getpid() <<"ProcessGenerator::~ProcessGenerator()" <<endl;
 
     this->processes.clear();
     vector<Harbour*>::iterator it;
