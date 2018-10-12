@@ -62,12 +62,10 @@ void Ship::sail(){
     set<int> passengersGettingOff;
 
     while(this->running()){
-        int nextHarbour = (this->harbour+1) % this->map.size();
-
         int dstNextHarbour = map.at(this->harbour)->distanceNextHarbour();
 
         //Get the list of passengers who are getting off the ship at the next stop:
-        this->shmPassenger.getPassangersForDestination(passengersGettingOff, nextHarbour);
+        this->shmPassenger.getPassangersForDestination(passengersGettingOff, this->harbour);
 
         //Travel to next harbour:
         sleep(dstNextHarbour);
@@ -110,8 +108,8 @@ void Ship::sail(){
             //Ship confiscated --> DEATH
             return;
         }
-
-        this->harbour = nextHarbour;
+        //Select next harbour:
+        this->harbour = (this->harbour+1) % this->map.size();
         passengersGettingOff.clear();
     }
 }
@@ -132,7 +130,11 @@ void Ship::departureAnnouncement(){
     const int DEPARTUREVALUE = -1;
     int fd = open(Harbour::entranceLockName(id).c_str(), O_WRONLY, 0666);
     if (fd < 0){
-        throw "No se puede anunciar partida el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) ;
+        if (this->running()){
+            throw "No se puede anunciar partida el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) ;
+        }else{
+            return;
+        }
     }
     this->writeInHarbourFile(fd, DEPARTUREVALUE);
     close(fd);
@@ -154,8 +156,10 @@ void Ship::unloadPeople(set<int> &passengers){
     this->shmship->removePassengers(passengers);
     set<int>::iterator it;
     for (it=passengers.begin(); it!=passengers.end(); ++it){
-        tuple<string,char> passSemData = Passenger::getSemaphore(*it);
+        //update passenger location:
+        this->shmPassenger.updateLocation(*it,this->harbour);
         //get passenger semaphore:
+        tuple<string,char> passSemData = Passenger::getSemaphore(*it);
         Semaphore passengerArrived(0, get<0>(passSemData), get<1>(passSemData));
         //Let passenger know he has arrived at his destination:
         passengerArrived.signal();
@@ -222,7 +226,7 @@ void Ship::loadPeople(){
 Ship::~Ship(){
     //cout<<getpid()<< "Ship::~Ship() ==> " << to_string(this->id)<<endl;
     this->freeResources();
-    // unlink(Ship::getShmName(this->id).c_str());
+    unlink(Ship::getShmName(this->id).c_str());
 }
 
 

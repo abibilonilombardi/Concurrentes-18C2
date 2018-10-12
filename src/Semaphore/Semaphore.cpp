@@ -1,9 +1,11 @@
 #include "../Semaphore/Semaphore.h"
 #include "../Lock/ExclusiveLock.h"
 
-Semaphore::Semaphore(const int &initialValue, const string& pathname, const char letter):initialValue(initialValue){
+Semaphore::Semaphore(const int &initialValue, const string& pathname, const char letter):initialValue(initialValue),
+pathname(pathname){
     this->checkingInitialValue();
     creat(pathname.c_str(), 0777);
+
     this->key = createKey(pathname, letter);
 
     //lockeo la creacion e inicializacion para que sea atomica
@@ -74,4 +76,5 @@ void Semaphore::remove(){
 }
 
 Semaphore::~Semaphore(){
+    unlink(this->pathname.c_str());
 }

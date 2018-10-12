@@ -21,13 +21,12 @@ string SharedMemoryPassenger::shmLockName(){
     return string("passengers.bin");
 }
 
-SharedMemoryPassenger::SharedMemoryPassenger(const std::string pathname, int maxPassengers):
-MemoriaCompartida(),
-pathname(pathname){
-    this->fd = open(pathname.c_str(), O_RDWR|O_CREAT, 0644);
+SharedMemoryPassenger::SharedMemoryPassenger(int maxPassengers):
+MemoriaCompartida(){
+    this->fd = open(SharedMemoryPassenger::shmFileName().c_str(), O_RDWR|O_CREAT, 0644);
     if (this->fd == -1){ throw "No se pudo abrir el archivo de la shared memory " + std::string(strerror(errno));}
     // std::cout<< " FD shared memo PAS "<< this->fd <<std::endl;
-    this->crear(pathname, 'p', maxPassengers * FIELDS);
+    this->crear(SharedMemoryPassenger::shmFileName(), 'p', maxPassengers * FIELDS);
 
     ExclusiveLock l(SharedMemoryPassenger::shmLockName());
     for(size_t i=0; i<this->size(); i++){
@@ -37,9 +36,8 @@ pathname(pathname){
     l.unlock();
 }
 
-SharedMemoryPassenger::SharedMemoryPassenger(const std::string pathname):
-pathname(pathname){
-    this->crear(pathname, 'p', SharedMemoryPassenger::maxPassengers * FIELDS);
+SharedMemoryPassenger::SharedMemoryPassenger(){
+    this->crear(SharedMemoryPassenger::shmFileName(), 'p', SharedMemoryPassenger::maxPassengers * FIELDS);
 }
 
 int SharedMemoryPassenger::addPassenger(int location, int nextStop, bool hasTicket){
@@ -139,5 +137,5 @@ size_t SharedMemoryPassenger::getStartingPosition(int passengerId){
 
 SharedMemoryPassenger::~SharedMemoryPassenger(){
     close(this->fd);
-    unlink(this->pathname.c_str());
+    unlink(SharedMemoryPassenger::shmFileName().c_str());
 }

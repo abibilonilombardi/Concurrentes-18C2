@@ -15,7 +15,7 @@ class Semaphore {
     key_t key;
     int setId;
     int initialValue;
-
+    const string &pathname;
 public:
     Semaphore(const int &initialValue, const string &pathname, const char letter);
     int getId();

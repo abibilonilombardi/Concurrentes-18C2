@@ -26,7 +26,7 @@ ProcessGenerator::ProcessGenerator():Process() {
 pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
     Logger::getInstance().log(" --- START TO CREATE SHIPS ---");
     SharedMemoryShip::setShipCapacity(capacity);
-    SharedMemoryPassenger passMem(SharedMemoryPassenger::shmFileName(), MAX_PASSENGERS);
+    SharedMemoryPassenger passMem(MAX_PASSENGERS);
     pid_t pid = 0;
 
     for (int i=0; i < quantity; i++){
@@ -54,7 +54,7 @@ pid_t ProcessGenerator::spawnPassenger(){
     Logger::getInstance().log(" --- START TO CREATE PASSENGERS ---");
     pid_t pid = 0;
     //Instanciar inspectores y pasarles la referencia de la memoria
-    SharedMemoryPassenger passMem(SharedMemoryPassenger::shmFileName(), MAX_PASSENGERS);
+    SharedMemoryPassenger passMem(MAX_PASSENGERS);
     try{
         pid = fork();
         if (pid < 0){

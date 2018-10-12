@@ -19,12 +19,10 @@ private:
 	int fd;
 	size_t getStartingPosition(int passengerId);
 	static size_t maxPassengers;
-	std::string pathname;
-
 	int getFreeId();
 public:
-    SharedMemoryPassenger(const std::string pathname, int maxPassengers);
-    SharedMemoryPassenger(const std::string pathname);
+    SharedMemoryPassenger(int maxPassengers);
+    SharedMemoryPassenger();
     int addPassenger(int location, int nextStop, bool hasTicket);
     void updateLocation(int passengerId, int location);
     int getLocation(int passengerId);

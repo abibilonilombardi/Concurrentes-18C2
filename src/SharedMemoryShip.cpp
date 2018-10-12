@@ -83,5 +83,5 @@ bool SharedMemoryShip::addPassenger(int passengerId){
 }
 
 SharedMemoryShip::~SharedMemoryShip(){
-    cout<< "SharedMemoryShip::~SharedMemoryShip() --> ";
+    //cout<< "SharedMemoryShip::~SharedMemoryShip() --> ";
 }

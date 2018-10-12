@@ -23,7 +23,7 @@
 class Ship : public Process{
     int id;
     vector<Harbour*> &map;
-    int harbour, capacity; // actual harbour??
+    int harbour, capacity;
     int fdShip;
 
     SharedMemoryShip *shmship;
