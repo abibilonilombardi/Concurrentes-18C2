@@ -20,8 +20,6 @@ int main(int argc, char *argv[]){
 
     int createLogFile = open("ShipsTrevelingSimulation.log", O_CREAT, 0666);
     close(createLogFile);
-    
-    
 
         if (argc == 3){
             shipQty = atoi(argv[1]);
@@ -46,7 +44,7 @@ int main(int argc, char *argv[]){
 
         //begin simulation (spawn people processes)
         pc.beginSimulation();
-        
+
         // std::cout<< "El proceso: "<< getpid() << " ha finalizado correctamente"<< std::endl;
         return 0;
 

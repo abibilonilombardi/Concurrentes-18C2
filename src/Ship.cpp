@@ -19,7 +19,7 @@ Ship::Ship(int id, vector<Harbour*> &map, size_t harbour, int capacity, SharedMe
 id(id), map(map), harbour(harbour), capacity(capacity), fdShip(-1), shmPassenger(shmPassenger){
     this->initialize();
     srand(time(NULL));
-    cout<< getpid()<<" Se termino de crear el barco "<<to_string(this->id)<<endl;
+    //cout<< getpid()<<" Se termino de crear el barco "<<to_string(this->id)<<endl;
 
     SignalHandler::getInstance()->registrarHandler(SIGALRM, &this->sigint_handler);
 
@@ -38,77 +38,84 @@ void Ship::freeResources(){
 
 void Ship::initialize(){
     size_t totalHarbours = this->map.size();
-    if (this->harbour >= (int)totalHarbours){throw "Error at ship creation! Too many Harbours.\n";}
-    
-    this->fdShip = open(Ship::getShmName(id).c_str(), O_CREAT|O_WRONLY|O_TRUNC, 0666); 
-    
+    if (this->harbour >= (int)totalHarbours){
+        string message = string("ERROR! TOO MANY HARBOURS AT Ship::initialize()!");
+        Logger::getInstance().log(message);
+        throw message;
+    }
+
+    this->fdShip = open(Ship::getShmName(id).c_str(), O_CREAT|O_WRONLY|O_TRUNC, 0666);
+
     if (fdShip < 0 ){
-        //TODO:log
-        throw "Error al abrir el archivo" + string(strerror(errno));
+        string message = string("ERROR! SHIP COULD NOT OPEN SHM FILE!");
+        Logger::getInstance().log(message);
+        throw message + string(strerror(errno));
     }
 
     bool authorized = rand() % 2;
-    this->shmship = new SharedMemoryShip(Ship::getShmName(id), authorized);       
+    this->shmship = new SharedMemoryShip(Ship::getShmName(id), authorized);
 }
 
 void Ship::sail(){
     string logMessage = string("SHIP: ") + to_string(this->id) + string(" STARTED TO SAIL");
     Logger::getInstance().log(logMessage);
+    set<int> passengersGettingOff;
 
     while(this->running()){
-        int nextHarbour = (this->harbour+1) % this->map.size();
-
         int dstNextHarbour = map.at(this->harbour)->distanceNextHarbour();
-        // cout << getpid()<<" I'm Ship " << getpid() << " leaving for harbour "<< to_string(nextHarbour) << " at distance " <<  to_string(dstNextHarbour) <<"!\n";
-        
-        sleep(dstNextHarbour); 
-        
-        this->harbour = nextHarbour;
-        // cout << "I'm Ship " << getpid() << " leaving for harbour "<< nextHarbour << " at distance " <<  dstNextHarbour <<"!\n";
-        //unload passengers (update their locations and Unblock semaphores)
-        
+
+        //Get the list of passengers who are getting off the ship at the next stop:
+        this->shmPassenger.getPassangersForDestination(passengersGettingOff, this->harbour);
+
+        //Travel to next harbour:
+        sleep(dstNextHarbour);
+
+        this->harbour = (this->harbour+1) % this->map.size();
+        //Lock harbour: no other ships can come in
         ExclusiveLock lockHarbour(Harbour::harbourLockName(this->harbour));
-        // cout<<getpid()<< " Ship" << to_string(this->id)<< " ENTRA AL PUERTO "<< to_string(this->harbour) <<endl;
-        logMessage = string("SHIP: ") + to_string(this->id) + string(" ENTRANCE TO HARBOURR ") + to_string(this->harbour);
+        logMessage = string("SHIP: ") + to_string(this->id) + string(" ENTRANCE TO HARBOUR ") + to_string(this->harbour);
         cout << logMessage << endl;
         Logger::getInstance().log(logMessage);
 
+        //Lock ship shared memory (lock it before the inspector has a chance do it)
+        cout << "Lockea mem barco" << endl;
+        ExclusiveLock lockShmShip(Ship::getShmName(this->id));
+
+        //Announce ship arrival
         cout << "Lockea archivo de entrada al muelle" << endl;
         ExclusiveLock lockEntrance(Harbour::entranceLockName(this->harbour));
         this->arrivalAnnouncement(lockEntrance.getfd());
         lockEntrance.unlock();
 
-        cout << "Lockea mem barco" << endl;
-        ExclusiveLock lockShmShip(Ship::getShmName(this->id));// -------------------
-
+        //this->unloadPeople();
+        
         sleep(10);
 
-        this->unblockSigAlarm();
-        //while (vble_cambiada por SIGALRM){
-        this->loadPeople();
+        //this->unblockSigAlarm();
+        //while (vble_cambiada por SIGALRM o capacidad max no alcanzada){
+        //    this->loadPeople();
         //}
-        this->blockSigAlarm();
-        
-        // this->unloadPeople();
+        //this->blockSigAlarm();
+        lockShmShip.unlock();
 
-        lockShmShip.unlock(); // -------------------------
-        
+        //Inspector could stop ship from leaving at this point!
+
         ExclusiveLock lockExit(Harbour::entranceLockName(this->harbour));
         //ver si meterle el metodo para escribir al lock
         this->departureAnnouncement(lockExit.getfd());
         lockExit.unlock();
-        
-        //cout<< getpid()<<" Ship" << to_string(this->id)<< " SALE DEL PUERTO "<< to_string(this->harbour) <<endl;
-        // lockHarbour.unlock();
+
+        //Unlock harbour so other ships can come in.
+        lockHarbour.unlock();
+
         //check if ship was confiscated and if so exit process
-        
         if(this->shmship->confiscated()){
             logMessage = string("SHIP: ") + to_string(this->id) + string(" WAS CONFISCATED AT HARBOUR ") + to_string(this->harbour);
             Logger::getInstance().log(logMessage);
-            exit(1); // cuando el barco lo confiscan muere
+            //Ship confiscated --> DEATH
+            return;
         }
-        
-        this->harbour = nextHarbour;
+        passengersGettingOff.clear();
     }
 }
 
@@ -128,7 +135,11 @@ void Ship::departureAnnouncement(int fd){
     const int DEPARTUREVALUE = -1;
     // int fd = open(Harbour::entranceLockName(id).c_str(), O_WRONLY, 0666);
     // if (fd < 0){
-    //     throw "No se puede anunciar partida el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) ;
+    //     if (this->running()){
+    //         throw "No se puede anunciar partida el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) ;
+    //     }else{
+    //         return;
+    //     }
     // }
     this->writeInHarbourFile(fd, DEPARTUREVALUE);
     // close(fd);
@@ -146,16 +157,19 @@ void Ship::writeInHarbourFile(int fd, int value){
 }
 
 
-void Ship::unloadPeople(){
-    // FifoLectura fl(); 
-    // pero aca el hardboud deberia tener un lfifo de escritura y not
-    
-    // buscar en el passenger
-    // ver si quiere bajar
-    // bajarlo
-    //elminarlo de la MCship
+void Ship::unloadPeople(set<int> &passengers){
+    this->shmship->removePassengers(passengers);
+    set<int>::iterator it;
+    for (it=passengers.begin(); it!=passengers.end(); ++it){
+        //update passenger location:
+        this->shmPassenger.updateLocation(*it,this->harbour);
+        //get passenger semaphore:
+        tuple<string,char> passSemData = Passenger::getSemaphore(*it);
+        Semaphore passengerArrived(0, get<0>(passSemData), get<1>(passSemData));
+        //Let passenger know he has arrived at his destination:
+        passengerArrived.signal();
+    }
 }
-
 
 void Ship::loadPeople(){
     string logMessage;
@@ -166,7 +180,7 @@ void Ship::loadPeople(){
     lp.abrir();
 
     // int idPassenger = this->shmship->leer(i);
-    
+
     int idPassenger = 0 ; //TODO: sacar puse para probar
     //TODO: matar esto y hacerlo bien en sms
     int currentNumberOfPassengers = 0;
@@ -174,7 +188,7 @@ void Ship::loadPeople(){
         // cout<<this->shmship->getPassengers()[i]<<endl;
         if (this->shmship->getPassengers()[i] >=0){currentNumberOfPassengers++;}
     }
-    
+
     logMessage = string("SHIP: ") + to_string(this->id) + string(" CURRENT NUMBER OF PASSENGERS ") + to_string(currentNumberOfPassengers);
     cout<<logMessage<<endl;
     Logger::getInstance().log(logMessage);
@@ -192,12 +206,12 @@ void Ship::loadPeople(){
             cout<<logMessage<<endl;
             Logger::getInstance().log(logMessage);
 
-            
+
             break;
         }
         else{
             this->shmship->addPassenger(idPassenger);
-            
+
             logMessage = string("PASSENGER: ") + to_string(idPassenger) + string(" GET ON SHIP ") + to_string(this->id);
             cout<<logMessage<<endl;
             Logger::getInstance().log(logMessage);
@@ -212,12 +226,12 @@ void Ship::loadPeople(){
     logMessage = string("SHIP: ") + to_string(this->id) + string(" FINISHED LOAD PEOPLE AT HARBOUR ") + to_string(this->harbour);
     cout<<logMessage<<endl;
     Logger::getInstance().log(logMessage);
-} 
+}
 
 Ship::~Ship(){
-    cout<<getpid()<< "Ship::~Ship() ==> " << to_string(this->id)<<endl;
-    this->freeResources(); 
-    // unlink(Ship::getShmName(this->id).c_str());
+    //cout<<getpid()<< "Ship::~Ship() ==> " << to_string(this->id)<<endl;
+    this->freeResources();
+    unlink(Ship::getShmName(this->id).c_str());
 }
 
 
@@ -236,7 +250,7 @@ void Ship::unblockSigAlarm() {
 }
 
 void Ship::setDepartureAlarm(){  //LLAMAR ANTES DE LEER EL FIFO PARA DEFINIRLE EL TIEMPO MAXIMO
-    // unsigned int time = 
+    // unsigned int time =
     alarm(2);
     // cout<< "se activo la alarma del barco "<<this->id<<"  puerto "<<this->harbour << " TIEMPO"<< time<<endl;
     // Logger::getInstance().log("Se activo la alarma");
@@ -250,11 +264,11 @@ void Ship::setDepartureAlarm(){  //LLAMAR ANTES DE LEER EL FIFO PARA DEFINIRLE E
 
 // void Ship::setAlarmAction(){
 // struct sigaction sa;
-    
+
 //     memset(&sa, 0, sizeof(sa));
 //     sa.sa_handler = t.rangAlamr;
-//     sigemptyset ( &sa.sa_mask );	
+//     sigemptyset ( &sa.sa_mask );
 //     sigaddset ( &sa.sa_mask,SIGALRM_ );
-    
+
 //     sigaction (SIGALRM_, &sa, 0);
 // }

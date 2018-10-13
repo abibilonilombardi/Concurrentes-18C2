@@ -39,7 +39,6 @@ bool SharedMemoryShip::confiscated(){
 
 std::vector<int> SharedMemoryShip::getPassengers(){
     std::vector<int> passengerIds;
-    //LOCK
     for(size_t i = 0; i < SharedMemoryShip::shipCty; i++){
         int passengerId = this->leer(i);
         passengerIds.push_back(passengerId);
@@ -48,43 +47,41 @@ std::vector<int> SharedMemoryShip::getPassengers(){
 }
 
 void SharedMemoryShip::updatePassengers(std::vector<int> &passengerIds){
-    //LOCK
     for(size_t i = 0; i < passengerIds.size(); i++){
         this->escribir(passengerIds[i], i);
     }
 }
 
 bool SharedMemoryShip::removePassenger(int passengerId){
-    //TODO: mejorar esto...
-    // try{
-        for(size_t j=0; j<SharedMemoryShip::shipCty;j++){
-            if (this->leer(j)==passengerId){
-                this->escribir(-1, j);
-                return true;
-            }
+    for(size_t j=0; j<SharedMemoryShip::shipCty;j++){
+        if (this->leer(j)==passengerId){
+            this->escribir(-1, j);
+            return true;
         }
-    // }catch(const char *error){
-    //     //log
-    //     trow err
-    // }
+    }
     return false;
 }
 
-bool SharedMemoryShip::addPassenger(int passengerId){
-    //TODO: mejorar esto...
-    // try{
-        for(size_t j=0; j<SharedMemoryShip::shipCty;j++){
-            if (this->leer(j)==-1){
-                this->escribir(passengerId, j);
-                return true;
-            }
+void SharedMemoryShip::removePassengers(set<int> &passengerList){
+    for(size_t j=0; j<SharedMemoryShip::shipCty;j++){
+        //if passenger is on the 'getOff' list:
+        if (passengerList.find(this->leer(j)) != passengerList.end()){
+            //remove passenger from ship:
+            this->escribir(-1, j);
         }
-    // }catch (const char *error){
-    //     //log
-    // }
+    }
+}
+
+bool SharedMemoryShip::addPassenger(int passengerId){
+    for(size_t j=0; j<SharedMemoryShip::shipCty;j++){
+        if (this->leer(j)==-1){
+            this->escribir(passengerId, j);
+            return true;
+        }
+    }
     return false;
 }
 
 SharedMemoryShip::~SharedMemoryShip(){
-    cout<< "SharedMemoryShip::~SharedMemoryShip() --> ";
+    //cout<< "SharedMemoryShip::~SharedMemoryShip() --> ";
 }

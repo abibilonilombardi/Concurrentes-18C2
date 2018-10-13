@@ -10,21 +10,19 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <set>
 
 using namespace std;
-
 
 class SharedMemoryPassenger: public MemoriaCompartida<int> {
 private:
 	int fd;
 	size_t getStartingPosition(int passengerId);
 	static size_t maxPassengers;
-	std::string pathname;
-
 	int getFreeId();
 public:
-    SharedMemoryPassenger(const std::string pathname, int maxPassengers);
-    SharedMemoryPassenger(const std::string pathname);
+    SharedMemoryPassenger(int maxPassengers);
+    SharedMemoryPassenger();
     int addPassenger(int location, int nextStop, bool hasTicket);
     void updateLocation(int passengerId, int location);
     int getLocation(int passengerId);
@@ -33,6 +31,9 @@ public:
     void updateNextStop(int passengerId, int nextStop);
     int getNextStop(int passengerId);
     bool hasTicket(int passengerId);
+
+	void getPassangersForDestination(set<int> passengerList, int destination);
+
 	static string shmFileName();
 	static string shmLockName();
     ~SharedMemoryPassenger();

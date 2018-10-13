@@ -1,7 +1,7 @@
 #include "MemoriaCompartida.h"
-//#include "Lock/Lock.h"
 #include <string.h>
 #include <vector>
+#include <set>
 
 using namespace std;
 
@@ -9,7 +9,7 @@ using namespace std;
 #define SHMSHIP_H
 
 class SharedMemoryShip: public MemoriaCompartida<int> {
-    static size_t shipCty; 
+    static size_t shipCty;
 public:
     SharedMemoryShip(const string &pathname, bool authorized);
     SharedMemoryShip(const string &pathname);
@@ -20,6 +20,7 @@ public:
     void updatePassengers(std::vector<int> &passengerIds);
     bool removePassenger(int passengerId);
     bool addPassenger(int passengerId);
+    void removePassengers(set<int> &passengerList);
     static void setShipCapacity(int shipCty);
     ~SharedMemoryShip();
 };

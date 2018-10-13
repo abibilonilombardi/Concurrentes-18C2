@@ -35,13 +35,13 @@ void Inspector::behave(int maxHarbours){
                 std::cout << "Va a tomar lock del mem compartida de barco: " << Ship::getShmName(buffer) << std::endl;
                 ExclusiveLock l_ship(Ship::getShmName(buffer));
     	        SharedMemoryShip sharedMemoryShip(Ship::getShmName(buffer));
-    	        SharedMemoryPassenger sharedMemoryPassenger(SharedMemoryPassenger::shmFileName());
+    	        SharedMemoryPassenger sharedMemoryPassenger;
     	        inspect(harbourToInspect, sharedMemoryShip, sharedMemoryPassenger);
                 l_ship.unlock();
-        	}  
+        	}
             // cout << "Antes del unlock inspector" << endl;
             l.unlock();
-            close(fd);            
+            close(fd);
     	}
     }catch(string error){
         cout<< "Error del inspector: "<< error<<endl;
@@ -50,7 +50,7 @@ void Inspector::behave(int maxHarbours){
     catch(char* error){
         cout<< "Error del inspector: "<< error<<endl;
         throw string("inspector: ") +error;
-    } 
+    }
 }
 
 // void Inspector::unloadShipPassenger(int passengerId, int harbourToInspect, SharedMemoryPassenger &sharedMemoryPassenger){
