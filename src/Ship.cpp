@@ -83,7 +83,7 @@ void Ship::sail(){
         this->arrivalAnnouncement();
         lockEntrance.unlock();
 
-        //this->unloadPeople();
+        //this->unloadPeople(passengersGettingOff);
 
         //this->unblockSigAlarm();
         //while (vble_cambiada por SIGALRM o capacidad max no alcanzada){
