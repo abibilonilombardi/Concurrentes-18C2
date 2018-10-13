@@ -14,8 +14,9 @@ public:
 
     virtual int handleSignal(int signum) {
         if( signum != SIGALRM ) {return -1;}
-        std::cout << "    --------------------------------------ALARM ---"<<endl;
+        std::cout << "---ALARM ---"<<std::endl;;
         this->alarmValue = 1;
+        continue;
         return 0;
     }
 

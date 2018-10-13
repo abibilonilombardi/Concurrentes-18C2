@@ -1,7 +1,7 @@
 rm *.bin -f
 rm *.log -f
 rm FIFOPUERTO_* -f
-
+rm fifopuerto* -f
 
 if [ -d "/build" ]
 then

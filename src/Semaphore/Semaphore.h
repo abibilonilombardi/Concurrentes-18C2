@@ -24,7 +24,7 @@ public:
     void remove();
     ~Semaphore();
 private:
-    key_t createKey(const string& pathname, const char letter);
+    void createKey(const string& pathname, const char letter);
     void initialize();
     void checkingInitialValue();
 };

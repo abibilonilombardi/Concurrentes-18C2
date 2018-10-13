@@ -1,12 +1,12 @@
 #include "../Semaphore/Semaphore.h"
-#include "../Lock/ExclusiveLock.h"
+// #include "../Lock/ExclusiveLock.h"
+#include "../Logger/Logger.h"
 
 Semaphore::Semaphore(const int &initialValue, const string& pathname, const char letter):initialValue(initialValue),
 pathname(pathname){
     this->checkingInitialValue();
-    creat(pathname.c_str(), 0777);
-
-    this->key = createKey(pathname, letter);
+    creat(pathname.c_str(), 0644);
+    createKey(pathname, letter);
 
     //lockeo la creacion e inicializacion para que sea atomica
     // ExclusiveLock l("lockcreacioneinicializacionSemaforo.txt");
@@ -16,14 +16,15 @@ pathname(pathname){
     }
     this->initialize(); // depende de lo anterior si tiene sentido asi o publico
     // l.unlock();
+
+    Logger::getInstance().log(to_string(getpid())+" Semaforo key: "+ to_string(this->key)+ " creado");  
 }
 
-key_t Semaphore::createKey(const string& pathname, const char letter){
+void Semaphore::createKey(const string& pathname, const char letter){
     this->key = ftok(pathname.c_str(), letter);
     if (this->key == -1){
         throw "Error al crear la clave del semaforo";
     }
-    return this->key;
 }
 
 void Semaphore::checkingInitialValue(){
@@ -54,6 +55,8 @@ void Semaphore::wait(){
     if (semop(this->setId, &semOperation, 1) < 0 && (errno != EINTR)){
         throw "Error at wait!";
     }
+
+    Logger::getInstance().log(to_string(getpid())+" Semaforo key: "+ to_string(this->key)+ " wait call");
 }
 
 void Semaphore::signal(){
@@ -65,6 +68,7 @@ void Semaphore::signal(){
     if (semop(this->setId, &semOperation, 1) < 0 && (errno != EINTR)){
         throw "Error at signal!";
     }
+    Logger::getInstance().log(to_string(getpid())+" Semaforo key: "+ to_string(this->key)+ " signal call");
 }
 
 int Semaphore::getId(){
