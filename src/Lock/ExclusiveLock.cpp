@@ -44,6 +44,10 @@ ExclusiveLock::ExclusiveLock(const std::string& file):isInternalFile(true){
     }
 }
 
+int ExclusiveLock::getfd(){
+    return this->fd;
+}
+
 void ExclusiveLock::unlock(){
     lock.l_type = F_UNLCK;
     //std::cout << "ExclusiveLock el proceso "<< getpid() << " LIBERO lock " << std::endl;

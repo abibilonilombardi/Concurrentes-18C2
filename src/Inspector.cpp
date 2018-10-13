@@ -13,7 +13,7 @@ void Inspector::behave(int maxHarbours){
 
     	srand(1);//TODO:srand(time(NULL));
     	int buffer;
-        // std::cout << "ENTRO AL BEHAVE" << std::endl;
+        std::cout << "ENTRO AL BEHAVE" << std::endl;
     	while(this->running()){
         	//int sleepTime = rand() % MAX_SLEEP_TIME;
         	//sleep(sleepTime);
@@ -28,11 +28,11 @@ void Inspector::behave(int maxHarbours){
         	}
         	ExclusiveLock l(fd);
         	read(fd, &buffer, sizeof(int));
-        	// std::cout << "Archivo muelle: " << buffer << std::endl;
+        	std::cout << "Archivo muelle: " << buffer << std::endl;
         	if(buffer != -1){
         		//si lo que hay en el archivo es == a -1 chau
         		//si no deberia acceder al archivo de memoria comp del barco
-                // std::cout << "Va a tomar lock del mem compartida de barco: " << Ship::getShmName(buffer) << std::endl;
+                std::cout << "Va a tomar lock del mem compartida de barco: " << Ship::getShmName(buffer) << std::endl;
                 ExclusiveLock l_ship(Ship::getShmName(buffer));
     	        SharedMemoryShip sharedMemoryShip(Ship::getShmName(buffer));
     	        SharedMemoryPassenger sharedMemoryPassenger(SharedMemoryPassenger::shmFileName());

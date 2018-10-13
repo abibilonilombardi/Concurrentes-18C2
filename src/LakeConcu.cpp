@@ -39,6 +39,11 @@ int main(int argc, char *argv[]){
         if (pc.spawnShips(shipQty, shipCty) == 0){
             return 0;
         }
+
+        if (pc.spawnShipInspector() == 0){
+            return 0;
+        }
+
         //begin simulation (spawn people processes)
         pc.beginSimulation();
         
@@ -57,7 +62,7 @@ int main(int argc, char *argv[]){
         cout<< error<<endl;
         return -1;
     }
-    catch(char const * error){
-        cout << "Catch vacio " << error << endl;
+    catch(...){
+        cout << "Catch vacio" << endl;
     }
 }

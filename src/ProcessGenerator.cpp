@@ -34,7 +34,7 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
         if (pid==0){
             srand(i);
             // int starting_hb = (rand() % this->harbourQty);
-            int starting_hb = 1;
+            int starting_hb = 0;
             Ship ship(i, this->harbours, starting_hb, capacity, *this->passengersMem);
             cout<< getpid() <<"Barco" << i << " se creo con la Memoria"<< this->passengersMem << "para el harbour: " << starting_hb << endl;
             // Logger::getInstance().log(CREACION_BARCO_EXITO(i));
@@ -71,13 +71,33 @@ pid_t ProcessGenerator::spawnPassenger(){
 
 //SpawnInspectors
 
+pid_t ProcessGenerator::spawnShipInspector(){
+    Logger::getInstance().log(" --- CREATE SHIP INSPECTOR ---");  
+    pid_t pid = 0;
+    //Instanciar inspectores y pasarles la referencia de la memoria
+    try{
+        pid = fork();
+        if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
+        if (pid==0){
+            //tirar random de 0 a 1 para ver si es turista o worker
+            ShipInspector inspector;
+            Logger::getInstance().log("Inspector creado con exitoS");
+            inspector.behave(MAX_HARBOURS);
+            return 0;
+        }else{
+            this->processes.insert(pid);
+        }
+        return pid;
+    }catch(string error){
+        throw error + " ProcessGenerator::spawnShipInspector() ";
+    }
+}
+
 int ProcessGenerator::beginSimulation(){
     Logger::getInstance().log(" --- BEGIN SIMULATION ---");    
     
 
     int status;
-    ShipInspector inspector;
-    // inspector.behave(MAX_HARBOURS);
     //Logger *l = Logger::getInstance();
 
     //spawn passanger processes...

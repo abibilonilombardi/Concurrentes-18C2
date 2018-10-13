@@ -63,21 +63,25 @@ void Ship::sail(){
         
         sleep(dstNextHarbour); 
         
+        this->harbour = nextHarbour;
         // cout << "I'm Ship " << getpid() << " leaving for harbour "<< nextHarbour << " at distance " <<  dstNextHarbour <<"!\n";
         //unload passengers (update their locations and Unblock semaphores)
         
         ExclusiveLock lockHarbour(Harbour::harbourLockName(this->harbour));
         // cout<<getpid()<< " Ship" << to_string(this->id)<< " ENTRA AL PUERTO "<< to_string(this->harbour) <<endl;
         logMessage = string("SHIP: ") + to_string(this->id) + string(" ENTRANCE TO HARBOURR ") + to_string(this->harbour);
+        cout << logMessage << endl;
         Logger::getInstance().log(logMessage);
 
-
+        cout << "Lockea archivo de entrada al muelle" << endl;
         ExclusiveLock lockEntrance(Harbour::entranceLockName(this->harbour));
-        this->arrivalAnnouncement();
+        this->arrivalAnnouncement(lockEntrance.getfd());
         lockEntrance.unlock();
 
-        // cout << "Lockea mem barco" << endl;
+        cout << "Lockea mem barco" << endl;
         ExclusiveLock lockShmShip(Ship::getShmName(this->id));// -------------------
+
+        sleep(10);
 
         this->unblockSigAlarm();
         //while (vble_cambiada por SIGALRM){
@@ -90,7 +94,8 @@ void Ship::sail(){
         lockShmShip.unlock(); // -------------------------
         
         ExclusiveLock lockExit(Harbour::entranceLockName(this->harbour));
-        this->departureAnnouncement();
+        //ver si meterle el metodo para escribir al lock
+        this->departureAnnouncement(lockExit.getfd());
         lockExit.unlock();
         
         //cout<< getpid()<<" Ship" << to_string(this->id)<< " SALE DEL PUERTO "<< to_string(this->harbour) <<endl;
@@ -107,26 +112,26 @@ void Ship::sail(){
     }
 }
 
-void Ship::arrivalAnnouncement(){
-    int fd = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY, 0666);
-    if (fd < 0){
-        throw "No se puede anunciar el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) + strerror(errno) ;
-    }
+void Ship::arrivalAnnouncement(int fd){
+    // int fd = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY, 0666);    
+    // if (fd < 0){
+    //     throw "No se puede anunciar el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) + strerror(errno) ;
+    // }
     this->writeInHarbourFile(fd,this->id);
-    close(fd);
+    // close(fd);
 
     string logMessage = string("SHIP: ") + to_string(this->id) + string(" ANNOUCED IN THE HARRBOUR ") + to_string(this->harbour);
     Logger::getInstance().log(logMessage);
 }
 
-void Ship::departureAnnouncement(){
+void Ship::departureAnnouncement(int fd){
     const int DEPARTUREVALUE = -1;
-    int fd = open(Harbour::entranceLockName(id).c_str(), O_WRONLY, 0666);
-    if (fd < 0){
-        throw "No se puede anunciar partida el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) ;
-    }
+    // int fd = open(Harbour::entranceLockName(id).c_str(), O_WRONLY, 0666);
+    // if (fd < 0){
+    //     throw "No se puede anunciar partida el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) ;
+    // }
     this->writeInHarbourFile(fd, DEPARTUREVALUE);
-    close(fd);
+    // close(fd);
 
     string logMessage = string("SHIP: ") + to_string(this->id) + string(" DEPARTURE TO HARBOUR ") + to_string(this->harbour);
     Logger::getInstance().log(logMessage);
