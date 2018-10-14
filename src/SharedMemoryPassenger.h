@@ -10,7 +10,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
-#include <set>
+#include <vector>
 
 using namespace std;
 
@@ -32,8 +32,6 @@ public:
     void updateNextStop(int passengerId, int nextStop);
     int getNextStop(int passengerId);
     bool hasTicket(int passengerId);
-
-	void getPassangersForDestination(set<int> &passengerList, int destination);
 
 	static string shmFileName();
 	static string shmLockName();

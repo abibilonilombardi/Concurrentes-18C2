@@ -62,13 +62,9 @@ bool SharedMemoryShip::removePassenger(int passengerId){
     return false;
 }
 
-void SharedMemoryShip::removePassengers(set<int> &passengerList){
-    for(size_t j=0; j<SharedMemoryShip::shipCty;j++){
-        //if passenger is on the 'getOff' list:
-        if (passengerList.find(this->leer(j)) != passengerList.end()){
-            //remove passenger from ship:
-            this->escribir(-1, j);
-        }
+void SharedMemoryShip::removePassengers(vector<int> &passengerList){
+    for(size_t j=0; j<passengerList.size();j++){
+        this->removePassenger(passengerList[j]);
     }
 }
 

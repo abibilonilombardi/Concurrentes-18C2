@@ -4,10 +4,6 @@ Passenger::Passenger(SharedMemoryPassenger &sharedMem):
 Process(),
 sharedMem(sharedMem)
 {
-    //Can't travel unless you've boarded a ship:
-    //Initialize passenger semaphore at 0:
-    tuple<string,char> s = Passenger::getSemaphore(this->id);
-    this->semTravel = new Semaphore(0, get<0>(s), get<1>(s));
 }
 
 tuple<string,char> Passenger::getSemaphore(int passengerId){
@@ -16,7 +12,9 @@ tuple<string,char> Passenger::getSemaphore(int passengerId){
 
 
 Passenger::~Passenger(){
-    //Free id:
+    string logMessage = string("PASSENGER: ") + to_string(this->id) + string(" MUERE id") + to_string(this->semTravel->getId());
+    Logger::getInstance().log(logMessage);
+
     this->sharedMem.freePassengerId(this->id);
     this->semTravel->remove();
     delete this->semTravel;

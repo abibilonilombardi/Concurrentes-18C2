@@ -12,9 +12,8 @@ FifoLectura::~FifoLectura() {
 void FifoLectura::abrir() {
 	this->fd = open( this->nombre.c_str(),O_RDONLY ,0644);
 	if(this->fd == -1){
-		throw std::string("Error FifoLectura::abrir() ") + std::string(strerror(errno));
+		// throw std::string("Error FifoLectura::abrir() ") + std::string(strerror(errno));
 	}
-	std::cout<<"SE ABRIO EL FIFO "<< nombre<<" PARA LECTURA"<<std::endl;
 }
 
 void FifoLectura::leer(void* buffer,const ssize_t buffsize) const {

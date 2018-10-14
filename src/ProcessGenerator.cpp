@@ -2,7 +2,7 @@
 #include "Logger/LogMessages.h"
 
 #define MAX_HARBOURS 10  //max amount of harbours total.
-#define MAX_PASSENGERS 1 //max amount of passengers total.
+#define MAX_PASSENGERS 5 //max amount of passengers total.
 
 
 ProcessGenerator::ProcessGenerator():Process() {
@@ -54,15 +54,15 @@ pid_t ProcessGenerator::spawnPassenger(){
             throw "ProcessGenerator::spawnPassenger() failed at fork!";
         }
         if (pid==0){
-            if ((rand()%2)==1){
+            // if ((rand()%2)==1){
                 Worker w(*this->passengersMem, this->harbourQty);
                 w.travel();
                 sleep(1);
-            }else{
+            // }else{
                 //Tourist t(passMem, this->harbourQty);
                 //t.travel();
                 sleep(1);
-            }
+            // }
             return 0;
         }else{
             this->processes.push_back(pid);

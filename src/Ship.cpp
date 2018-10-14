@@ -60,13 +60,10 @@ void Ship::sail(){
     string logMessage = string("SHIP: ") + to_string(this->id) + string(" STARTED TO SAIL");
     Logger::getInstance().log(logMessage);
 
-    set<int> passengersGettingOff;
+    
     while(this->running()){
         this->harbour = (this->harbour+1) % this->map.size();
         int dstNextHarbour = map.at(this->harbour)->distanceNextHarbour();
-
-        //Get the list of passengers who are getting off the ship at the next stop:
-        this->shmPassenger.getPassangersForDestination(passengersGettingOff, this->harbour);
 
         sleep(dstNextHarbour);
 
@@ -87,7 +84,7 @@ void Ship::sail(){
         lockEntrance.unlock();
 
         this->unblockSigAlarm();
-        this->unloadPeople(passengersGettingOff);
+        this->unloadPeople();
 
         if(!this->running()){
             return;
@@ -117,7 +114,6 @@ void Ship::sail(){
             //Ship confiscated --> DEATH
             exit(0);
         }
-        passengersGettingOff.clear();
     }
 }
 
@@ -161,21 +157,32 @@ void Ship::writeInHarbourFile(int fd, int value){
 }
 
 
-void Ship::unloadPeople(set<int> &passengers){
-    this->shmship->removePassengers(passengers);
-    set<int>::iterator it;
-    for (it=passengers.begin(); it!=passengers.end(); ++it){
-        //update passenger location:
-        string logMessage = string("SHIP: ") + to_string(this->id) + string(" UNLOADING PASSENGER ") + to_string(*it);
-        Logger::getInstance().log(logMessage);
+void Ship::unloadPeople(){
+    vector<int> shipPassengers = this->shmship->getPassengers();
 
-        this->shmPassenger.updateLocation(*it,this->harbour);
-        //get passenger semaphore:
-        tuple<string,char> passSemData = Passenger::getSemaphore(*it);
-        Semaphore passengerArrived(0, get<0>(passSemData), get<1>(passSemData));
-        //Let passenger know he has arrived at his destination:
-        passengerArrived.signal();
+    vector<int>::iterator it;
+    for (it=shipPassengers.begin(); it!=shipPassengers.end(); ++it){
+        if (*it < 0) {continue;}
+
+        if(this->shmPassenger.getNextStop(*it) == this->harbour ){
+            
+            string logMessage = string("SHIP: ") + to_string(this->id) + string(" UNLOADING PASSENGER ") + to_string(*it);
+            Logger::getInstance().log(logMessage);
+            
+            this->shmPassenger.updateLocation(*it,this->harbour);
+            
+            tuple<string,char> passSemData = Passenger::getSemaphore(*it);
+            Semaphore passengerArrived(0, get<0>(passSemData), get<1>(passSemData));
+            //Let passenger know he has arrived at his destination:
+            passengerArrived.signal();
+
+            *it = -1;
+        }
     }
+
+    this->shmship->updatePassengers(shipPassengers);
+    string logMessage = string("SHIP: ") + to_string(this->id) + string(" termina UNLOAD ") ;
+    Logger::getInstance().log(logMessage);
 }
 
 void Ship::loadPeople(){
@@ -183,34 +190,32 @@ void Ship::loadPeople(){
     int idPassenger;
 
     FifoLectura fifito(Harbour::entranceName(this->harbour));
-
+    
+    alarm(10);
+    fifito.abrir();
     try{
-
+        
         logMessage = string("SHIP: ") + to_string(this->id) + string(" STARTS LOADING PEOPLE AT HARBOUR ") + to_string(this->harbour);
         Logger::getInstance().log(logMessage);
-
+        
         int currentNumberOfPassengers = 0;
         for (unsigned int i = 0;i< this->shmship->getPassengers().size(); i++){
             if (this->shmship->getPassengers()[i] >=0){currentNumberOfPassengers++;}
         }
-
+        if(!this->running() || sigalrm_handler.isActivate()){
+            return;
+        }
         while(currentNumberOfPassengers < this->capacity){
-            alarm(30);
-            fifito.abrir();
-
-            if(!this->running()){
-                return;
-            }
+            alarm(15);
 
             idPassenger = fifito.leerId();
+            
 
             if(!this->running()){
                 return;
             }
 
-            fifito.cerrar();
-
-            logMessage = string("SHIP: ") + to_string(this->id) + string(" LEYO ") + to_string(this->id);
+            logMessage = string("SHIP: ") + to_string(this->id) + string(" LEYO ") + to_string(idPassenger);
             Logger::getInstance().log(logMessage);
 
             if(sigalrm_handler.isActivate() ){
@@ -222,16 +227,16 @@ void Ship::loadPeople(){
 
                 logMessage = string("PASSENGER: ") + to_string(idPassenger) + string(" GET ON SHIP ") + to_string(this->id);
                 Logger::getInstance().log(logMessage);
-
-                //TODO actualizar la posicion actual del pasajero en la memoria compartida de pasajeros
+                currentNumberOfPassengers++;
             }
             alarm(0);
             sigalrm_handler.restartAlarm();
         }
+        fifito.cerrar();
     }catch(string err){
             fifito.cerrar();
 
-            logMessage = string("SHIP: ") + to_string(this->id) + string(" FINISHED LOAD PEOPLE AT HARBOUR ") + to_string(this->harbour);
+            logMessage = string("SHIP: ") + to_string(this->id) + string(" FINISHED LOAD PEOPLE AT HARBOUR ") + to_string(this->harbour) + err;
             Logger::getInstance().log(logMessage);
 
             sigalrm_handler.restartAlarm();

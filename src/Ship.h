@@ -43,7 +43,7 @@ private:
     void departureAnnouncement(int fd);
     void writeInHarbourFile(int fd,int value);
     void loadPeople();
-    void unloadPeople(set<int> &passengers);
+    void unloadPeople();
 
     void blockSigAlarm();
     void unblockSigAlarm();

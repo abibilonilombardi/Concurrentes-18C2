@@ -25,8 +25,8 @@ int main(int argc, char *argv[]){
             shipCty = atoi(argv[2]);
         }
         else{
-            shipQty = 1;
-            shipCty = 2;
+            shipQty = 3;
+            shipCty = 5;
             // return -1;
         }
         std::cout<<getpid() << "PARAMETROS cantidadBarcos:"<<shipQty << " capacidadBarcos:"<< shipCty<< std::endl;
@@ -37,9 +37,9 @@ int main(int argc, char *argv[]){
             return 0;
         }
 
-        // if (pc.spawnShipInspector() == 0){
-        //     return 0;
-        // }
+        if (pc.spawnShipInspector() == 0){
+            return 0;
+        }
 
         //begin simulation (spawn people processes)
         pc.beginSimulation();

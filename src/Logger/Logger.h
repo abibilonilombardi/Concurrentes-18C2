@@ -11,6 +11,12 @@
 // TODO: VER DONDE DECARAMOS EL NOMBRE DEL ARCHIVO DE LOG
 // TODO: DOCUMENTAR
 
+/* #define LOG( msg ) \
+//   do { \
+//     std::stringstream ss;
+//     Logger::getInstance().log(str); \
+   } while( 0 ) */
+
 class Logger {
 private:
     static std::string LOG_FILE_NAME;

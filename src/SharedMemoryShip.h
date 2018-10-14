@@ -16,11 +16,11 @@ public:
     void confiscateShip();
     bool authorizedToSail();
     bool confiscated();
-    std::vector<int> getPassengers(); //no los elimina
+    std::vector<int> getPassengers(); 
     void updatePassengers(std::vector<int> &passengerIds);
     bool removePassenger(int passengerId);
     bool addPassenger(int passengerId);
-    void removePassengers(set<int> &passengerList);
+    void removePassengers(vector<int> &passengerList);
     static void setShipCapacity(int shipCty);
     ~SharedMemoryShip();
 };
