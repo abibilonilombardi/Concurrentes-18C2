@@ -48,9 +48,6 @@ private:
     void blockSigAlarm();
     void unblockSigAlarm();
     void setDepartureAlarm();
-    // void setAlarmAction();
-    // void rangAlamr(int signum);
-
 };
 
 #endif //SHIP_H

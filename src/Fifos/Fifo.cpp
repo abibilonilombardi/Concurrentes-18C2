@@ -9,7 +9,7 @@ Fifo::Fifo(const std::string nombre) : nombre(nombre), fd(-1) {
 	// if (result==-1){
 	// 	throw std::string("Error Fifo::Fifo(const std::string nombre)") + std::string(strerror(errno));
 	// }
-	Logger::getInstance().log(" FIFO  "+ nombre + " creado");  
+	// Logger::getInstance().log(" FIFO  "+ nombre + " creado");  
 }
 
 void Fifo::cerrar() {
@@ -19,7 +19,7 @@ void Fifo::cerrar() {
 
 void Fifo::eliminar() const {
 	unlink(this->nombre.c_str() );
-	Logger::getInstance().log(" FIFO  "+ nombre + " eliminado"); 
+	// Logger::getInstance().log(" FIFO  "+ nombre + " eliminado"); 
 }
 
 Fifo::~Fifo() {

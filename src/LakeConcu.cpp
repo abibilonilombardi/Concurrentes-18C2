@@ -17,14 +17,8 @@ using namespace std;
 int main(int argc, char *argv[]){
     int shipQty, shipCty;
     try{
-<<<<<<< Updated upstream
-
-    int createLogFile = open("ShipsTrevelingSimulation.log", O_CREAT, 0666);
-    close(createLogFile);
-=======
         int createLogFile = open("ShipsTrevelingSimulation.log", O_CREAT, 0666);
         close(createLogFile);
->>>>>>> Stashed changes
 
         if (argc == 3){
             shipQty = atoi(argv[1]);
@@ -43,10 +37,6 @@ int main(int argc, char *argv[]){
         //spawn ship processes
         //begin simulation (spawn people processes)
         pc.beginSimulation();
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
         // std::cout<< "El proceso: "<< getpid() << " ha finalizado correctamente"<< std::endl;
         return 0;
     }catch(const string &error){

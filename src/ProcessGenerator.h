@@ -30,7 +30,7 @@ class ProcessGenerator : public Process{
     vector<pid_t> processes;
 
     vector<Harbour*> harbours;
-    //SharedMemoryPassenger* passengersMem;
+    SharedMemoryPassenger* passengersMem;
 
 public:
     ProcessGenerator();

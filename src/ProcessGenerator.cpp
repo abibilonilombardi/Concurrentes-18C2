@@ -1,8 +1,8 @@
 #include "ProcessGenerator.h"
 #include "Logger/LogMessages.h"
 
-#define MAX_HARBOURS 10 //max amount of harbours total.
-#define MAX_PASSENGERS 10 //max amount of passengers total.
+#define MAX_HARBOURS 10  //max amount of harbours total.
+#define MAX_PASSENGERS 1 //max amount of passengers total.
 
 
 ProcessGenerator::ProcessGenerator():Process() {
@@ -16,13 +16,11 @@ ProcessGenerator::ProcessGenerator():Process() {
         this->harbours.push_back(new Harbour(i));
         Logger::getInstance().log(CREACION_PUERTO_EXITO(i));
     }
-    this->passengersMem = new SharedMemoryPassenger(SharedMemoryPassenger::shmFileName(), MAX_PASSENGERS);
+    this->passengersMem = new SharedMemoryPassenger(MAX_PASSENGERS);
 }
 
 pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
-    Logger::getInstance().log(" --- START TO CREATE SHIPS ---");
     SharedMemoryShip::setShipCapacity(capacity);
-    SharedMemoryPassenger passMem(MAX_PASSENGERS);
     pid_t pid = 0;
 
     for (int i=0; i < quantity; i++){
@@ -45,10 +43,9 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
 }
 
 pid_t ProcessGenerator::spawnPassenger(){
-    Logger::getInstance().log(" --- START TO CREATE PASSENGERS ---");
     pid_t pid = 0;
     //Instanciar inspectores y pasarles la referencia de la memoria
-    SharedMemoryPassenger passMem(MAX_PASSENGERS);
+    // SharedMemoryPassenger passMem(MAX_PASSENGERS);
     try{
         pid = fork();
         if (pid < 0){
@@ -73,9 +70,6 @@ pid_t ProcessGenerator::spawnPassenger(){
 }
 
 int ProcessGenerator::beginSimulation(){
-    Logger::getInstance().log(" --- BEGIN SIMULATION ---");
-
-
     int status;
     // ShipInspector inspector;
     // inspector.behave(MAX_HARBOURS);
@@ -88,7 +82,6 @@ int ProcessGenerator::beginSimulation(){
         for (int i=0; i < MAX_PASSENGERS; i++){
             // while(this->running()){
                 s.wait();// ++++++++++++++++++++++++
-                Logger::getInstance().log("EMPIEZA  spawnPassenger");  
                 if(this->running()){
                     
                     if(spawnPassenger()==0){

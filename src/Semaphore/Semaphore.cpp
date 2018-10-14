@@ -17,7 +17,6 @@ pathname(pathname){
     this->initialize(); // depende de lo anterior si tiene sentido asi o publico
     // l.unlock();
 
-    Logger::getInstance().log(to_string(getpid())+" Semaforo key: "+ to_string(this->key)+ " creado");  
 }
 
 void Semaphore::createKey(const string& pathname, const char letter){
@@ -56,7 +55,7 @@ void Semaphore::wait(){
         throw "Error at wait!";
     }
 
-    Logger::getInstance().log(to_string(getpid())+" Semaforo key: "+ to_string(this->key)+ " wait call");
+    // Logger::getInstance().log(to_string(getpid())+" Semaforo key: "+ to_string(this->key)+ " wait call");
 }
 
 void Semaphore::signal(){
@@ -68,7 +67,7 @@ void Semaphore::signal(){
     if (semop(this->setId, &semOperation, 1) < 0 && (errno != EINTR)){
         throw "Error at signal!";
     }
-    Logger::getInstance().log(to_string(getpid())+" Semaforo key: "+ to_string(this->key)+ " signal call");
+    // Logger::getInstance().log(to_string(getpid())+" Semaforo key: "+ to_string(this->key)+ " signal call");
 }
 
 int Semaphore::getId(){
