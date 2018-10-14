@@ -4,9 +4,6 @@ Passenger::Passenger(SharedMemoryPassenger &sharedMem):
 Process(),
 sharedMem(sharedMem)
 {
-    //Write passenger data to shared memory:
-    this->id = this->sharedMem.addPassenger(this->locationStart, this->locationEnd, this->hasTicket);
-
     //Can't travel unless you've boarded a ship:
     //Initialize passenger semaphore at 0:
     tuple<string,char> s = Passenger::getSemaphore(this->id);

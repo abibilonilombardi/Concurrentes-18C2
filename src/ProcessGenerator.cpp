@@ -55,6 +55,7 @@ pid_t ProcessGenerator::spawnPassenger(){
     pid_t pid = 0;
     //Instanciar inspectores y pasarles la referencia de la memoria
     SharedMemoryPassenger passMem(MAX_PASSENGERS);
+    passMem.initialize();
     try{
         pid = fork();
         if (pid < 0){
@@ -62,12 +63,15 @@ pid_t ProcessGenerator::spawnPassenger(){
             throw "ProcessGenerator::spawnPassenger() failed at fork!";
         }
         if (pid==0){
-            //tirar random de 0 a 1 para ver si es turista o worker
-            //Worker w(passMem, this->harbourQty);
-            Tourist t(passMem, this->harbourQty);
-            t.travel();
-            //w.travel();
-            sleep(1);
+            if ((rand()%2)==1){
+                Worker w(passMem, this->harbourQty);
+                w.travel();
+                sleep(1);
+            }else{
+                //Tourist t(passMem, this->harbourQty);
+                //t.travel();
+                sleep(1);
+            }
             return 0;
         }else{
             this->processes.push_back(pid);
@@ -106,11 +110,12 @@ int ProcessGenerator::beginSimulation(){
             //signal all child processes to end in orderly fashion:
             kill(*procIt, SIGINT);
         }
-        // cout << "Waiting for all child processes to end\n";
         size_t sz = this->processes.size();
+        cout << "Signaling all child processes to end " << to_string(sz) << endl;
         for (size_t i=0; i < sz; i++){
             //wait for all child processes to end:
             wait(&status);
+            cout << "Child " << to_string(i+1) << " ended!" << endl;
         }
         s.remove();
 

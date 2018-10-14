@@ -16,7 +16,7 @@
 #include "Ship.h"
 #include "Process.h"
 #include "Harbour.h"
-//#include "Worker.h"
+#include "Worker.h"
 #include "Tourist.h"
 #include "ShipInspector.h"
 

@@ -6,11 +6,14 @@ Passenger(sharedMem){
 	this->locationStart = rand() % maxHarbours;
 	this->hasTicket = rand() % 2;
 	this->locationEnd = rand() % maxHarbours;
+	//Write passenger data to shared memory:
+	this->id = this->sharedMem.addPassenger(this->locationStart, this->locationEnd, this->hasTicket);
 	while (locationStart==locationEnd){
 		this->locationEnd = rand() % maxHarbours;
 	}
 	string logMessage = string("WORKER: ") + to_string(this->id) + string(" CREATED");
     Logger::getInstance().log(logMessage);
+
 }
 
 
@@ -26,13 +29,21 @@ void Worker::travel(){
 		//Now open it:
 		FifoEscritura entrance(hb);
 		entrance.abrir();
+		if(!this->running()){
+			return;
+		}
 		//Write my id:
 		entrance.escribir(static_cast<const void*>(&this->id),sizeof(int));
 		entrance.cerrar();
 		Logger::getInstance().log("WORKER: " +to_string(this->id) + " QUEUED AT " + to_string(this->locationStart));
-
+		if(!this->running()){
+			return;
+		}
 		//lock semaphore until I arrive
 		this->semTravel->wait();
+		if(!this->running()){
+			return;
+		}
 		int loc = this->sharedMem.getLocation(this->id);
 		if (loc != this->locationEnd){
 			Logger::getInstance().log("WORKER: " +to_string(this->id) + " WAS FORCED TO GET OFF AT HARBOUR " + to_string(loc));

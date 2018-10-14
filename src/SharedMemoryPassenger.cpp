@@ -27,7 +27,9 @@ MemoriaCompartida(){
     if (this->fd == -1){ throw "No se pudo abrir el archivo de la shared memory " + std::string(strerror(errno));}
     // std::cout<< " FD shared memo PAS "<< this->fd <<std::endl;
     this->crear(SharedMemoryPassenger::shmFileName(), 'p', maxPassengers * FIELDS);
+}
 
+void SharedMemoryPassenger::initialize(){
     ExclusiveLock l(SharedMemoryPassenger::shmLockName());
     for(size_t i=0; i<this->size(); i++){
         //initialize shm in -1;
