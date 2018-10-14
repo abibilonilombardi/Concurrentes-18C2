@@ -3,7 +3,7 @@
 #include "Harbour.h"
 #include "Fifos/FifoEscritura.h"
 
-#include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -12,7 +12,7 @@ using namespace std;
 
 class Tourist : public Passenger {
 private:
-    std::vector<int> destinations;
+    queue<int> destinations;
 public:
     Tourist(SharedMemoryPassenger &sharedMem, int maxHarbours);
     void travel();

@@ -87,8 +87,7 @@ void Ship::sail(){
         this->arrivalAnnouncement(lockEntrance.getfd());
         lockEntrance.unlock();
 
-        //this->unloadPeople();
-        
+        //this->unloadPeople(passengersGettingOff);
         sleep(10);
 
         //this->unblockSigAlarm();

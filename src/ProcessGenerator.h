@@ -9,7 +9,6 @@
 #include <set>
 #include <errno.h>
 #include <vector>
-//#include <error.h>
 
 #include "SharedMemoryPassenger.h"
 #include "Logger/Logger.h"
@@ -17,7 +16,8 @@
 #include "Ship.h"
 #include "Process.h"
 #include "Harbour.h"
-#include "Worker.h"
+//#include "Worker.h"
+#include "Tourist.h"
 #include "ShipInspector.h"
 
 using namespace std;
@@ -27,8 +27,8 @@ using namespace std;
 
 class ProcessGenerator : public Process{
     size_t harbourQty;
-    set<pid_t> processes;
-    
+    vector<pid_t> processes;
+
     vector<Harbour*> harbours;
     //SharedMemoryPassenger* passengersMem;
 
