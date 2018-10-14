@@ -26,18 +26,20 @@ MemoriaCompartida(){
     this->fd = open(SharedMemoryPassenger::shmFileName().c_str(), O_RDWR|O_CREAT, 0644);
     if (this->fd == -1){ throw "No se pudo abrir el archivo de la shared memory " + std::string(strerror(errno));}
     // std::cout<< " FD shared memo PAS "<< this->fd <<std::endl;
-    this->crear(SharedMemoryPassenger::shmFileName(), 'p', maxPassengers * FIELDS);
+    this->crear(SharedMemoryPassenger::shmFileName(), 'p', maxPassengers * FIELDS);    
+}
 
+SharedMemoryPassenger::SharedMemoryPassenger(){
+    this->crear(SharedMemoryPassenger::shmFileName(), 'p', SharedMemoryPassenger::maxPassengers * FIELDS);
+}
+
+void SharedMemoryPassenger::initialize(){
     ExclusiveLock l(SharedMemoryPassenger::shmLockName());
     for(size_t i=0; i<this->size(); i++){
         //initialize shm in -1;
         this->escribir(FREE, i);
     }
     l.unlock();
-}
-
-SharedMemoryPassenger::SharedMemoryPassenger(){
-    this->crear(SharedMemoryPassenger::shmFileName(), 'p', SharedMemoryPassenger::maxPassengers * FIELDS);
 }
 
 int SharedMemoryPassenger::addPassenger(int location, int nextStop, bool hasTicket){

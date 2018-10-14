@@ -22,7 +22,7 @@ pathname(pathname){
 void Semaphore::createKey(const string& pathname, const char letter){
     this->key = ftok(pathname.c_str(), letter);
     if (this->key == -1){
-        throw "Error al crear la clave del semaforo";
+        throw "No pudo crear la clave del semaforo para el pathname: " + pathname;
     }
 }
 

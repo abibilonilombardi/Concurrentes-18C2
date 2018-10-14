@@ -4,7 +4,7 @@ Worker::Worker(SharedMemoryPassenger &sharedMem, int maxHarbours):
 Passenger(sharedMem){
 	srand(this->id);//TODO:srand(time(NULL));
 	this->locationStart = rand() % maxHarbours;
-	this->hasTicket = rand() % 2;
+	this->hasTicket = rand() % 2; //TODO VER POR QUE ES BOOL
 	this->locationEnd = rand() % maxHarbours;
 	while (locationStart==locationEnd){
 		this->locationEnd = rand() % maxHarbours;

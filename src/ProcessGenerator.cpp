@@ -11,7 +11,7 @@ ProcessGenerator::ProcessGenerator():Process() {
 
     this->harbourQty = (rand() % MAX_HARBOURS) + 1;
 
-    cout<<"Cantidad de "<<this->harbourQty<<endl;
+    // cout<<"Cantidad de harbours: "<<this->harbourQty<<endl;
     for(size_t i=0; i < this->harbourQty; i++){
         this->harbours.push_back(new Harbour(i));
         Logger::getInstance().log(CREACION_PUERTO_EXITO(i));
@@ -66,6 +66,30 @@ pid_t ProcessGenerator::spawnPassenger(){
         return pid;
     }catch(string error){
         throw  string(" ProcessGenerator::spawnPassenger() ") + error;
+    }
+}
+
+//SpawnInspectors
+
+pid_t ProcessGenerator::spawnShipInspector(){
+    Logger::getInstance().log(" --- CREATE SHIP INSPECTOR ---");  
+    pid_t pid = 0;
+    //Instanciar inspectores y pasarles la referencia de la memoria
+    try{
+        pid = fork();
+        if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
+        if (pid==0){
+            //tirar random de 0 a 1 para ver si es turista o worker
+            ShipInspector inspector;
+            Logger::getInstance().log("Inspector creado con exitoS");
+            inspector.behave(MAX_HARBOURS);
+            return 0;
+        }else{
+            this->processes.insert(pid);
+        }
+        return pid;
+    }catch(string error){
+        throw error + " ProcessGenerator::spawnShipInspector() ";
     }
 }
 

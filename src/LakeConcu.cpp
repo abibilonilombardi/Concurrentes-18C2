@@ -31,10 +31,16 @@ int main(int argc, char *argv[]){
         }
         std::cout<<getpid() << "PARAMETROS cantidadBarcos:"<<shipQty << " capacidadBarcos:"<< shipCty<< std::endl;
         ProcessGenerator pc;
+
+        // spawn ship processes
         if (pc.spawnShips(shipQty, shipCty) == 0){
             return 0;
         }
-        //spawn ship processes
+
+        // if (pc.spawnShipInspector() == 0){
+        //     return 0;
+        // }
+
         //begin simulation (spawn people processes)
         pc.beginSimulation();
         // std::cout<< "El proceso: "<< getpid() << " ha finalizado correctamente"<< std::endl;
@@ -50,5 +56,11 @@ int main(int argc, char *argv[]){
     catch(char const* error){
         cout<< error<<endl;
         return -1;
+    }
+    catch(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > error){
+        cout << "error mistico: " << error << endl;
+    }
+    catch(...){
+        cout << "Catch vacio" << endl;
     }
 }

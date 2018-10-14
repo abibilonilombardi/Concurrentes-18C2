@@ -23,6 +23,7 @@ private:
 public:
     SharedMemoryPassenger(int maxPassengers);
     SharedMemoryPassenger();
+    void initialize();
     int addPassenger(int location, int nextStop, bool hasTicket);
     void updateLocation(int passengerId, int location);
     int getLocation(int passengerId);

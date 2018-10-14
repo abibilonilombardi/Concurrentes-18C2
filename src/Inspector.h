@@ -20,7 +20,7 @@ public:
     Inspector();
     virtual void inspect(int harbourToInspect, SharedMemoryShip &sharedMemoryShip, SharedMemoryPassenger &sharedMemoryPassenger) = 0;
     void behave(int maxHarbours);
-    void unloadShipPassenger(int passengerId, int harbourToInspect, SharedMemoryPassenger &sharedMemoryPassenger);
+    // void unloadShipPassenger(int passengerId, int harbourToInspect, SharedMemoryPassenger &sharedMemoryPassenger);
     ~Inspector();
 };
 

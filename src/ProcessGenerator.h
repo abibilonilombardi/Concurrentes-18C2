@@ -38,6 +38,7 @@ public:
     pid_t spawnShips(int qty, int capacity);
     pid_t spawnHarbours();
     pid_t spawnPassenger();
+    pid_t spawnShipInspector();
     int beginSimulation();
 
 };
