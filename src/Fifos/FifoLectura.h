@@ -9,7 +9,10 @@ public:
 	~FifoLectura();
 
 	void abrir();
-	ssize_t leer(void* buffer,const ssize_t buffsize) const;
+	void leer(void* buffer,const ssize_t buffsize) const;
+
+	int leerId() const;
+
 };
 
 #endif /* FIFOLECTURA_H_ */

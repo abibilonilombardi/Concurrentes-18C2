@@ -33,7 +33,7 @@ public:
     int getNextStop(int passengerId);
     bool hasTicket(int passengerId);
 
-	void getPassangersForDestination(set<int> passengerList, int destination);
+	void getPassangersForDestination(set<int> &passengerList, int destination);
 
 	static string shmFileName();
 	static string shmLockName();

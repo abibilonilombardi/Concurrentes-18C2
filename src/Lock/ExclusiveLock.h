@@ -18,6 +18,7 @@ public:
     ExclusiveLock(const std::string& file);
     ExclusiveLock(int fileDescriptor);
     void unlock();
+    int getfd();
     ~ExclusiveLock();   
 private:
     void initializeFlock(); 

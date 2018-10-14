@@ -7,14 +7,12 @@
 #define NO_SHIP -1
 
 string Harbour::entranceName(int harbour_id){
-    ostringstream os;
-    os << "FIFOPUERTO_" << harbour_id;
-    return os.str();
+    return string("fifopuerto")+to_string(harbour_id);
 }
 
 string Harbour::entranceLockName(int harbour_id){
     ostringstream os;
-    os << "lock_" << harbour_id << ".bin";
+    os << "lockcito_" << harbour_id << ".bin";
     return os.str();
 }
 
@@ -25,13 +23,11 @@ string Harbour::harbourLockName(int harbour_id){
 }
 
 Harbour::Harbour(int id):id(id){
-    this->entrance = new FifoLectura(Harbour::entranceName(id));
     //Open harbour for incoming passangers:
     this->distanceNext = (rand() % MAX_DST_HARBOURS)+1;
     this->fdEntrance = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY, 0666);
+    // std::cout << "Se crea archivo de harbour: " << Harbour::entranceLockName(id) << std::endl;
     if (this->fdEntrance < 0){
-        // std::cout << "fdEntrance: " << fdEntrance << std::endl;
-        delete this->entrance;
         std::string mensaje = "Error at Harbour creation!";
         throw mensaje;
     }
@@ -39,8 +35,6 @@ Harbour::Harbour(int id):id(id){
     close(this->fdEntrance);
     this->fdHarbour = open(Harbour::harbourLockName(id).c_str(), O_CREAT|O_WRONLY, 0666);
     if (this->fdHarbour < 0){
-        // std::cout << "fdHarbour: " << fdHarbour << std::endl;
-        delete this->entrance;
         throw std::string("Error at Harbour creation! ") + string(strerror(errno));
     }
     close(this->fdHarbour);
@@ -59,12 +53,11 @@ void Harbour::writeInHarbourFile(int fd, int value){
             throw std::string("Error hip::writeInHarbourFile(value) =") + to_string(value);
         }
     }
+    // std::cout << "Harbour initialization writing value: " << value << std::endl;
 }
 
 Harbour::~Harbour(){
     //TODO:cerrar los FIFOS, y hacer el unlink.
-    this->entrance->eliminar();
-    delete this->entrance;
     unlink(Harbour::harbourLockName(this->id).c_str());
     unlink(Harbour::entranceLockName(this->id).c_str());
 }

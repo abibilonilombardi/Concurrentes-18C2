@@ -39,8 +39,8 @@ public:
 private:
     void freeResources();
     void initialize();
-    void arrivalAnnouncement();
-    void departureAnnouncement();
+    void arrivalAnnouncement(int fd);
+    void departureAnnouncement(int fd);
     void writeInHarbourFile(int fd,int value);
     void loadPeople();
     void unloadPeople(set<int> &passengers);
@@ -48,9 +48,6 @@ private:
     void blockSigAlarm();
     void unblockSigAlarm();
     void setDepartureAlarm();
-    // void setAlarmAction();
-    // void rangAlamr(int signum);
-
 };
 
 #endif //SHIP_H

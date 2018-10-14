@@ -1,3 +1,6 @@
+#ifndef PROCGEN_H
+#define PROCGEN_H
+    
 #include <unistd.h>
 #include <iostream>
 #include <sys/types.h>
@@ -22,15 +25,13 @@
 
 using namespace std;
 
-#ifndef PROCGEN_H
-#define PROCGEN_H
 
 class ProcessGenerator : public Process{
     size_t harbourQty;
     vector<pid_t> processes;
 
     vector<Harbour*> harbours;
-    //SharedMemoryPassenger* passengersMem;
+    SharedMemoryPassenger* passengersMem;
 
 public:
     ProcessGenerator();
@@ -38,6 +39,7 @@ public:
     pid_t spawnShips(int qty, int capacity);
     pid_t spawnHarbours();
     pid_t spawnPassenger();
+    pid_t spawnShipInspector();
     int beginSimulation();
 
 };

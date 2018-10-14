@@ -6,8 +6,7 @@ ShipInspector::ShipInspector(): Inspector(){
 }
 
 void ShipInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemoryShip, SharedMemoryPassenger &sharedMemoryPassenger){
-	// std::cout << "Entro al inspect " << std::endl;
-	// std::cout << "Barco autorizado: " << sharedMemoryShip.authorizedToSail() << std::endl;
+	std::cout << "Barco autorizado: " << sharedMemoryShip.authorizedToSail() << std::endl;
 	if (!sharedMemoryShip.authorizedToSail()){
     	sharedMemoryShip.confiscateShip();        	
     	std::vector<int> passengerIds = sharedMemoryShip.getPassengers();
@@ -23,6 +22,7 @@ void ShipInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemory
 	    		tuple<string,char> semTuple = Passenger::getSemaphore(passengerIds[i]);
 	    		Semaphore *passSemaphore = new Semaphore(0, get<0>(semTuple), get<1>(semTuple));
 	    		passSemaphore->signal();
+	    		delete passSemaphore;
 	    	}
     	}
     	sharedMemoryShip.updatePassengers(passengerIds);

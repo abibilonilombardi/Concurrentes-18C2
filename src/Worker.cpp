@@ -2,9 +2,9 @@
 
 Worker::Worker(SharedMemoryPassenger &sharedMem, int maxHarbours):
 Passenger(sharedMem){
-	srand(1);//TODO:srand(time(NULL));
+	srand(this->id);//TODO:srand(time(NULL));
 	this->locationStart = rand() % maxHarbours;
-	this->hasTicket = rand() % 2;
+	this->hasTicket = rand() % 2; //TODO VER POR QUE ES BOOL
 	this->locationEnd = rand() % maxHarbours;
 	//Write passenger data to shared memory:
 	this->id = this->sharedMem.addPassenger(this->locationStart, this->locationEnd, this->hasTicket);
@@ -25,14 +25,17 @@ void Worker::travel(){
 		logMessage = string("WORKER: " + to_string(this->id) + string(" TRAVELING FROM ") + to_string(this->locationStart)+ " TO "+ to_string(this->locationEnd));;
 		Logger::getInstance().log(logMessage);
 		//Get harbour FIFO name, for harbour at locationStart:
-		string hb = Harbour::entranceName(this->locationStart);
+		// string hb = Harbour::entranceName(this->locationStart);
 		//Now open it:
-		FifoEscritura entrance(hb);
+		Logger::getInstance().log("Worker with id " +to_string(this->id) + " va a CREAR fifo escritura " );
+		FifoEscritura entrance(Harbour::entranceName(this->locationStart));		
+		Logger::getInstance().log("Worker with id " +to_string(this->id) + " va a ABRIR fifo escritura " );
 		entrance.abrir();
 		if(!this->running()){
 			return;
 		}
 		//Write my id:
+		Logger::getInstance().log("Worker with id " +to_string(this->id) + " va a ESCRIBIR fifo escritura " );
 		entrance.escribir(static_cast<const void*>(&this->id),sizeof(int));
 		entrance.cerrar();
 		Logger::getInstance().log("WORKER: " +to_string(this->id) + " QUEUED AT " + to_string(this->locationStart));

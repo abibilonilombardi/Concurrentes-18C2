@@ -1,7 +1,7 @@
 #include "ProcessGenerator.h"
 #include "Logger/LogMessages.h"
 
-#define MAX_HARBOURS 10 //max amount of harbours total.
+#define MAX_HARBOURS 10  //max amount of harbours total.
 #define MAX_PASSENGERS 1 //max amount of passengers total.
 
 
@@ -11,22 +11,16 @@ ProcessGenerator::ProcessGenerator():Process() {
 
     this->harbourQty = (rand() % MAX_HARBOURS) + 1;
 
-    cout<<"Cantidad de "<<this->harbourQty<<endl;
+    // cout<<"Cantidad de harbours: "<<this->harbourQty<<endl;
     for(size_t i=0; i < this->harbourQty; i++){
         this->harbours.push_back(new Harbour(i));
-        // cout<< " va a entrar al logger"<< i<<endl;
         Logger::getInstance().log(CREACION_PUERTO_EXITO(i));
     }
-    // cout<< " va a crear la memoria"<<endl;
-    //this->passengersMem = new SharedMemoryPassenger(SharedMemoryPassenger::shmFileName(), MAX_PASSENGERS);
-
-    cout<< "termina de crearse ProcessGenerator"<<endl;
+    this->passengersMem = new SharedMemoryPassenger(MAX_PASSENGERS);
 }
 
 pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
-    Logger::getInstance().log(" --- START TO CREATE SHIPS ---");
     SharedMemoryShip::setShipCapacity(capacity);
-    SharedMemoryPassenger passMem(MAX_PASSENGERS);
     pid_t pid = 0;
 
     for (int i=0; i < quantity; i++){
@@ -38,9 +32,7 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
         if (pid==0){
             srand(i);
             int starting_hb = (rand() % this->harbourQty);
-            Ship ship(i, this->harbours, starting_hb, capacity, passMem);
-            // cout<< getpid() <<"Barco" << i << " se creo con la Memoria"<< this->passengersMem << endl;
-            // Logger::getInstance().log(CREACION_BARCO_EXITO(i));
+            Ship ship(i, this->harbours, starting_hb, capacity, *this->passengersMem);
             ship.sail();
             return 0;
         }else{
@@ -51,7 +43,6 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
 }
 
 pid_t ProcessGenerator::spawnPassenger(){
-    Logger::getInstance().log(" --- START TO CREATE PASSENGERS ---");
     pid_t pid = 0;
     //Instanciar inspectores y pasarles la referencia de la memoria
     SharedMemoryPassenger passMem(MAX_PASSENGERS);
@@ -78,21 +69,43 @@ pid_t ProcessGenerator::spawnPassenger(){
         }
         return pid;
     }catch(string error){
-        throw error + " ProcessGenerator::spawnPassenger() ";
+        throw  string(" ProcessGenerator::spawnPassenger() ") + error;
+    }
+}
+
+//SpawnInspectors
+
+pid_t ProcessGenerator::spawnShipInspector(){
+    Logger::getInstance().log(" --- CREATE SHIP INSPECTOR ---");
+    pid_t pid = 0;
+    //Instanciar inspectores y pasarles la referencia de la memoria
+    try{
+        pid = fork();
+        if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
+        if (pid==0){
+            //tirar random de 0 a 1 para ver si es turista o worker
+            ShipInspector inspector;
+            Logger::getInstance().log("Inspector creado con exitoS");
+            inspector.behave(MAX_HARBOURS);
+            return 0;
+        }else{
+            this->processes.push_back(pid);
+        }
+        return pid;
+    }catch(string error){
+        throw error + " ProcessGenerator::spawnShipInspector() ";
     }
 }
 
 int ProcessGenerator::beginSimulation(){
-    Logger::getInstance().log(" --- BEGIN SIMULATION ---");
-
-
     int status;
-    //ShipInspector inspector;
-    //inspector.behave(MAX_HARBOURS);
+    // ShipInspector inspector;
+    // inspector.behave(MAX_HARBOURS);
+    // //Logger *l = Logger::getInstance();
 
     //spawn passanger processes...
     try{
-        Semaphore s(MAX_PASSENGERS, "/bin/ls",'a'); //???? no se si quiere esto o o A++?
+        Semaphore s(MAX_PASSENGERS, "/bin/ls",'A'); //???? no se si quiere esto o o A++?  ++++++++
 
         while(this->running()){
             s.wait();
