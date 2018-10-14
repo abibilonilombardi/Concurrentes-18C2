@@ -38,7 +38,7 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
             ship.sail();
             return 0;
         }else{
-            this->processes.insert(pid);
+            this->processes.push_back(pid);
         }
     }
     return pid;
@@ -57,11 +57,14 @@ pid_t ProcessGenerator::spawnPassenger(){
         }
         if (pid==0){
             //tirar random de 0 a 1 para ver si es turista o worker
-            Worker w(*this->passengersMem, this->harbourQty);
-            w.travel();
+            //Worker w(passMem, this->harbourQty);
+            Tourist t(passMem, this->harbourQty);
+            t.travel();
+            //w.travel();
+            sleep(1);
             return 0;
         }else{
-            this->processes.insert(pid);
+            this->processes.push_back(pid);
         }
         return pid;
     }catch(string error){
@@ -97,20 +100,24 @@ int ProcessGenerator::beginSimulation(){
         s.remove();  // ++++++++++++++++++++++++++
 
         // cout << "Signaling all child processes to end\n";
-        std::set<int>::iterator it;
-        for (it=this->processes.begin(); it!=this->processes.end(); ++it){
+        vector<int>::iterator procIt;
+        for (procIt=this->processes.begin(); procIt!=this->processes.end(); ++procIt){
             //signal all child processes to end in orderly fashion:
-            kill(*it, SIGINT);
+            kill(*procIt, SIGINT);
         }
         // cout << "Waiting for all child processes to end\n";
         size_t sz = this->processes.size();
         for (size_t i=0; i < sz; i++){
             //wait for all child processes to end:
-            pid_t pid = wait(&status);
-            this->processes.erase(pid);
+            wait(&status);
         }
         s.remove();
 
+        this->processes.clear();
+        vector<Harbour*>::iterator hbIt;
+        for (hbIt=this->harbours.begin(); hbIt!=this->harbours.end(); ++hbIt){
+            delete(*hbIt);
+        }
         // cout << "All child processes ended, now exiting main loop...\n";
         return 0;
     }catch(string error){
@@ -118,14 +125,4 @@ int ProcessGenerator::beginSimulation(){
     }
 }
 
-ProcessGenerator::~ProcessGenerator(){
-    cout<< getpid() <<" ProcessGenerator::~ProcessGenerator()" <<endl;
-
-    cout<<"CANTIDAD DE PROCESOS CREADOS " <<this->processes.size() <<endl;
-
-    this->processes.clear();
-    vector<Harbour*>::iterator it;
-    for (it=this->harbours.begin(); it!=this->harbours.end(); ++it){
-        delete(*it);
-    }
-}
+ProcessGenerator::~ProcessGenerator(){}
