@@ -123,7 +123,7 @@ bool SharedMemoryPassenger::hasTicket(int passengerId){
     return hasTicket;
 }
 
-void SharedMemoryPassenger::getPassangersForDestination(set<int> passengerList, int destination){
+void SharedMemoryPassenger::getPassangersForDestination(set<int> &passengerList, int destination){
     for(size_t i=0; i<this->size(); i+=FIELDS){
         //if this passenger get off the ship at 'destination':
         if(this->leer(i+STOP_OFFSET)==destination){

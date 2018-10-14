@@ -54,10 +54,10 @@ pid_t ProcessGenerator::spawnPassenger(){
         }
         if (pid==0){
             //tirar random de 0 a 1 para ver si es turista o worker
-            //Worker w(passMem, this->harbourQty);
-            Tourist t(passMem, this->harbourQty);
-            t.travel();
-            //w.travel();
+            // Tourist t( *this->passengersMem, this->harbourQty);
+            // t.travel();
+            Worker w(*this->passengersMem, this->harbourQty);
+            w.travel();
             sleep(1);
             return 0;
         }else{
@@ -85,7 +85,7 @@ pid_t ProcessGenerator::spawnShipInspector(){
             inspector.behave(MAX_HARBOURS);
             return 0;
         }else{
-            this->processes.insert(pid);
+            this->processes.push_back(pid);
         }
         return pid;
     }catch(string error){

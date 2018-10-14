@@ -57,9 +57,9 @@ int main(int argc, char *argv[]){
         cout<< error<<endl;
         return -1;
     }
-    catch(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > error){
-        cout << "error mistico: " << error << endl;
-    }
+    // catch(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > error){
+    //     cout << "error mistico: " << error << endl;
+    // }
     catch(...){
         cout << "Catch vacio" << endl;
     }
