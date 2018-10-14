@@ -19,7 +19,6 @@ tuple<string,char> Passenger::getSemaphore(int passengerId){
 
 
 Passenger::~Passenger(){
-    cout << "PASSENGER " << this->id << " FREED!\n";
     //Free id:
     this->sharedMem.freePassengerId(this->id);
     this->semTravel->remove();

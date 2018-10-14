@@ -11,7 +11,7 @@ ProcessGenerator::ProcessGenerator():Process() {
 
     this->harbourQty = (rand() % MAX_HARBOURS) + 1;
 
-    cout<<"Cantidad de harbours: "<<this->harbourQty<<endl;
+    // cout<<"Cantidad de harbours: "<<this->harbourQty<<endl;
     for(size_t i=0; i < this->harbourQty; i++){
         this->harbours.push_back(new Harbour(i));
         // cout<< " va a entrar al logger"<< i<<endl;
@@ -19,8 +19,6 @@ ProcessGenerator::ProcessGenerator():Process() {
     }
     // cout<< " va a crear la memoria"<<endl;
     //this->passengersMem = new SharedMemoryPassenger(SharedMemoryPassenger::shmFileName(), MAX_PASSENGERS);
-
-    cout<< "termina de crearse ProcessGenerator"<<endl;
 }
 
 pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
@@ -40,7 +38,7 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
             // int starting_hb = (rand() % this->harbourQty);
             int starting_hb = 0;
             Ship ship(i, this->harbours, starting_hb, capacity, passMem);
-            cout<< getpid() <<"Barco" << i << " se creo con la Memoria"<< this->passengersMem << "para el harbour: " << starting_hb << endl;
+            // cout<< getpid() <<"Barco" << i << " se creo para el harbour: " << starting_hb << endl;
             // Logger::getInstance().log(CREACION_BARCO_EXITO(i));
             ship.sail();
             return 0;
@@ -56,6 +54,7 @@ pid_t ProcessGenerator::spawnPassenger(){
     pid_t pid = 0;
     //Instanciar inspectores y pasarles la referencia de la memoria
     SharedMemoryPassenger passMem(MAX_PASSENGERS);
+    passMem.initialize();
     try{
         pid = fork();
         if (pid < 0){

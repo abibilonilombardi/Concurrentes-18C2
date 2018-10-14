@@ -18,8 +18,8 @@ int main(int argc, char *argv[]){
     int shipQty, shipCty;
     try{
 
-    int createLogFile = open("ShipsTrevelingSimulation.log", O_CREAT, 0666);
-    close(createLogFile);
+        int createLogFile = open("ShipsTrevelingSimulation.log", O_CREAT, 0666);
+        close(createLogFile);
 
         if (argc == 3){
             shipQty = atoi(argv[1]);
@@ -38,9 +38,9 @@ int main(int argc, char *argv[]){
             return 0;
         }
 
-        if (pc.spawnShipInspector() == 0){
-            return 0;
-        }
+        // if (pc.spawnShipInspector() == 0){
+        //     return 0;
+        // }
 
         //begin simulation (spawn people processes)
         pc.beginSimulation();
@@ -59,6 +59,9 @@ int main(int argc, char *argv[]){
     catch(char const* error){
         cout<< error<<endl;
         return -1;
+    }
+    catch(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > error){
+        cout << "error mistico: " << error << endl;
     }
     catch(...){
         cout << "Catch vacio" << endl;

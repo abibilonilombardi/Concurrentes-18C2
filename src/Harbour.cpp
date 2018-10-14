@@ -29,7 +29,7 @@ Harbour::Harbour(int id):id(id){
     //Open harbour for incoming passangers:
     this->distanceNext = (rand() % MAX_DST_HARBOURS)+1;
     this->fdEntrance = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY, 0666);
-    std::cout << "Se crea archivo de harbour: " << Harbour::entranceLockName(id) << std::endl;
+    // std::cout << "Se crea archivo de harbour: " << Harbour::entranceLockName(id) << std::endl;
     if (this->fdEntrance < 0){
         // std::cout << "fdEntrance: " << fdEntrance << std::endl;
         delete this->entrance;
@@ -60,6 +60,7 @@ void Harbour::writeInHarbourFile(int fd, int value){
             throw std::string("Error hip::writeInHarbourFile(value) =") + to_string(value);
         }
     }
+    // std::cout << "Harbour initialization writing value: " << value << std::endl;
 }
 
 Harbour::~Harbour(){

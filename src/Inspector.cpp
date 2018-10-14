@@ -13,7 +13,7 @@ void Inspector::behave(int maxHarbours){
 
     	srand(1);//TODO:srand(time(NULL));
     	int buffer;
-        std::cout << "ENTRO AL BEHAVE" << std::endl;
+        // std::cout << "ENTRO AL BEHAVE" << std::endl;
     	while(this->running()){
         	//int sleepTime = rand() % MAX_SLEEP_TIME;
         	//sleep(sleepTime);
@@ -22,20 +22,23 @@ void Inspector::behave(int maxHarbours){
             // std::cout << "max harbours: " << maxHarbours << std::endl;
             int harbourToInspect = 1;
         	//Accede a archivo de lock
-        	int fd = open(Harbour::entranceLockName(harbourToInspect).c_str(), O_CREAT|O_RDWR, 0644);
+            // std::cout << "Archivo muelle: " << Harbour::entranceLockName(harbourToInspect) << std::endl;
+        	int fd = open(Harbour::entranceLockName(harbourToInspect).c_str(), O_RDWR, 0644);
         	if(fd < 0){
         		throw std::string("File error ") + std::string(strerror(errno));
         	}
         	ExclusiveLock l(fd);
         	read(fd, &buffer, sizeof(int));
-        	std::cout << "Archivo muelle: " << buffer << std::endl;
+        	// std::cout << "Leido en archivo muelle: " << Harbour::entranceLockName(harbourToInspect) << " valor leido: " << buffer << std::endl;
         	if(buffer != -1){
         		//si lo que hay en el archivo es == a -1 chau
         		//si no deberia acceder al archivo de memoria comp del barco
-                std::cout << "Va a tomar lock del mem compartida de barco: " << Ship::getShmName(buffer) << std::endl;
-                ExclusiveLock l_ship(Ship::getShmName(buffer));
+                // std::cout << "Va a tomar lock del mem compartida de barco: " << Ship::getShmName(buffer) << std::endl;
     	        SharedMemoryShip sharedMemoryShip(Ship::getShmName(buffer));
-    	        SharedMemoryPassenger sharedMemoryPassenger;
+                // std::cout << "Instancio mem compartida del barco" << std::endl;
+                ExclusiveLock l_ship(Ship::getShmName(buffer));
+                // std::cout << "Lockeo mem comaprtida barco" << std::endl;
+    	        SharedMemoryPassenger sharedMemoryPassenger(1);
     	        inspect(harbourToInspect, sharedMemoryShip, sharedMemoryPassenger);
                 l_ship.unlock();
         	}
@@ -43,7 +46,7 @@ void Inspector::behave(int maxHarbours){
             l.unlock();
             close(fd);
     	}
-    }catch(string error){
+    }catch(std::string error){
         cout<< "Error del inspector: "<< error<<endl;
         throw string("inspector: ") +error;
     }
@@ -68,6 +71,5 @@ void Inspector::behave(int maxHarbours){
 // }
 
 Inspector::~Inspector(){
-    //Free id?
-    //delete this->semTravel;
+
 }

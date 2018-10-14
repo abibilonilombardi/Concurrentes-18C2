@@ -19,7 +19,7 @@ pathname(pathname){
 }
 
 key_t Semaphore::createKey(const string& pathname, const char letter){
-    std::cout << "Pathname: " << pathname << std::endl;
+    // std::cout << "Pathname: " << pathname << std::endl;
     this->key = ftok(pathname.c_str(), letter);
     if (this->key == -1){
         throw "No pudo crear la clave del semaforo para el pathname: " + pathname;
