@@ -27,9 +27,7 @@ void Worker::travel(){
 	try{
 		logMessage = string("WORKER: " + to_string(this->id) + string(" TRAVELING FROM ") + to_string(this->locationStart)+ " TO "+ to_string(this->locationEnd));;
 		Logger::getInstance().log(logMessage);
-		//Get harbour FIFO name, for harbour at locationStart:
-		// string hb = Harbour::entranceName(this->locationStart);
-		//Now open it:
+		//Get harbour FIFO name, for harbour at locationStart and open it:
 		FifoEscritura entrance(Harbour::entranceName(this->locationStart));
 		entrance.abrir();
 		if(!this->running()){

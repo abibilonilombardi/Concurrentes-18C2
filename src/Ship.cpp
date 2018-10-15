@@ -90,6 +90,7 @@ void Ship::sail(){
         }
 
         alarm(0);
+        sigalrm_handler.restartAlarm();
         this->unblockSigAlarm();
         this->loadPeople();
         this->blockSigAlarm();
@@ -190,8 +191,7 @@ void Ship::loadPeople(){
     int idPassenger;
 
     FifoLectura fifito(Harbour::entranceName(this->harbour));
-
-    alarm(100);
+    alarm(10);
 
     fifito.abrir();
     try{
@@ -207,8 +207,10 @@ void Ship::loadPeople(){
             }
         }
 
-        if((!this->running()) || this->sigalrm_handler.isActivate()){
-            Logger::getInstance().log("ALARM WENT OFF!");
+        if(!this->running() || this->sigalrm_handler.isActivate()){
+            if(this->sigalrm_handler.isActivate()){
+                Logger::getInstance().log("ALARM WENT OFF!");
+            }
             fifito.cerrar();
             return;
         }
@@ -226,30 +228,26 @@ void Ship::loadPeople(){
             }
 
             if(!this->running() || this->sigalrm_handler.isActivate()){
+                if(this->sigalrm_handler.isActivate()){
+                    logMessage = string("SHIP: ") + to_string(idPassenger) + string(" ALARM SOUNDED AT HARBOUR ") + to_string(this->harbour);
+                    Logger::getInstance().log(logMessage);
+                }
+                fifito.cerrar();
                 return;
             }
             //cancel alarm
-            alarm(0);
             sigalrm_handler.restartAlarm();
+            this->shmship->addPassenger(idPassenger);
 
-            logMessage = string("SHIP: ") + to_string(this->id) + string(" LEYO ") + to_string(idPassenger);
+            logMessage = string("PASSENGER: ") + to_string(idPassenger) + string(" GET ON SHIP ") + to_string(this->id);
             Logger::getInstance().log(logMessage);
+            currentNumberOfPassengers++;
 
-            //if(sigalrm_handler.isActivate()){
-            //    logMessage = string("SHIP: ") + to_string(idPassenger) + string(" ALARM SOUNDED AT HARBOUR ") + to_string(this->harbour);
-            //    Logger::getInstance().log(logMessage);
-            //}
-            //else{
-                this->shmship->addPassenger(idPassenger);
-
-                logMessage = string("PASSENGER: ") + to_string(idPassenger) + string(" GET ON SHIP ") + to_string(this->id);
-                Logger::getInstance().log(logMessage);
-                currentNumberOfPassengers++;
-            //}
             //reset alarm:
-            alarm(100);
-
+            alarm(10);
         }
+        alarm(0);
+        sigalrm_handler.restartAlarm();
         fifito.cerrar();
     }catch(string err){
             fifito.cerrar();
