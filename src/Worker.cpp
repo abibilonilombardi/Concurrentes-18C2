@@ -13,7 +13,7 @@ Passenger(sharedMem){
 	}
 	tuple<string,char> s = Passenger::getSemaphore(this->id);
 	this->semTravel = new Semaphore(0, get<0>(s), get<1>(s));
-	
+
 	string logMessage = string("WORKER: ") + to_string(this->id) + string(" CREATED");
     Logger::getInstance().log(logMessage);
 
@@ -30,14 +30,13 @@ void Worker::travel(){
 		//Get harbour FIFO name, for harbour at locationStart:
 		// string hb = Harbour::entranceName(this->locationStart);
 		//Now open it:
-		FifoEscritura entrance(Harbour::entranceName(this->locationStart));		
+		FifoEscritura entrance(Harbour::entranceName(this->locationStart));
 		entrance.abrir();
 		if(!this->running()){
 			return;
 		}
 		//Write my id:
 		entrance.escribir(static_cast<const void*>(&this->id),sizeof(int));
-		entrance.cerrar();
 		Logger::getInstance().log("WORKER: " +to_string(this->id) + " QUEUED AT " + to_string(this->locationStart));
 		if(!this->running()){
 			return;
@@ -47,6 +46,7 @@ void Worker::travel(){
 		if(!this->running()){
 			return;
 		}
+		entrance.cerrar();
 		int loc = this->sharedMem.getLocation(this->id);
 
 		if (loc != this->locationEnd){

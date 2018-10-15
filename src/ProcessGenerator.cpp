@@ -1,7 +1,7 @@
 #include "ProcessGenerator.h"
 #include "Logger/LogMessages.h"
 
-#define MAX_HARBOURS 10  //max amount of harbours total.
+#define MAX_HARBOURS 2  //max amount of harbours total.
 #define MAX_PASSENGERS 5 //max amount of passengers total.
 
 
@@ -117,7 +117,8 @@ int ProcessGenerator::beginSimulation(){
             }
         }
 
-        // cout << "Signaling all child processes to end\n";
+        Logger::getInstance().log(" --- CTRL + C ---");
+
         vector<int>::iterator procIt;
         for (procIt=this->processes.begin(); procIt!=this->processes.end(); ++procIt){
             //signal all child processes to end in orderly fashion:

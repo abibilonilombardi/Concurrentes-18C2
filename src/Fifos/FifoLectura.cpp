@@ -27,10 +27,12 @@ void FifoLectura::leer(void* buffer,const ssize_t buffsize) const {
 
 int FifoLectura::leerId() const {
 	int id = -1;
-	ssize_t readedBytes = 0;
-    while( readedBytes < (ssize_t)sizeof(id)){
-        readedBytes += read(this->fd, (char*)&id + readedBytes , sizeof(int) - readedBytes);
-        if(readedBytes == -1){throw std::string("Error FifoLectura::leerId") + std::string(strerror(errno));}
+	ssize_t readBytes = 0;
+    while( readBytes < (ssize_t)sizeof(id)){
+        readBytes += read(this->fd, (char*)&id + readBytes , sizeof(int) - readBytes);
+        if (readBytes==-1){
+			return -1;
+		}
 	}
 	return id;
 }

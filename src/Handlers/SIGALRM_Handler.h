@@ -3,6 +3,7 @@
 
 #ifndef SIGALRM_HANDLER
 #define SIGALRM_HANDLER
+#include "Logger/Logger.h"
 
 class SIGALRM_Handler : public EventHandler {
 private:
@@ -13,7 +14,10 @@ public:
     ~SIGALRM_Handler() {}
 
     virtual int handleSignal(int signum) {
-        if( signum != SIGALRM ) {return -1;}
+        if( signum != SIGALRM ) {
+			return -1;
+		}
+		Logger::getInstance().log("HANDLE ALARM!");
         this->alarmValue = 1;
         return 0;
     }
