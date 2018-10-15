@@ -3,9 +3,12 @@
 Worker::Worker(SharedMemoryPassenger &sharedMem, int maxHarbours):
 Passenger(sharedMem){
 	srand(this->id);//TODO:srand(time(NULL));
-	this->locationStart = rand() % maxHarbours;
-	this->hasTicket = rand() % 2; //TODO VER POR QUE ES BOOL
-	this->locationEnd = rand() % maxHarbours;
+	// this->locationStart = rand() % maxHarbours;
+	this->locationStart = 0; //TODO SOF: CAMBIAR
+	// this->hasTicket = rand() % 2; //TODO VER POR QUE ES BOOL
+	this->hasTicket = 0; //TODO SOF: CAMBIAR 
+	// this->locationEnd = rand() % maxHarbours;
+	this->locationEnd = 2; //TODO SOF: CAMBIAR
 	//Write passenger data to shared memory:
 	this->id = this->sharedMem.addPassenger(this->locationStart, this->locationEnd, this->hasTicket);
 	while (locationStart==locationEnd){

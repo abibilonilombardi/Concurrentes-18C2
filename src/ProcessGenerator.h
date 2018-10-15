@@ -22,6 +22,7 @@
 #include "Worker.h"
 #include "Tourist.h"
 #include "ShipInspector.h"
+#include "TicketInspector.h"
 
 using namespace std;
 
@@ -40,6 +41,7 @@ public:
     pid_t spawnHarbours();
     pid_t spawnPassenger();
     pid_t spawnShipInspector();
+    pid_t spawnTicketInspector();
     int beginSimulation();
 
 };

@@ -12,7 +12,7 @@ Inspector::Inspector():Process(){
 
 }
 
-void Inspector::behave(int maxHarbours){
+void Inspector::behave(int maxHarbours, int maxPassengers){
 	string logMessage;
     try{
 		//TODO BORRAR
@@ -50,8 +50,11 @@ void Inspector::behave(int maxHarbours){
 				SharedMemoryShip sharedMemoryShip(Ship::getShmName(buffer));
                 // std::cout << "Instancio mem compartida del barco" << std::endl;
                 ExclusiveLock l_ship(Ship::getShmName(buffer));
+
+                logMessage = string("INSPECTOR: ") + string(" LOCKED SHIP SHARED MEMORY: ") + Ship::getShmName(buffer);
+                Logger::getInstance().log(logMessage);
                 // std::cout << "Lockeo mem comaprtida barco" << std::endl;
-    	        SharedMemoryPassenger sharedMemoryPassenger(1);
+    	        SharedMemoryPassenger sharedMemoryPassenger(maxPassengers);
     	        inspect(harbourToInspect, sharedMemoryShip, sharedMemoryPassenger);
                 l_ship.unlock();
         	}

@@ -52,7 +52,8 @@ void Ship::initialize(){
         throw message + string(strerror(errno));
     }
 
-    bool authorized = rand() % 2;
+    // bool authorized = rand() % 2;
+    bool authorized = 0;//TODO SOF: CAMBIAR
     this->shmship = new SharedMemoryShip(Ship::getShmName(id), authorized);
 }
 
@@ -89,11 +90,11 @@ void Ship::sail(){
             return;
         }
 
-        alarm(0);
-        sigalrm_handler.restartAlarm();
-        this->unblockSigAlarm();
+        // alarm(0);
+        // sigalrm_handler.restartAlarm();
+        // this->unblockSigAlarm();
         this->loadPeople();
-        this->blockSigAlarm();
+        // this->blockSigAlarm();
 
         if(!this->running()){
             return;
@@ -164,6 +165,9 @@ void Ship::unloadPeople(){
     vector<int>::iterator it;
     for (it=shipPassengers.begin(); it!=shipPassengers.end(); ++it){
         if (*it < 0) {continue;}
+
+        string logMessage = "Passenger: " + to_string(*it) + " getNextStop: " + to_string(this->shmPassenger.getNextStop(*it)) + " Harbour actual del ship: " + to_string(this->harbour);
+        Logger::getInstance().log(logMessage);
 
         if(this->shmPassenger.getNextStop(*it) == this->harbour ){
 
@@ -244,9 +248,9 @@ void Ship::loadPeople(){
             currentNumberOfPassengers++;
 
             //reset alarm:
-            alarm(10);
+            // alarm(10);
         }
-        alarm(0);
+        // alarm(0);
         sigalrm_handler.restartAlarm();
         fifito.cerrar();
     }catch(string err){

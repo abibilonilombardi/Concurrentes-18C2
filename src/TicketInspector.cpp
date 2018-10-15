@@ -6,27 +6,27 @@ TicketInspector::TicketInspector(): Inspector(){
 }
 
 void TicketInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemoryShip, SharedMemoryPassenger &sharedMemoryPassenger){
-    if (!sharedMemoryShip.authorizedToSail()){
-        sharedMemoryShip.confiscateShip();          
-        std::vector<int> passengerIds = sharedMemoryShip.getPassengers();
-        for(size_t i = 0; i < passengerIds.size(); i++){
-            if(passengerIds[i] != NO_PASSENGER){
-                if(!sharedMemoryPassenger.hasTicket(passengerIds[i])){
-                    //cambiar ubicacion actual
-                    sharedMemoryPassenger.updateLocation(passengerIds[i], harbourToInspect);
-                    //borrar de mem de barco al tipo
-                    passengerIds[i] = NO_PASSENGER;
-                    //hacerlo mas lindo
-                    // sharedMemoryShip.removePassenger(passengerIds[i]);
-                    //v al semaforo de pasajero
-                    tuple<string,char> semTuple = Passenger::getSemaphore(passengerIds[i]);
-                    Semaphore *passSemaphore = new Semaphore(0, get<0>(semTuple), get<1>(semTuple));
-                    passSemaphore->signal();
-                    delete passSemaphore;
-                }
+    std::vector<int> passengerIds = sharedMemoryShip.getPassengers();
+    for(size_t i = 0; i < passengerIds.size(); i++){
+        string logMessage = string("TICKET INSPECTOR: ") + string(" ABOUT TO UNLOAD PASSENGER: ") + to_string(passengerIds[i]);
+        Logger::getInstance().log(logMessage);
+        if(passengerIds[i] != NO_PASSENGER){
+            if(!sharedMemoryPassenger.hasTicket(passengerIds[i])){
+                //cambiar ubicacion actual
+                sharedMemoryPassenger.updateLocation(passengerIds[i], harbourToInspect);                
+                //v al semaforo de pasajero
+                tuple<string,char> semTuple = Passenger::getSemaphore(passengerIds[i]);
+                Semaphore passSemaphore(0, get<0>(semTuple), get<1>(semTuple));
+                passSemaphore.signal();
+                //borrar de mem de barco al tipo
+                passengerIds[i] = NO_PASSENGER;
+                
+                logMessage = string("TICKET INSPECTOR: ") + string(" UNLOADED PASSENGER: ") + to_string(passengerIds[i]);
+                Logger::getInstance().log(logMessage);
             }
         }
     }
+    sharedMemoryShip.updatePassengers(passengerIds);
 }
     
 TicketInspector::~TicketInspector(){}
