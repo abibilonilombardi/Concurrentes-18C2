@@ -34,19 +34,19 @@ void Inspector::behave(int maxHarbours){
         	if(fd < 0){
         		throw std::string("File error ") + std::string(strerror(errno));
 			}
-			logMessage = string("INSPECTOR: ") + string(" ABOUT TO LOCK HARBOUR FILE: ") + Harbour::entranceLockName(harbourToInspect);
-			Logger::getInstance().log(logMessage);
+			// logMessage = string("INSPECTOR: ") + string(" ABOUT TO LOCK HARBOUR FILE: ") + Harbour::entranceLockName(harbourToInspect);
+			// Logger::getInstance().log(logMessage);
         	ExclusiveLock l(fd);
         	read(fd, &buffer, sizeof(int));
         	// std::cout << "Leido en archivo muelle: " << Harbour::entranceLockName(harbourToInspect) << " valor leido: " << buffer << std::endl;
         	if(buffer != -1){
-				logMessage = string("INSPECTOR: ") + string(" FOUND SHIP: ") + to_string(buffer) + string("ON HARBOUR ") + to_string(harbourToInspect);
-				Logger::getInstance().log(logMessage);
+				// logMessage = string("INSPECTOR: ") + string(" FOUND SHIP: ") + to_string(buffer) + string("ON HARBOUR ") + to_string(harbourToInspect);
+				// Logger::getInstance().log(logMessage);
         		//si lo que hay en el archivo es == a -1 chau
         		//si no deberia acceder al archivo de memoria comp del barco
                 // std::cout << "Va a tomar lock del mem compartida de barco: " << Ship::getShmName(buffer) << std::endl;
-				logMessage = string("INSPECTOR: ") + string(" ABOUT TO LOCK SHIP SHARED MEMORY: ") + Ship::getShmName(buffer);
-				Logger::getInstance().log(logMessage);
+				// logMessage = string("INSPECTOR: ") + string(" ABOUT TO LOCK SHIP SHARED MEMORY: ") + Ship::getShmName(buffer);
+				// Logger::getInstance().log(logMessage);
 				SharedMemoryShip sharedMemoryShip(Ship::getShmName(buffer));
                 // std::cout << "Instancio mem compartida del barco" << std::endl;
                 ExclusiveLock l_ship(Ship::getShmName(buffer));

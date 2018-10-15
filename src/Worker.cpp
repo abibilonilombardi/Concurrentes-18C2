@@ -37,7 +37,6 @@ void Worker::travel(){
 		}
 		//Write my id:
 		entrance.escribir(static_cast<const void*>(&this->id),sizeof(int));
-		entrance.cerrar();
 		Logger::getInstance().log("WORKER: " +to_string(this->id) + " QUEUED AT " + to_string(this->locationStart));
 		if(!this->running()){
 			return;
@@ -48,7 +47,7 @@ void Worker::travel(){
 			return;
 		}
 		int loc = this->sharedMem.getLocation(this->id);
-
+		
 		if (loc != this->locationEnd){
 			Logger::getInstance().log("WORKER: " +to_string(this->id) + " WAS FORCED TO GET OFF AT HARBOUR " + to_string(loc));
 		}else{
@@ -56,6 +55,7 @@ void Worker::travel(){
 		    sleep(8); //spend 8hs working...
 			Logger::getInstance().log("WORKER: " +to_string(this->id) + " FINISHED WORK!");
 		}
+		entrance.cerrar();
 	}catch(string error){
 		Logger::getInstance().log("ERROR! WORKER: " +to_string(this->id) + " - "+  string(strerror(errno)));
 		cerr << "ERROR! " << string(strerror(errno));

@@ -13,8 +13,10 @@ Fifo::Fifo(const std::string nombre) : nombre(nombre), fd(-1) {
 }
 
 void Fifo::cerrar() {
-	close ( this->fd );
-	this->fd = -1;
+	if(this->fd != -1){
+		close ( this->fd );
+		this->fd = -1;
+	}
 }
 
 void Fifo::eliminar() const {
