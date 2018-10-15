@@ -132,7 +132,7 @@ template <class T> MemoriaCompartida<T>::~MemoriaCompartida(){
 			shmctl(this->shmId, IPC_RMID, NULL);
 		}
 	}else{
-		std::string mensaje = std::string(strerror(errno));
+		std::string mensaje = std::string("ERROR IN SHARED MEMORY DESTRUCTOR: ") + std::string(strerror(errno));
 		Logger::getInstance().log(mensaje);
 	}
 

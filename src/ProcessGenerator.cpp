@@ -32,8 +32,8 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
         }
         if (pid==0){
             srand(i);
-            // int starting_hb = (rand() % this->harbourQty);
-            int starting_hb = -1;
+            int starting_hb = (rand() % this->harbourQty);
+            // int starting_hb = -1; //TODO SOF: CAMBIAR
             Ship ship(i, this->harbours, starting_hb, capacity, *this->passengersMem);
             ship.sail();
             return 0;
@@ -86,7 +86,7 @@ pid_t ProcessGenerator::spawnShipInspector(){
         if (pid==0){
             //tirar random de 0 a 1 para ver si es turista o worker
             ShipInspector inspector;
-            inspector.behave(MAX_HARBOURS, MAX_PASSENGERS);
+            inspector.behave(this->harbourQty, MAX_PASSENGERS);
             return 0;
         }else{
             this->processes.push_back(pid);
@@ -107,8 +107,7 @@ pid_t ProcessGenerator::spawnTicketInspector(){
         if (pid==0){
             //tirar random de 0 a 1 para ver si es turista o worker
             TicketInspector inspector;
-            Logger::getInstance().log("TICKET INSPECTOR CREATED SUCCESSFULLY");
-            inspector.behave(MAX_HARBOURS, MAX_PASSENGERS);
+            inspector.behave(this->harbourQty, MAX_PASSENGERS);
             return 0;
         }else{
             this->processes.push_back(pid);
