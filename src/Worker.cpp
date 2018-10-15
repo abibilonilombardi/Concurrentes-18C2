@@ -9,17 +9,17 @@ Passenger(sharedMem){
 	this->hasTicket = 0; //TODO SOF: CAMBIAR 
 	// this->locationEnd = rand() % maxHarbours;
 	this->locationEnd = 2; //TODO SOF: CAMBIAR
-	//Write passenger data to shared memory:
-	this->id = this->sharedMem.addPassenger(this->locationStart, this->locationEnd, this->hasTicket);
+
 	while (locationStart==locationEnd){
 		this->locationEnd = rand() % maxHarbours;
 	}
+	//Write passenger data to shared memory:
+	this->id = this->sharedMem.addPassenger(this->locationStart, this->locationEnd, this->hasTicket);
 	tuple<string,char> s = Passenger::getSemaphore(this->id);
 	this->semTravel = new Semaphore(0, get<0>(s), get<1>(s));
 
 	string logMessage = string("WORKER: ") + to_string(this->id) + string(" CREATED");
     Logger::getInstance().log(logMessage);
-
 }
 
 
@@ -49,7 +49,7 @@ void Worker::travel(){
 		}
 		entrance.cerrar();
 		int loc = this->sharedMem.getLocation(this->id);
-
+		
 		if (loc != this->locationEnd){
 			Logger::getInstance().log("WORKER: " +to_string(this->id) + " WAS FORCED TO GET OFF AT HARBOUR " + to_string(loc));
 		}else{
@@ -57,6 +57,7 @@ void Worker::travel(){
 		    sleep(8); //spend 8hs working...
 			Logger::getInstance().log("WORKER: " +to_string(this->id) + " FINISHED WORK!");
 		}
+		entrance.cerrar();
 	}catch(string error){
 		Logger::getInstance().log("ERROR! WORKER: " +to_string(this->id) + " - "+  string(strerror(errno)));
 		cerr << "ERROR! " << string(strerror(errno));

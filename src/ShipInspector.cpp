@@ -23,7 +23,7 @@ void ShipInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemory
 
 		logMessage = string("SHIP INSPECTOR: ") + string(" GOT ") + to_string(passengerIds.size()) + string(" PASSENGERS TO UNLOAD FROM SHIP");
 		Logger::getInstance().log(logMessage);
-
+		
     	for(size_t i = 0; i < passengerIds.size(); i++){
     		logMessage = string("SHIP INSPECTOR: ") + string(" ABOUT TO UNLOAD PASSENGER: ") + to_string(passengerIds[i]);
 			Logger::getInstance().log(logMessage);
