@@ -67,7 +67,8 @@ void Ship::sail(){
         this->harbour = (this->harbour+1) % this->map.size();
         int dstNextHarbour = map.at(this->harbour)->distanceNextHarbour();
 
-        sleep(dstNextHarbour);
+        sleep(dstNextHarbour);// TODO DESCOMENTAR Y BORRAR EL HARDCODEADO
+        sleep(15);
 
         ExclusiveLock lockHarbour(Harbour::harbourLockName(this->harbour));
         logMessage = string("SHIP: ") + to_string(this->id) + string(" ENTRANCE TO HARBOUR ") + to_string(this->harbour);
@@ -189,6 +190,9 @@ void Ship::loadPeople(){
         Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" NO PASSENGER AT HARBOUR ") + to_string(this->harbour) );
         return;
     }
+
+    Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" CURRENT NUMBER OF PASSENGER ") + to_string(currentNumberOfPassengers) + string(" QUEDA LUGAR PARA ") + to_string(this->capacity - currentNumberOfPassengers));
+    
     while(currentNumberOfPassengers < this->capacity && !this->sigalrm_handler.isActivate()){
         alarm(15);
         idPassenger = fifito.leerId();

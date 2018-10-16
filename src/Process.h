@@ -6,7 +6,7 @@
 #include <time.h>   
 
 #define RANDOM(maxNumber) \
-    (srand(time(NULL)), \
+    (srand(time(NULL) + getpid()), \
      rand() % maxNumber)
 
 class Process {
