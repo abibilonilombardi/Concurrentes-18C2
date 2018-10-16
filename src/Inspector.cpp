@@ -12,30 +12,28 @@ Inspector::Inspector():Process(){
 
 }
 
-void Inspector::behave(int maxHarbours){
+void Inspector::behave(int maxHarbours, int maxPassengers){
 	string logMessage;
     try{
 		//TODO BORRAR
 		if(maxHarbours==0){}//TODO BORRAR
 
-    	srand(1);//TODO:srand(time(NULL));
+    	srand(getpid());//TODO:srand(time(NULL));
     	int buffer;
-        // std::cout << "ENTRO AL BEHAVE" << std::endl;
     	while(this->running()){
         	//int sleepTime = rand() % MAX_SLEEP_TIME;
         	//sleep(sleepTime);
             sleep(2);
-        	// int harbourToInspect = rand() % maxHarbours;
-            // std::cout << "max harbours: " << maxHarbours << std::endl;
-            int harbourToInspect = 1;
+        	int harbourToInspect = rand() % maxHarbours;
+            // int harbourToInspect = 1;
+            logMessage = string("INSPECTOR: ") + string(" ABOUT TO LOCK HARBOUR FILE: ") + Harbour::entranceLockName(harbourToInspect);
+            Logger::getInstance().log(logMessage);
         	//Accede a archivo de lock
-            // std::cout << "Archivo muelle: " << Harbour::entranceLockName(harbourToInspect) << std::endl;
         	int fd = open(Harbour::entranceLockName(harbourToInspect).c_str(), O_RDWR, 0644);
         	if(fd < 0){
-        		throw std::string("File error ") + std::string(strerror(errno));
+        		throw std::string("File error in Inspector") + std::string(strerror(errno));
 			}
-			// logMessage = string("INSPECTOR: ") + string(" ABOUT TO LOCK HARBOUR FILE: ") + Harbour::entranceLockName(harbourToInspect);
-			// Logger::getInstance().log(logMessage);
+			
         	ExclusiveLock l(fd);
         	read(fd, &buffer, sizeof(int));
         	// std::cout << "Leido en archivo muelle: " << Harbour::entranceLockName(harbourToInspect) << " valor leido: " << buffer << std::endl;
@@ -50,8 +48,11 @@ void Inspector::behave(int maxHarbours){
 				SharedMemoryShip sharedMemoryShip(Ship::getShmName(buffer));
                 // std::cout << "Instancio mem compartida del barco" << std::endl;
                 ExclusiveLock l_ship(Ship::getShmName(buffer));
+
+                logMessage = string("INSPECTOR: ") + string(" LOCKED SHIP SHARED MEMORY: ") + Ship::getShmName(buffer);
+                Logger::getInstance().log(logMessage);
                 // std::cout << "Lockeo mem comaprtida barco" << std::endl;
-    	        SharedMemoryPassenger sharedMemoryPassenger(1);
+    	        SharedMemoryPassenger sharedMemoryPassenger(maxPassengers);
     	        inspect(harbourToInspect, sharedMemoryShip, sharedMemoryPassenger);
                 l_ship.unlock();
         	}

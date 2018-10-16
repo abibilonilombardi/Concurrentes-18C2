@@ -25,6 +25,7 @@ string Harbour::harbourLockName(int harbour_id){
 Harbour::Harbour(int id):id(id){
     //Open harbour for incoming passangers:
     this->distanceNext = (rand() % MAX_DST_HARBOURS)+1;
+    // this->distanceNext = 2; //TODO SOF: CAMBIAR
     this->fdEntrance = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY, 0666);
     // std::cout << "Se crea archivo de harbour: " << Harbour::entranceLockName(id) << std::endl;
     if (this->fdEntrance < 0){

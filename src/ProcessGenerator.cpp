@@ -33,6 +33,7 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
         if (pid==0){
             srand(i);
             int starting_hb = (rand() % this->harbourQty);
+            // int starting_hb = -1; //TODO SOF: CAMBIAR
             Ship ship(i, this->harbours, starting_hb, capacity, *this->passengersMem);
             ship.sail();
             return 0;
@@ -84,8 +85,7 @@ pid_t ProcessGenerator::spawnShipInspector(){
         if (pid==0){
             //tirar random de 0 a 1 para ver si es turista o worker
             ShipInspector inspector;
-            Logger::getInstance().log("Inspector creado con exitoS");
-            inspector.behave(MAX_HARBOURS);
+            inspector.behave(this->harbourQty, MAX_PASSENGERS);
             return 0;
         }else{
             this->processes.push_back(pid);
@@ -93,6 +93,27 @@ pid_t ProcessGenerator::spawnShipInspector(){
         return pid;
     }catch(string error){
         throw error + " ProcessGenerator::spawnShipInspector() ";
+    }
+}
+
+pid_t ProcessGenerator::spawnTicketInspector(){
+    Logger::getInstance().log(" --- CREATE TICKET INSPECTOR ---");
+    pid_t pid = 0;
+    //Instanciar inspectores y pasarles la referencia de la memoria
+    try{
+        pid = fork();
+        if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
+        if (pid==0){
+            //tirar random de 0 a 1 para ver si es turista o worker
+            TicketInspector inspector;
+            inspector.behave(this->harbourQty, MAX_PASSENGERS);
+            return 0;
+        }else{
+            this->processes.push_back(pid);
+        }
+        return pid;
+    }catch(string error){
+        throw error + " ProcessGenerator::spawnTicketInspector() ";
     }
 }
 

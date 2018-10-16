@@ -19,7 +19,7 @@ class Inspector: public Process{
 public:
     Inspector();
     virtual void inspect(int harbourToInspect, SharedMemoryShip &sharedMemoryShip, SharedMemoryPassenger &sharedMemoryPassenger) = 0;
-    void behave(int maxHarbours);
+    void behave(int maxHarbours, int maxPassengers);
     // void unloadShipPassenger(int passengerId, int harbourToInspect, SharedMemoryPassenger &sharedMemoryPassenger);
     ~Inspector();
 };

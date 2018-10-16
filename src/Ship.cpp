@@ -55,6 +55,7 @@ void Ship::initialize(){
     }
 
     bool authorized = rand() % 2;
+    // bool authorized = 0;//TODO SOF: CAMBIAR
     this->shmship = new SharedMemoryShip(Ship::getShmName(id), authorized);
 }
 
@@ -91,7 +92,6 @@ void Ship::sail(){
         if(!this->running()){
             return;
         }
-        //unload passengers (update their locations and Unblock semaphores)
 
         lockShmShip.unlock();
 
@@ -111,11 +111,6 @@ void Ship::sail(){
 }
 
 void Ship::arrivalAnnouncement(int fd){
-    // int fd = open(Harbour::entranceLockName(id).c_str(), O_CREAT|O_WRONLY, 0666);
-    // if (fd < 0){
-    //     throw "No se puede anunciar el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) + strerror(errno) ;
-    // }
-    // std::cout << "Ship's about to write its id: " << this->id <<  " on harbour "<< this->harbour << " file" << std::endl;
     this->writeInHarbourFile(fd,this->id);
     // close(fd);
     Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" ANNOUCED IN THE HARRBOUR ") + to_string(this->harbour));
@@ -123,15 +118,7 @@ void Ship::arrivalAnnouncement(int fd){
 
 void Ship::departureAnnouncement(int fd){
     const int DEPARTUREVALUE = -1;
-    // int fd = open(Harbour::entranceLockName(id).c_str(), O_WRONLY, 0666);
-    // if (fd < 0){
-    //     if (this->running()){
-    //         throw "No se puede anunciar partida el barco "+ to_string(this->id)+" en el puerto "+ to_string(this->harbour) ;
-    //     }else{
-    //         return;
-    //     }
-    // }
-    // std::cout << "Ship's about to write " << DEPARTUREVALUE <<  " on harbour file" << std::endl;
+    
     this->writeInHarbourFile(fd, DEPARTUREVALUE);
     // close(fd);
 
@@ -155,6 +142,9 @@ void Ship::unloadPeople(){
     vector<int>::iterator it;
     for (it=shipPassengers.begin(); it!=shipPassengers.end(); ++it){
         if (*it < 0) {continue;}
+
+        // string logMessage = "Passenger: " + to_string(*it) + " getNextStop: " + to_string(this->shmPassenger.getNextStop(*it)) + " Harbour actual del ship: " + to_string(this->harbour);
+        // Logger::getInstance().log(logMessage);
 
         if(this->shmPassenger.getNextStop(*it) == this->harbour ){
             Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" UNLOADING PASSENGER ") + to_string(*it));

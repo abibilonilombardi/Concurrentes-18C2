@@ -37,9 +37,13 @@ int main(int argc, char *argv[]){
             return 0;
         }
 
-        // if (pc.spawnShipInspector() == 0){
-        //     return 0;
-        // }
+        if (pc.spawnShipInspector() == 0){
+           return 0;
+        }
+
+        if (pc.spawnTicketInspector() == 0){
+           return 0;
+        }
 
         //begin simulation (spawn people processes)
         pc.beginSimulation();

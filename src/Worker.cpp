@@ -2,10 +2,14 @@
 
 Worker::Worker(SharedMemoryPassenger &sharedMem, int maxHarbours):
 Passenger(sharedMem){
-	srand(this->id);//TODO:srand(time(NULL));
+	srand(getpid());
 	this->locationStart = rand() % maxHarbours;
+	//this->locationStart = 0; //TODO SOF: CAMBIAR
 	this->hasTicket = rand() % 2; //TODO VER POR QUE ES BOOL
+	// this->hasTicket = 0; //TODO SOF: CAMBIAR 
 	this->locationEnd = rand() % maxHarbours;
+	//this->locationEnd = 2; //TODO SOF: CAMBIAR
+
 	while (locationStart==locationEnd){
 		this->locationEnd = rand() % maxHarbours;
 	}
@@ -14,7 +18,7 @@ Passenger(sharedMem){
 	tuple<string,char> s = Passenger::getSemaphore(this->id);
 	this->semTravel = new Semaphore(0, get<0>(s), get<1>(s));
 
-	string logMessage = string("WORKER: ") + to_string(this->id) + string(" CREATED");
+	string logMessage = string("WORKER: ") + to_string(this->id) + string(" CREATED, HAS TICKET: ") + to_string(this->hasTicket);
     Logger::getInstance().log(logMessage);
 }
 
