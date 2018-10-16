@@ -1,8 +1,13 @@
-#include "Handlers/SignalHandler.h"
-#include "Handlers/SIGINT_Handler.h"
-
 #ifndef PROCESS_H
 #define PROCESS_H
+
+#include "Handlers/SignalHandler.h"
+#include "Handlers/SIGINT_Handler.h"
+#include <time.h>   
+
+#define RANDOM(maxNumber) \
+    (srand(time(NULL)), \
+     rand() % maxNumber)
 
 class Process {
 protected:

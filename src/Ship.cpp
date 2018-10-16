@@ -29,10 +29,12 @@ id(id), map(map), harbour(harbour), capacity(capacity), fdShip(-1), shmPassenger
 void Ship::freeResources(){
     if(this->fdShip > 0){
         close(this->fdShip);
+        Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" CERRO FILE DESCRIPTOR") );
     }
     if(this->shmship != NULL){
-        this->shmship->liberar();
+        // this->shmship->liberar();
         delete this->shmship;
+        Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" eLIMINO MEMORIA COKMPARTID") );
     }
 }
 
@@ -60,8 +62,7 @@ void Ship::sail(){
     string logMessage = string("SHIP: ") + to_string(this->id) + string(" STARTED TO SAIL");
     Logger::getInstance().log(logMessage);
 
-    for(int k=0; k<7; k++){
-    // while(this->running()){
+    while(this->running()){
         this->harbour = (this->harbour+1) % this->map.size();
         int dstNextHarbour = map.at(this->harbour)->distanceNextHarbour();
 
@@ -83,8 +84,6 @@ void Ship::sail(){
             return;
         }
 
-        alarm(0);
-        sigalrm_handler.restartAlarm();
         this->unblockSigAlarm();
         this->loadPeople();
         this->blockSigAlarm();
@@ -225,7 +224,7 @@ void Ship::loadPeople(){
 }
 
 Ship::~Ship(){
-    cout<<getpid()<< "Ship::~Ship() ==> " << to_string(this->id)<<endl;
+    Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" DESTRUCTOR")  );
     this->freeResources();
     //unlink(Ship::getShmName(this->id).c_str());
 }

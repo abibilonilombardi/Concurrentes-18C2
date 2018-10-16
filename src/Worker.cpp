@@ -24,7 +24,7 @@ void Worker::travel(){
 	Logger::getInstance().log(logMessage);
 
 	try{
-		logMessage = string("WORKER: " + to_string(this->id) + string(" TRAVELING FROM ") + to_string(this->locationStart)+ " TO "+ to_string(this->locationEnd));;
+		logMessage = string("WORKER: " + to_string(this->id) + string(" TRAVELING FROM ") + to_string(this->locationStart)+ " TO "+ to_string(this->locationEnd));
 		Logger::getInstance().log(logMessage);
 		//Get harbour FIFO name, for harbour at locationStart and open it:
 		FifoEscritura entrance(Harbour::entranceName(this->locationStart));
@@ -56,7 +56,6 @@ void Worker::travel(){
 		entrance.cerrar();
 	}catch(string error){
 		Logger::getInstance().log("ERROR! WORKER: " +to_string(this->id) + " - "+  string(strerror(errno)));
-		cerr << "ERROR! " << string(strerror(errno));
 		throw string("Worker::travel() ") + error;
 	}
 }

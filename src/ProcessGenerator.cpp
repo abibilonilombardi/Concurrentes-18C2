@@ -1,8 +1,8 @@
 #include "ProcessGenerator.h"
 #include "Logger/LogMessages.h"
 
-#define MAX_HARBOURS 2  //max amount of harbours total.
-#define MAX_PASSENGERS 5 //max amount of passengers total.
+#define MAX_HARBOURS 5  //max amount of harbours total.
+#define MAX_PASSENGERS 15 //max amount of passengers total.
 
 
 ProcessGenerator::ProcessGenerator():Process() {
@@ -46,7 +46,6 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
 pid_t ProcessGenerator::spawnPassenger(){
     pid_t pid = 0;
     //Instanciar inspectores y pasarles la referencia de la memoria
-
     try{
         pid = fork();
         if (pid < 0){
@@ -54,15 +53,15 @@ pid_t ProcessGenerator::spawnPassenger(){
             throw "ProcessGenerator::spawnPassenger() failed at fork!";
         }
         if (pid==0){
-            // if ((rand()%2)==1){
+            if ((RANDOM(2))==1){
                 Worker w(*this->passengersMem, this->harbourQty);
                 w.travel();
                 sleep(1);
-            // }else{
-                //Tourist t(passMem, this->harbourQty);
-                //t.travel();
+            }else{
+                // Tourist t(*this->passengersMem, this->harbourQty);
+                // t.travel();
                 sleep(1);
-            // }
+            }
             return 0;
         }else{
             this->processes.push_back(pid);

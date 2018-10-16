@@ -17,7 +17,6 @@ public:
         if( signum != SIGALRM ) {
 			return -1;
 		}
-		Logger::getInstance().log("HANDLE ALARM!");
         this->alarmValue = 1;
         return 0;
     }
