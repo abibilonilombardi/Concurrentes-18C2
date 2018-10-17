@@ -12,7 +12,7 @@ tuple<string,char> Passenger::getSemaphore(int passengerId){
 
 
 Passenger::~Passenger(){
-    string logMessage = string("PASSENGER: ") + to_string(this->id) + string(" MUERE id") + to_string(this->semTravel->getId());
+    string logMessage = string("PASSENGER: ") + to_string(this->id) + string(" MUERE id ") + to_string(this->semTravel->getId());
     Logger::getInstance().log(logMessage);
 
     this->sharedMem.freePassengerId(this->id);

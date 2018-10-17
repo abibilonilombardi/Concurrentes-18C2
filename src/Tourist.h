@@ -13,6 +13,7 @@ using namespace std;
 class Tourist : public Passenger {
 private:
     vector<int> destinations;
+    int qtyHarbours;
 public:
     Tourist(SharedMemoryPassenger &sharedMem, int maxHarbours);
     void travel();

@@ -1,7 +1,7 @@
 #include "ProcessGenerator.h"
 #include "Logger/LogMessages.h"
 
-#define MAX_HARBOURS 5  //max amount of harbours total.
+#define MAX_HARBOURS 20 //max amount of harbours total.
 #define MAX_PASSENGERS 15 //max amount of passengers total.
 
 
@@ -9,7 +9,7 @@ ProcessGenerator::ProcessGenerator():Process() {
     Logger::getInstance().log(" --- START TO CREATE HARBOURS ---");
     srand(1);//TODO:srand(time(NULL));
 
-    this->harbourQty = (rand() % MAX_HARBOURS) + 1;
+    this->harbourQty = (RANDOM(MAX_HARBOURS)) + 1;
 
     // cout<<"Cantidad de harbours: "<<this->harbourQty<<endl;
     for(size_t i=0; i < this->harbourQty; i++){
@@ -54,15 +54,15 @@ pid_t ProcessGenerator::spawnPassenger(){
             throw "ProcessGenerator::spawnPassenger() failed at fork!";
         }
         if (pid==0){
-            if ((RANDOM(2))==1){
-                Worker w(*this->passengersMem, this->harbourQty);
-                w.travel();
+            // if ((RANDOM(2))==1){
+                // Worker w(*this->passengersMem, this->harbourQty);
+                // w.travel();
                 sleep(1);
-            }else{
-                // Tourist t(*this->passengersMem, this->harbourQty);
-                // t.travel();
+            // }else{
+                Tourist t(*this->passengersMem, this->harbourQty);
+                t.travel();
                 sleep(1);
-            }
+            // }
             return 0;
         }else{
             this->processes.insert(pid);

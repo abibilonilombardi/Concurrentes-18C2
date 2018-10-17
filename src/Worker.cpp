@@ -3,11 +3,11 @@
 Worker::Worker(SharedMemoryPassenger &sharedMem, int maxHarbours):
 Passenger(sharedMem){
 	srand(getpid());
-	this->locationStart = rand() % maxHarbours;
+	this->locationStart = RANDOM(maxHarbours);//rand() % maxHarbours;
 	//this->locationStart = 0; //TODO SOF: CAMBIAR
-	this->hasTicket = rand() % 2; //TODO VER POR QUE ES BOOL
+	this->hasTicket = RANDOM(2); //TODO VER POR QUE ES BOOL
 	// this->hasTicket = 0; //TODO SOF: CAMBIAR 
-	this->locationEnd = rand() % maxHarbours;
+	this->locationEnd = RANDOM(maxHarbours);
 	//this->locationEnd = 2; //TODO SOF: CAMBIAR
 
 	while (locationStart==locationEnd){
@@ -47,7 +47,6 @@ void Worker::travel(){
 		if(!this->running()){
 			return;
 		}
-		entrance.cerrar();
 		int loc = this->sharedMem.getLocation(this->id);
 		
 		if (loc != this->locationEnd){
