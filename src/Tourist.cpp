@@ -12,7 +12,7 @@ Passenger(sharedMem),qtyHarbours(maxHarbours){
     
     //pick random destinations between start and end: TODO MIRAR  SON LAS POSIBLES PARADAS DONDE PUEDEN DECIDIR DI BAJAR O NO
     this->destinations.push_back(this->locationStart);
-    int diferencia =  this->locationEnd > this->locationStart? this->locationEnd - this->locationStart : this->qtyHarbours + this->locationEnd - this->locationStart);
+    int diferencia =  this->locationEnd > this->locationStart? this->locationEnd - this->locationStart : this->qtyHarbours + this->locationEnd - this->locationStart;
     for(int i=1; i<diferencia-1;i++){ //mmmmmmmmm ?? diferencia-1 si o no?
         if (RANDOM(3) == 0 && this->destinations.back() != (i-1)%maxHarbours){ //no puedo bajarme en el primer puerto a caminar y no puedo hacer el ultimo tramo caminando
             this->destinations.push_back((this->locationStart+i)%maxHarbours);
