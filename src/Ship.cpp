@@ -32,8 +32,8 @@ void Ship::freeResources(){
         Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" CERRO FILE DESCRIPTOR") );
     }
     if(this->shmship != NULL){
-        // this->shmship->liberar();
         delete this->shmship;
+        // unlink(Ship::getShmName(this->id).c_str());
         Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" eLIMINO MEMORIA COKMPARTID") );
     }
 }
@@ -150,11 +150,14 @@ void Ship::unloadPeople(){
             Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" UNLOADING PASSENGER ") + to_string(*it));
 
             this->shmPassenger.updateLocation(*it,this->harbour);
-
+            if(!this->running()){
+                    return;
+                }
             tuple<string,char> passSemData = Passenger::getSemaphore(*it);
             Semaphore passengerArrived(0, get<0>(passSemData), get<1>(passSemData));
             //Let passenger know he has arrived at his destination:
             passengerArrived.signal();
+            passengerArrived.remove();
             *it = -1;
             unloded++;
         }
@@ -216,7 +219,7 @@ void Ship::loadPeople(){
 Ship::~Ship(){
     Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" DESTRUCTOR")  );
     this->freeResources();
-    //unlink(Ship::getShmName(this->id).c_str());
+    unlink(Ship::getShmName(this->id).c_str());
 }
 
 

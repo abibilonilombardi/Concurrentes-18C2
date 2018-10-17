@@ -13,7 +13,7 @@ ShipInspector::ShipInspector(): Inspector(){
 void ShipInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemoryShip, SharedMemoryPassenger &sharedMemoryPassenger){
 	// std::cout << "Barco autorizado: " << sharedMemoryShip.authorizedToSail() << std::endl;
 	string logMessage;
-	if (!sharedMemoryShip.authorizedToSail()){
+	if (this->running() && !sharedMemoryShip.authorizedToSail()){
 
 		logMessage = string("SHIP INSPECTOR: ") + string(" ABOUT TO CONFISCATE SHIP IN HARBOUR: ") + to_string(harbourToInspect);
 		Logger::getInstance().log(logMessage);
@@ -27,13 +27,17 @@ void ShipInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemory
     	for(size_t i = 0; i < passengerIds.size(); i++){
     		logMessage = string("SHIP INSPECTOR: ") + string(" ABOUT TO UNLOAD PASSENGER: ") + to_string(passengerIds[i]);
 			Logger::getInstance().log(logMessage);
-    		if(passengerIds[i] != NO_PASSENGER){
+    		if(this->running() && passengerIds[i] != NO_PASSENGER){
 	    		//cambiar ubicacion actual
 	    		sharedMemoryPassenger.updateLocation(passengerIds[i], harbourToInspect);	    		
 	    		//v al semaforo de pasajero
+	    		if(!this->running()){
+                    return;
+                }
 	    		tuple<string,char> semTuple = Passenger::getSemaphore(passengerIds[i]);
 	    		Semaphore passSemaphore(0, get<0>(semTuple), get<1>(semTuple));
 				passSemaphore.signal();
+				passSemaphore.remove();
 				//borrar de mem de barco al tipo
 	    		passengerIds[i] = NO_PASSENGER;
 

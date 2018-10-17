@@ -11,7 +11,7 @@
 #include <time.h>
 #include <set>
 #include <errno.h>
-#include <vector>
+#include <set>
 
 #include "SharedMemoryPassenger.h"
 #include "Logger/Logger.h"
@@ -29,7 +29,7 @@ using namespace std;
 
 class ProcessGenerator : public Process{
     size_t harbourQty;
-    vector<pid_t> processes;
+    set<pid_t> processes;
 
     vector<Harbour*> harbours;
     SharedMemoryPassenger* passengersMem;

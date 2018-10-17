@@ -38,7 +38,7 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
             ship.sail();
             return 0;
         }else{
-            this->processes.push_back(pid);
+            this->processes.insert(pid);
         }
     }
     return pid;
@@ -65,7 +65,7 @@ pid_t ProcessGenerator::spawnPassenger(){
             }
             return 0;
         }else{
-            this->processes.push_back(pid);
+            this->processes.insert(pid);
         }
         return pid;
     }catch(string error){
@@ -81,14 +81,14 @@ pid_t ProcessGenerator::spawnShipInspector(){
     //Instanciar inspectores y pasarles la referencia de la memoria
     try{
         pid = fork();
-        if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
+        if (pid < 0){ return -1; } //TODO: aca lanzar una excepcion;
         if (pid==0){
             //tirar random de 0 a 1 para ver si es turista o worker
             ShipInspector inspector;
             inspector.behave(this->harbourQty, MAX_PASSENGERS);
             return 0;
         }else{
-            this->processes.push_back(pid);
+            this->processes.insert(pid);
         }
         return pid;
     }catch(string error){
@@ -102,14 +102,14 @@ pid_t ProcessGenerator::spawnTicketInspector(){
     //Instanciar inspectores y pasarles la referencia de la memoria
     try{
         pid = fork();
-        if (pid < 0){ exit(-1); } //TODO: aca lanzar una excepcion;
+        if (pid < 0){ return -1; } //TODO: aca lanzar una excepcion;
         if (pid==0){
             //tirar random de 0 a 1 para ver si es turista o worker
             TicketInspector inspector;
             inspector.behave(this->harbourQty, MAX_PASSENGERS);
             return 0;
         }else{
-            this->processes.push_back(pid);
+            this->processes.insert(pid);
         }
         return pid;
     }catch(string error){
@@ -118,10 +118,8 @@ pid_t ProcessGenerator::spawnTicketInspector(){
 }
 
 int ProcessGenerator::beginSimulation(){
+    pid_t pid;
     int status;
-    // ShipInspector inspector;
-    // inspector.behave(MAX_HARBOURS);
-    // //Logger *l = Logger::getInstance();
 
     //spawn passanger processes...
     try{
@@ -129,6 +127,8 @@ int ProcessGenerator::beginSimulation(){
 
         while(this->running()){
             s.wait();
+            pid = wait(&status);
+            this->processes.erase(pid);
             if(this->running()){
                 if(spawnPassenger()==0){
                     s.signal();
@@ -139,17 +139,15 @@ int ProcessGenerator::beginSimulation(){
 
         Logger::getInstance().log(" --- CTRL + C ---");
 
-        vector<int>::iterator procIt;
+        set<pid_t>::iterator procIt;
         for (procIt=this->processes.begin(); procIt!=this->processes.end(); ++procIt){
             //signal all child processes to end in orderly fashion:
             kill(*procIt, SIGINT);
         }
         size_t sz = this->processes.size();
-        //cout << "Signaling all child processes to end " << to_string(sz) << endl;
         for (size_t i=0; i < sz; i++){
             //wait for all child processes to end:
             wait(&status);
-            //cout << "Child " << to_string(i+1) << " ended!" << endl;
         }
         s.remove();
 
@@ -158,7 +156,6 @@ int ProcessGenerator::beginSimulation(){
         for (hbIt=this->harbours.begin(); hbIt!=this->harbours.end(); ++hbIt){
             delete(*hbIt);
         }
-        // cout << "All child processes ended, now exiting main loop...\n";
         return 0;
     }catch(string error){
         throw string( "ProcessGenerator::beginSimulation()" +error);
@@ -167,4 +164,6 @@ int ProcessGenerator::beginSimulation(){
 
 ProcessGenerator::~ProcessGenerator(){
     this->passengersMem->liberar();
+    unlink(SharedMemoryPassenger::shmLockName().c_str());
+    // delete this->passengersMem;
 }
