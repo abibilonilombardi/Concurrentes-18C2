@@ -119,7 +119,7 @@ void Ship::arrivalAnnouncement(int fd){
 
 void Ship::departureAnnouncement(int fd){
     const int DEPARTUREVALUE = -1;
-    
+
     this->writeInHarbourFile(fd, DEPARTUREVALUE);
     // close(fd);
 
@@ -138,7 +138,7 @@ void Ship::writeInHarbourFile(int fd, int value){
 void Ship::unloadPeople(){
     Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" STARTS UNLOADING PEOPLE AT HARBOUR ") + to_string(this->harbour));
     vector<int> shipPassengers = this->shmship->getPassengers();
-    
+
     int unloded = 0;
     vector<int>::iterator it;
     for (it=shipPassengers.begin(); it!=shipPassengers.end(); ++it){
@@ -158,13 +158,13 @@ void Ship::unloadPeople(){
             Semaphore passengerArrived(0, get<0>(passSemData), get<1>(passSemData));
             //Let passenger know he has arrived at his destination:
             passengerArrived.signal();
-            passengerArrived.remove();
+            //passengerArrived.remove();
             *it = -1;
             unloded++;
         }
     }
     if (unloded == 0){
-        Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" NO PASSENGER UNLOADED AT HARBOUR ") + to_string(this->harbour));   
+        Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" NO PASSENGER UNLOADED AT HARBOUR ") + to_string(this->harbour));
         return;
     }
     this->shmship->updatePassengers(shipPassengers);
@@ -176,14 +176,14 @@ void Ship::loadPeople(){
     FifoLectura fifito(Harbour::entranceName(this->harbour));
 
     Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" STARTS LOADING PEOPLE AT HARBOUR ") + to_string(this->harbour));
-    
+
     int currentNumberOfPassengers = 0;
     for (unsigned int i = 0;i< this->shmship->getPassengers().size(); i++){
         if (this->shmship->getPassengers()[i] >=0){
             currentNumberOfPassengers++;
         }
     }
-    
+
     alarm(5); // espera por si llega pasajero
     try{
         fifito.abrir();
@@ -195,11 +195,11 @@ void Ship::loadPeople(){
     }
 
     Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" CURRENT NUMBER OF PASSENGER ") + to_string(currentNumberOfPassengers) + string(" QUEDA LUGAR PARA ") + to_string(this->capacity - currentNumberOfPassengers));
-    
+
     while(currentNumberOfPassengers < this->capacity && !this->sigalrm_handler.isActivate()){
         alarm(15);
         idPassenger = fifito.leerId();
-        
+
         if(this->sigalrm_handler.isActivate()){
             Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" ALARM SOUNDED AT HARBOUR ") + to_string(this->harbour));
             sigalrm_handler.restartAlarm();
