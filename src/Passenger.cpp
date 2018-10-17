@@ -4,12 +4,16 @@ Passenger::Passenger(SharedMemoryPassenger &sharedMem):
 Process(),
 sharedMem(sharedMem)
 {
+    SignalHandler::getInstance()->registrarHandler(SIGPIPE, &this->sigpipe_handler);
 }
 
 tuple<string,char> Passenger::getSemaphore(int passengerId){
     return make_tuple("passenger"+to_string(passengerId)+".bin",'p');
 }
 
+bool Passenger::failedBoard(){
+    return this->sigpipe_handler.getFailedBoard();
+}
 
 Passenger::~Passenger(){
     string logMessage = string("PASSENGER: ") + to_string(this->id) + string(" MUERE id ") + to_string(this->semTravel->getId());

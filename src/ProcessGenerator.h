@@ -1,6 +1,6 @@
 #ifndef PROCGEN_H
 #define PROCGEN_H
-    
+
 #include <unistd.h>
 #include <iostream>
 #include <sys/types.h>
@@ -30,6 +30,7 @@ using namespace std;
 class ProcessGenerator : public Process{
     size_t harbourQty;
     set<pid_t> processes;
+    set<pid_t> passengers;
 
     vector<Harbour*> harbours;
     SharedMemoryPassenger* passengersMem;

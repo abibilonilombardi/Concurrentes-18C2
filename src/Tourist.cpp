@@ -9,7 +9,7 @@ Passenger(sharedMem),qtyHarbours(maxHarbours){
     while (locationStart==locationEnd){
 		this->locationEnd = RANDOM(maxHarbours);
     }
-    
+
     //pick random destinations between start and end: TODO MIRAR  SON LAS POSIBLES PARADAS DONDE PUEDEN DECIDIR DI BAJAR O NO
     this->destinations.push_back(this->locationStart);
     int diferencia =  this->locationEnd > this->locationStart? this->locationEnd - this->locationStart : this->qtyHarbours + this->locationEnd - this->locationStart;
@@ -19,13 +19,13 @@ Passenger(sharedMem),qtyHarbours(maxHarbours){
         }
     }
     this->destinations.push_back(this->locationEnd);
-    
+
     // for(int i=this->locationStart+1; i<this->locationEnd;i++){
     //     if ((rand()%maxHarbours)==0 && this->destinations[i-1] != i){
     //         this->destinations.push_back(i);
     //     }
     // }
-    
+
     int nextDestination = this->destinations.at(1);
     this->id = this->sharedMem.addPassenger(this->locationStart, nextDestination, this->hasTicket);
     tuple<string,char> s = Passenger::getSemaphore(this->id);
@@ -36,7 +36,7 @@ Passenger(sharedMem),qtyHarbours(maxHarbours){
         dest += to_string(this->destinations[j])+ string(" - ");
     }
     Logger::getInstance().log(string("TOURIST: ") + to_string(this->id) + string(" destinos: ") + dest);
-    
+
     Logger::getInstance().log(string("TOURIST: ") + to_string(this->id) + string(" CREATED"));
     Logger::getInstance().log(string("TOURIST: ") + to_string(this->id) + string(" HAS ")+ to_string(this->destinations.size()-2) + string(" ADITIONAL STOPS"));
 }
@@ -57,33 +57,40 @@ void Tourist::travel(){
                 return;
             }
             entrance.escribir(static_cast<const void*>(&this->id),sizeof(int));
+            if(this->failedBoard()){
+                Logger::getInstance().log("WORKER: " +to_string(this->id) + " FAILED BOARD!");
+                entrance.cerrar();
+                return;
+            }
             Logger::getInstance().log("TOURIST: " +to_string(this->id) + " QUEUED AT " + to_string(this->locationStart));
             if(!this->running()){
+                entrance.cerrar();
                 return;
             }
             //lock semaphore until I arrive
 		    this->semTravel->wait();
 		    if(!this->running()){
+                entrance.cerrar();
                 return;
 		    }
 		    // entrance.cerrar();
             int loc = this->sharedMem.getLocation(this->id);
-            
+
 		    if (loc != nextDestination){
                 Logger::getInstance().log("TOURIST: " +to_string(this->id) + " WAS FORCED TO GET OFF AT HARBOUR " + to_string(loc));
 		    }else if(loc != this->locationEnd){
                 Logger::getInstance().log("TOURIST: " +to_string(this->id) + " IM GOING TO WALK TO NEXT CITY");
                 int secondsWalking = 5;
-                sleep(secondsWalking); //TODO: make this proportional to the 
+                sleep(secondsWalking); //TODO: make this proportional to the
                 Logger::getInstance().log(string("TOURIST: " )+ to_string(this->id) + string(" WALKING BY  ") + to_string(secondsWalking)+ string(" SECONDS " )+ " TO HARBOUR " + to_string(this->locationStart));
-                
+
                 int newBeginig = (nextDestination + 1) % this->qtyHarbours ;
                 this->destinations[0]= newBeginig;
                 this->sharedMem.updateNextStop(this->id, this->destinations.at(1));
             }else{
                 Logger::getInstance().log("TOURIST: " +to_string(this->id) + " ARRIVED AT DESTINATION!");
             }
-            entrance.cerrar(); 
+            entrance.cerrar();
         }
         Logger::getInstance().log("Tourist with id " +to_string(this->id) + " arrived at destination!");
 
