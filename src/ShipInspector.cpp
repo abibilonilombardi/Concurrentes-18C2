@@ -49,10 +49,6 @@ void ShipInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemory
     }
 }
 
-<<<<<<< HEAD
 ShipInspector::~ShipInspector(){
 	Logger::getInstance().log(string("SHIPINSPECTOR-") + to_string(getpid())+ string(" DELETED"),'d');
 }
-=======
-ShipInspector::~ShipInspector(){}
->>>>>>> 308f4008aa7ea2cadbed46e57fbc388d38a1b587

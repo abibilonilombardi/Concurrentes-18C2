@@ -51,11 +51,7 @@ pid_t ProcessGenerator::spawnPassenger(){
         if (pid==0){
             if ((RANDOM(2))==1){
                 Worker w(*this->passengersMem, this->harbourQty);
-<<<<<<< HEAD
-                 w.travel();
-=======
                 w.travel();
->>>>>>> 308f4008aa7ea2cadbed46e57fbc388d38a1b587
             }else{
                 Tourist t(*this->passengersMem, this->harbourQty);
                 t.travel();

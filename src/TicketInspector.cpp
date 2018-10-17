@@ -36,12 +36,7 @@ void TicketInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemo
     }
     sharedMemoryShip.updatePassengers(passengerIds);
 }
-<<<<<<< HEAD
     
 TicketInspector::~TicketInspector(){
     Logger::getInstance().log(string("TICKETINSPECTOR-") + to_string(getpid())+ string(" DELETED"),'d');
 }
-=======
-
-TicketInspector::~TicketInspector(){}
->>>>>>> 308f4008aa7ea2cadbed46e57fbc388d38a1b587
