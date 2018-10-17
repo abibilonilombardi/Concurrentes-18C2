@@ -139,22 +139,23 @@ int ProcessGenerator::beginSimulation(){
         Logger::getInstance().log(" --- CTRL + C ---");
 
         set<pid_t>::iterator passIt, procIt;
-        for (passIt=this->passengers.begin(); passIt!=this->passengers.end(); ++passIt){
-            //signal all passengers to end in orderly fashion:
-            kill(*passIt, SIGINT);
-        }
         for (procIt=this->processes.begin(); procIt!=this->processes.end(); ++procIt){
             //signal all child processes to end in orderly fashion:
             kill(*procIt, SIGINT);
-        }
-        for (size_t i=0; i < this->passengers.size(); i++){
-            //wait for all passengers to end:
-            wait(&status);
         }
         for (size_t i=0; i < this->processes.size(); i++){
             //wait for all child processes to end:
             wait(&status);
         }
+        for (passIt=this->passengers.begin(); passIt!=this->passengers.end(); ++passIt){
+            //signal all passengers to end in orderly fashion:
+            kill(*passIt, SIGINT);
+        }
+        for (size_t i=0; i < this->passengers.size(); i++){
+            //wait for all passengers to end:
+            wait(&status);
+        }
+
         s.remove();
 
         this->processes.clear();

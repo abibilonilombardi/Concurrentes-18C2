@@ -52,7 +52,8 @@ void Semaphore::wait(){
     semOperation.sem_flg = SEM_UNDO;
 
     if (semop(this->setId, &semOperation, 1) < 0 && (errno != EINTR)){
-        throw "Error at wait!";
+        Logger::getInstance().log(to_string(getpid())+": ERROR AT WAIT!!!");
+        throw string("Error at wait! ")+to_string(getpid())+"-"+string(to_string(errno));
     }
 
     // Logger::getInstance().log(to_string(getpid())+" Semaforo key: "+ to_string(this->key)+ " wait call");
