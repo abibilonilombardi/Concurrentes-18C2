@@ -20,19 +20,16 @@ int main(int argc, char *argv[]){
         int createLogFile = open("ShipsTrevelingSimulation.log", O_CREAT, 0666);
         close(createLogFile);
 
-        if (argc == 3){ //TODO SACAR
-            shipQty = atoi(argv[1]);
-            shipCty = atoi(argv[2]);
+        if (argc < 3){ //TODO SACAR
+            throw "No enough params";
         }
-        else{
-            shipQty = 3;
-            shipCty = 5;
-            // return -1;
-        }
-        std::cout<<getpid() << " PARAMETROS cantidadBarcos:"<<shipQty << " capacidadBarcos:"<< shipCty<< std::endl;
+
+        shipQty = atoi(argv[1]);
+        shipCty = atoi(argv[2]);
+        if (argc == 4 && string(argv[3]) == "D") Logger::debbugingMood = true;
+        
         ProcessGenerator pc;
 
-        // spawn ship processes
         if (pc.spawnShips(shipQty, shipCty) == 0){
             return 0;
         }
@@ -45,9 +42,10 @@ int main(int argc, char *argv[]){
            return 0;
         }
 
-        //begin simulation (spawn people processes)
         pc.beginSimulation();
         return 0;
+
+
     }catch(const string &error){
         cout<< error<<endl;
         return -1;

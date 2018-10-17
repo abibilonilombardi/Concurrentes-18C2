@@ -36,7 +36,7 @@ void Ship::initialize(){
     size_t totalHarbours = this->map.size();
     if (this->harbour >= (int)totalHarbours){
         string message = string("ERROR! TOO MANY HARBOURS AT Ship::initialize()!");
-        Logger::getInstance().log(message);
+        Logger::getInstance().log(message, 'd');
         throw message;
     }
 
@@ -44,7 +44,7 @@ void Ship::initialize(){
 
     if (fdShip < 0 ){
         string message = string("ERROR! SHIP COULD NOT OPEN SHM FILE!");
-        Logger::getInstance().log(message);
+        Logger::getInstance().log(message, 'd');
         throw message + string(strerror(errno));
     }
 
@@ -54,9 +54,8 @@ void Ship::initialize(){
 }
 
 void Ship::sail(){
-    string logMessage = string("SHIP-") + to_string(this->id) + string(" STARTED TO SAIL");
-    Logger::getInstance().log(logMessage);
-
+    Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" STARTED TO SAIL"));
+    
     while(this->running()){
         this->harbour = (this->harbour+1) % this->map.size();
         int dstNextHarbour = map.at(this->harbour)->distanceNextHarbour();
@@ -65,8 +64,7 @@ void Ship::sail(){
         sleep(15);
 
         ExclusiveLock lockHarbour(Harbour::harbourLockName(this->harbour));
-        logMessage = string("SHIP-") + to_string(this->id) + string(" ENTRANCE TO HARBOUR-") + to_string(this->harbour);
-        Logger::getInstance().log(logMessage);
+        Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" ENTRANCE TO HARBOUR-") + to_string(this->harbour));
 
         ExclusiveLock lockShmShip(Ship::getShmName(this->id));
 
@@ -108,7 +106,7 @@ void Ship::sail(){
 void Ship::arrivalAnnouncement(int fd){
     this->writeInHarbourFile(fd,this->id);
     // close(fd);
-    Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" ANNOUCED IN THE HARRBOUR ") + to_string(this->harbour));
+    Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" ANNOUCED IN THE HARBOUR-") + to_string(this->harbour));
 }
 
 void Ship::departureAnnouncement(int fd){

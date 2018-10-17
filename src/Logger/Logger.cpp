@@ -8,6 +8,8 @@ std::string Logger::LOG_FILE_NAME = "ShipsTrevelingSimulation.log";
 
 Logger::Logger () {}
 
+bool Logger::debbugingMood = false;
+
 Logger& Logger::getInstance(){
     static Logger instance;
     
@@ -48,6 +50,9 @@ void Logger::log(const std::string& eventDescription, char mood){
         case ('e'):
             descpMood = std::string(" ERROR ");
             break;
+    }
+    if(!debbugingMood && mood == 'd'){
+        return;
     }
     this->log(descpMood+eventDescription);
 }

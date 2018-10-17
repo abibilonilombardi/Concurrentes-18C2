@@ -15,6 +15,7 @@ private:
     static int fd;
     time_t now;
 public:
+    static bool debbugingMood;
     static Logger& getInstance();
     static void destroy();
     void log(const std::string& eventDescription);
