@@ -4,11 +4,9 @@ Worker::Worker(SharedMemoryPassenger &sharedMem, int maxHarbours):
 Passenger(sharedMem){
 	srand(getpid());
 	this->locationStart = RANDOM(maxHarbours);//rand() % maxHarbours;
-	//this->locationStart = 0; //TODO SOF: CAMBIAR
-	this->hasTicket = RANDOM(2); //TODO VER POR QUE ES BOOL
-	// this->hasTicket = 0; //TODO SOF: CAMBIAR 
+	this->hasTicket = RANDOM(2);
 	this->locationEnd = RANDOM(maxHarbours);
-	//this->locationEnd = 2; //TODO SOF: CAMBIAR
+
 
 	while (locationStart==locationEnd){
 		this->locationEnd = rand() % maxHarbours;
@@ -38,17 +36,24 @@ void Worker::travel(){
 		}
 		//Write my id:
 		entrance.escribir(static_cast<const void*>(&this->id),sizeof(int));
-		Logger::getInstance().log("PASSENGER-" +to_string(this->id) + " QUEUED AT " + to_string(this->locationStart));
+		if(this->failedBoard()){
+			Logger::getInstance().log(string("PASSENGER-")  +to_string(this->id) + " FAILED BOARD!");
+			entrance.cerrar();
+			return;
+		}
+		Logger::getInstance().log(string("PASSENGER-")  +to_string(this->id) + " QUEUED AT " + to_string(this->locationStart));
 		if(!this->running()){
+			entrance.cerrar();
 			return;
 		}
 		//lock semaphore until I arrive
 		this->semTravel->wait();
 		if(!this->running()){
+			entrance.cerrar();
 			return;
 		}
 		int loc = this->sharedMem.getLocation(this->id);
-		
+
 		if (loc != this->locationEnd){
 			Logger::getInstance().log("PASSENGER-" +to_string(this->id) + " WAS FORCED TO GET OFF AT HARBOUR-" + to_string(loc));
 		}else{

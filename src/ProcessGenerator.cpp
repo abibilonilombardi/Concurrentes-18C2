@@ -50,18 +50,16 @@ pid_t ProcessGenerator::spawnPassenger(){
             throw "ProcessGenerator::spawnPassenger() failed at fork!";
         }
         if (pid==0){
-            // if ((RANDOM(2))==1){
-                // Worker w(*this->passengersMem, this->harbourQty);
-                // w.travel();
-                sleep(1);
-            // }else{
+            //if ((RANDOM(2))==1){
+                //Worker w(*this->passengersMem, this->harbourQty);
+                 //w.travel();
+            //}else{
                 Tourist t(*this->passengersMem, this->harbourQty);
                 t.travel();
-                sleep(1);
-            // }
+            //}
             return 0;
         }else{
-            this->processes.insert(pid);
+            this->passengers.insert(pid);
         }
         return pid;
     }catch(string error){
@@ -120,11 +118,12 @@ int ProcessGenerator::beginSimulation(){
     //spawn passanger processes...
     try{
         Semaphore s(MAX_PASSENGERS, "/bin/ls",'A'); //???? no se si quiere esto o o A++?  ++++++++
-
         while(this->running()){
             s.wait();
-            pid = wait(&status);
-            this->processes.erase(pid);
+            if(this->passengers.size()==MAX_PASSENGERS){
+                pid = wait(&status);
+                this->passengers.erase(pid);
+            }
             if(this->running()){
                 if(spawnPassenger()==0){
                     s.signal();
@@ -135,19 +134,27 @@ int ProcessGenerator::beginSimulation(){
 
         Logger::getInstance().log(" --- CTRL + C ---");
 
-        set<pid_t>::iterator procIt;
+        set<pid_t>::iterator passIt, procIt;
+        for (passIt=this->passengers.begin(); passIt!=this->passengers.end(); ++passIt){
+            //signal all passengers to end in orderly fashion:
+            kill(*passIt, SIGINT);
+        }
         for (procIt=this->processes.begin(); procIt!=this->processes.end(); ++procIt){
             //signal all child processes to end in orderly fashion:
             kill(*procIt, SIGINT);
         }
-        size_t sz = this->processes.size();
-        for (size_t i=0; i < sz; i++){
+        for (size_t i=0; i < this->passengers.size(); i++){
+            //wait for all passengers to end:
+            wait(&status);
+        }
+        for (size_t i=0; i < this->processes.size(); i++){
             //wait for all child processes to end:
             wait(&status);
         }
         s.remove();
 
         this->processes.clear();
+        this->passengers.clear();
         vector<Harbour*>::iterator hbIt;
         for (hbIt=this->harbours.begin(); hbIt!=this->harbours.end(); ++hbIt){
             delete(*hbIt);

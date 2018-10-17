@@ -9,7 +9,7 @@ Passenger(sharedMem),qtyHarbours(maxHarbours){
     while (locationStart==locationEnd){
 		this->locationEnd = RANDOM(maxHarbours);
     }
-    
+
     //pick random destinations between start and end: TODO MIRAR  SON LAS POSIBLES PARADAS DONDE PUEDEN DECIDIR DI BAJAR O NO
     this->destinations.push_back(this->locationStart);
     int diferencia =  this->locationEnd > this->locationStart? this->locationEnd - this->locationStart : this->qtyHarbours + this->locationEnd - this->locationStart;
@@ -51,18 +51,25 @@ void Tourist::travel(){
                 return;
             }
             entrance.escribir(static_cast<const void*>(&this->id),sizeof(int));
-            Logger::getInstance().log("PASSENGER-" +to_string(this->id) + " QUEUED AT " + to_string(this->locationStart));
+            if(this->failedBoard()){
+                Logger::getInstance().log(string("PASSENGER-")  +to_string(this->id) + " FAILED BOARD!");
+                entrance.cerrar();
+                return;
+            }
+            Logger::getInstance().log(string("PASSENGER-") +to_string(this->id) + " QUEUED AT " + to_string(this->locationStart));
             if(!this->running()){
+                entrance.cerrar();
                 return;
             }
             //lock semaphore until I arrive
 		    this->semTravel->wait();
 		    if(!this->running()){
+                entrance.cerrar();
                 return;
 		    }
 		    // entrance.cerrar();
             int loc = this->sharedMem.getLocation(this->id);
-            
+
 		    if (loc != nextDestination){
                 Logger::getInstance().log("PASSENGER-" +to_string(this->id) + " WAS FORCED TO GET OFF AT HARBOUR-" + to_string(loc));
 		    }else if(loc != this->locationEnd){
@@ -76,7 +83,7 @@ void Tourist::travel(){
             }else{
                 Logger::getInstance().log("PASSENGER-" +to_string(this->id) + " ARRIVED AT DESTINATION!");
             }
-            entrance.cerrar(); 
+            entrance.cerrar();
         }
 	}catch(string error){
         Logger::getInstance().log("ERROR! PASSENGER-" +to_string(this->id) + " - "+  string(strerror(errno)));
