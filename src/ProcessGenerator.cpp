@@ -29,7 +29,6 @@ pid_t ProcessGenerator::spawnShips(int quantity, int capacity){
         if (pid==0){
             srand(i);
             int starting_hb = (rand() % this->harbourQty);
-            // int starting_hb = -1; //TODO SOF: CAMBIAR
             Ship ship(i, this->harbours, starting_hb, capacity, *this->passengersMem);
             ship.sail();
             return 0;
@@ -52,7 +51,11 @@ pid_t ProcessGenerator::spawnPassenger(){
         if (pid==0){
             if ((RANDOM(2))==1){
                 Worker w(*this->passengersMem, this->harbourQty);
+<<<<<<< HEAD
                  w.travel();
+=======
+                w.travel();
+>>>>>>> 308f4008aa7ea2cadbed46e57fbc388d38a1b587
             }else{
                 Tourist t(*this->passengersMem, this->harbourQty);
                 t.travel();
@@ -115,9 +118,15 @@ int ProcessGenerator::beginSimulation(){
     pid_t pid;
     int status;
 
+    for(int i = 0; i < MAX_PASSENGERS; i++){
+        tuple<string,char> semTuple = Passenger::getSemaphore(i);
+        creat(get<0>(semTuple).c_str(), 0644);
+    }
+
     //spawn passanger processes...
     try{
-        Semaphore s(MAX_PASSENGERS, "/bin/ls",'A'); //???? no se si quiere esto o o A++?  ++++++++
+        creat("passQty.bin", 0644);
+        Semaphore s(MAX_PASSENGERS, "passQty.bin",'A');
         while(this->running()){
             s.wait();
             if(this->passengers.size()==MAX_PASSENGERS){
@@ -135,26 +144,29 @@ int ProcessGenerator::beginSimulation(){
         Logger::getInstance().log(" --- CTRL + C ---");
 
         set<pid_t>::iterator passIt, procIt;
-        for (passIt=this->passengers.begin(); passIt!=this->passengers.end(); ++passIt){
-            //signal all passengers to end in orderly fashion:
-            kill(*passIt, SIGINT);
-        }
         for (procIt=this->processes.begin(); procIt!=this->processes.end(); ++procIt){
             //signal all child processes to end in orderly fashion:
             kill(*procIt, SIGINT);
         }
-        for (size_t i=0; i < this->passengers.size(); i++){
-            //wait for all passengers to end:
-            wait(&status);
+        for (passIt=this->passengers.begin(); passIt!=this->passengers.end(); ++passIt){
+            //signal all passengers to end in orderly fashion:
+            kill(*passIt, SIGINT);
         }
-        for (size_t i=0; i < this->processes.size(); i++){
+        for (size_t i=0; i < this->processes.size()+this->passengers.size(); i++){
             //wait for all child processes to end:
             wait(&status);
         }
+        
         s.remove();
+        unlink("passQty.bin");
 
         this->processes.clear();
         this->passengers.clear();
+        for(int i = 0; i < MAX_PASSENGERS; i++){
+            tuple<string,char> semTuple = Passenger::getSemaphore(i);
+            unlink(get<0>(semTuple).c_str());
+        }
+
         vector<Harbour*>::iterator hbIt;
         for (hbIt=this->harbours.begin(); hbIt!=this->harbours.end(); ++hbIt){
             delete(*hbIt);

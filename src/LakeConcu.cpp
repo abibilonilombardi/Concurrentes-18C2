@@ -29,7 +29,7 @@ int main(int argc, char *argv[]){
             shipCty = 5;
             // return -1;
         }
-        std::cout<<getpid() << "PARAMETROS cantidadBarcos:"<<shipQty << " capacidadBarcos:"<< shipCty<< std::endl;
+        std::cout<<getpid() << " PARAMETROS cantidadBarcos:"<<shipQty << " capacidadBarcos:"<< shipCty<< std::endl;
         ProcessGenerator pc;
 
         // spawn ship processes

@@ -113,7 +113,7 @@ void Ship::arrivalAnnouncement(int fd){
 
 void Ship::departureAnnouncement(int fd){
     const int DEPARTUREVALUE = -1;
-    
+
     this->writeInHarbourFile(fd, DEPARTUREVALUE);
     // close(fd);
 
@@ -134,7 +134,7 @@ void Ship::writeInHarbourFile(int fd, int value){
 void Ship::unloadPeople(){
     Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" STARTS UNLOADING PEOPLE AT HARBOUR-") + to_string(this->harbour));
     vector<int> shipPassengers = this->shmship->getPassengers();
-    
+
     int unloded = 0;
     vector<int>::iterator it;
     for (it=shipPassengers.begin(); it!=shipPassengers.end(); ++it){
@@ -154,13 +154,17 @@ void Ship::unloadPeople(){
             Semaphore passengerArrived(0, get<0>(passSemData), get<1>(passSemData));
             //Let passenger know he has arrived at his destination:
             passengerArrived.signal();
-            passengerArrived.remove();
+            //passengerArrived.remove();
             *it = -1;
             unloded++;
         }
     }
     if (unloded == 0){
+<<<<<<< HEAD
         Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" NO PASSENGER UNLOADED AT HARBOUR-") + to_string(this->harbour));   
+=======
+        Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" NO PASSENGER UNLOADED AT HARBOUR ") + to_string(this->harbour));
+>>>>>>> 308f4008aa7ea2cadbed46e57fbc388d38a1b587
         return;
     }
     this->shmship->updatePassengers(shipPassengers);
@@ -171,16 +175,26 @@ void Ship::loadPeople(){
     int idPassenger;
     FifoLectura fifito(Harbour::entranceName(this->harbour));
 
+<<<<<<< HEAD
     Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" STARTS LOADING PEOPLE AT HARBOUR-") + to_string(this->harbour));
     
+=======
+    Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" STARTS LOADING PEOPLE AT HARBOUR ") + to_string(this->harbour));
+
+>>>>>>> 308f4008aa7ea2cadbed46e57fbc388d38a1b587
     int currentNumberOfPassengers = 0;
     for (unsigned int i = 0;i< this->shmship->getPassengers().size(); i++){
         if (this->shmship->getPassengers()[i] >=0){
             currentNumberOfPassengers++;
         }
     }
+<<<<<<< HEAD
     
     alarm(5); //Ships waits for 5 seconds to some passegenger appear
+=======
+
+    alarm(5); // espera por si llega pasajero
+>>>>>>> 308f4008aa7ea2cadbed46e57fbc388d38a1b587
     try{
         fifito.abrir();
     }catch(string err){
@@ -190,12 +204,17 @@ void Ship::loadPeople(){
         return;
     }
 
+<<<<<<< HEAD
     Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" CURRENT NUMBER OF PASSENGER-") + to_string(currentNumberOfPassengers) + string(" QUEDA LUGAR PARA ") + to_string(this->capacity - currentNumberOfPassengers));
     
+=======
+    Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" CURRENT NUMBER OF PASSENGER ") + to_string(currentNumberOfPassengers) + string(" QUEDA LUGAR PARA ") + to_string(this->capacity - currentNumberOfPassengers));
+
+>>>>>>> 308f4008aa7ea2cadbed46e57fbc388d38a1b587
     while(currentNumberOfPassengers < this->capacity && !this->sigalrm_handler.isActivate()){
         alarm(15); //Ships waits for 15 seconds entre cada subida de pasajero
         idPassenger = fifito.leerId();
-        
+
         if(this->sigalrm_handler.isActivate()){
             Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" ALARM SOUNDED AT HARBOUR-") + to_string(this->harbour));
             sigalrm_handler.restartAlarm();

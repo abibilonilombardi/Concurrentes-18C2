@@ -38,6 +38,7 @@ void Inspector::behave(int maxHarbours, int maxPassengers){
         	read(fd, &buffer, sizeof(int));
         	// std::cout << "Leido en archivo muelle: " << Harbour::entranceLockName(harbourToInspect) << " valor leido: " << buffer << std::endl;
         	if(buffer != -1){
+<<<<<<< HEAD
 				// logMessage = string("INSPECTOR: ") + string(" FOUND SHIP-") + to_string(buffer) + string("ON HARBOUR-") + to_string(harbourToInspect);
 				// Logger::getInstance().log(logMessage);
         		//si lo que hay en el archivo es == a -1 chau
@@ -55,8 +56,19 @@ void Inspector::behave(int maxHarbours, int maxPassengers){
     	        SharedMemoryPassenger sharedMemoryPassenger(maxPassengers);
     	        inspect(harbourToInspect, sharedMemoryShip, sharedMemoryPassenger);
                 l_ship.unlock();
+=======
+				
+				if(this->running()){
+                    SharedMemoryShip sharedMemoryShip(Ship::getShmName(buffer));
+                    ExclusiveLock l_ship(Ship::getShmName(buffer));
+                    logMessage = string("INSPECTOR: ") + string(" LOCKED SHIP SHARED MEMORY: ") + Ship::getShmName(buffer);
+                    Logger::getInstance().log(logMessage);
+                    SharedMemoryPassenger sharedMemoryPassenger(maxPassengers);
+                    inspect(harbourToInspect, sharedMemoryShip, sharedMemoryPassenger);
+                    l_ship.unlock();
+                }
+>>>>>>> 308f4008aa7ea2cadbed46e57fbc388d38a1b587
         	}
-            // cout << "Antes del unlock inspector" << endl;
             l.unlock();
             close(fd);
     	}

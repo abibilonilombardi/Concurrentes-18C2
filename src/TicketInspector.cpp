@@ -17,7 +17,7 @@ void TicketInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemo
         if(this->running() && passengerIds[i] != NO_PASSENGER){
             if(!sharedMemoryPassenger.hasTicket(passengerIds[i])){
                 //cambiar ubicacion actual
-                sharedMemoryPassenger.updateLocation(passengerIds[i], harbourToInspect);                
+                sharedMemoryPassenger.updateLocation(passengerIds[i], harbourToInspect);
                 //v al semaforo de pasajero
                 if(!this->running()){
                     return;
@@ -25,10 +25,10 @@ void TicketInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemo
                 tuple<string,char> semTuple = Passenger::getSemaphore(passengerIds[i]);
                 Semaphore passSemaphore(0, get<0>(semTuple), get<1>(semTuple));
                 passSemaphore.signal();
-                passSemaphore.remove();
+                //passSemaphore.remove();
                 //borrar de mem de barco al tipo
                 passengerIds[i] = NO_PASSENGER;
-                
+
                 logMessage = string("TICKET INSPECTOR: ") + string(" UNLOADED PASSENGER: ") + to_string(passengerIds[i]);
                 Logger::getInstance().log(logMessage);
             }
@@ -36,7 +36,12 @@ void TicketInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemo
     }
     sharedMemoryShip.updatePassengers(passengerIds);
 }
+<<<<<<< HEAD
     
 TicketInspector::~TicketInspector(){
     Logger::getInstance().log(string("TICKETINSPECTOR-") + to_string(getpid())+ string(" DELETED"),'d');
 }
+=======
+
+TicketInspector::~TicketInspector(){}
+>>>>>>> 308f4008aa7ea2cadbed46e57fbc388d38a1b587
