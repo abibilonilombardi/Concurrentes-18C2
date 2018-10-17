@@ -13,18 +13,12 @@ Passenger(sharedMem),qtyHarbours(maxHarbours){
     //pick random destinations between start and end: TODO MIRAR  SON LAS POSIBLES PARADAS DONDE PUEDEN DECIDIR DI BAJAR O NO
     this->destinations.push_back(this->locationStart);
     int diferencia =  this->locationEnd > this->locationStart? this->locationEnd - this->locationStart : this->qtyHarbours + this->locationEnd - this->locationStart;
-    for(int i=1; i<diferencia-1;i++){ //mmmmmmmmm ?? diferencia-1 si o no?
+    for(int i=1; i<diferencia-1;i++){ 
         if (RANDOM(3) == 0 && this->destinations.back() != (this->locationStart+i-1) % maxHarbours){
             this->destinations.push_back((this->locationStart+i)%maxHarbours);
         }
     }
     this->destinations.push_back(this->locationEnd);
-    
-    // for(int i=this->locationStart+1; i<this->locationEnd;i++){
-    //     if ((rand()%maxHarbours)==0 && this->destinations[i-1] != i){
-    //         this->destinations.push_back(i);
-    //     }
-    // }
     
     int nextDestination = this->destinations.at(1);
     this->id = this->sharedMem.addPassenger(this->locationStart, nextDestination, this->hasTicket);
@@ -73,11 +67,10 @@ void Tourist::travel(){
                 Logger::getInstance().log("TOURIST: " +to_string(this->id) + " WAS FORCED TO GET OFF AT HARBOUR " + to_string(loc));
 		    }else if(loc != this->locationEnd){
                 Logger::getInstance().log("TOURIST: " +to_string(this->id) + " IM GOING TO WALK TO NEXT CITY");
-                int secondsWalking = 5;
-                sleep(secondsWalking); //TODO: make this proportional to the 
-                Logger::getInstance().log(string("TOURIST: " )+ to_string(this->id) + string(" WALKING BY  ") + to_string(secondsWalking)+ string(" SECONDS " )+ " TO HARBOUR " + to_string(this->locationStart));
-                
+                int secondsWalking = 10 + RANDOM(30);
+                sleep(secondsWalking); 
                 int newBeginig = (nextDestination + 1) % this->qtyHarbours ;
+                Logger::getInstance().log(string("TOURIST: " )+ to_string(this->id) + string(" WALKING BY  ") + to_string(secondsWalking)+ string(" SECONDS TO HARBOUR ") + to_string(newBeginig));
                 this->destinations[0]= newBeginig;
                 this->sharedMem.updateNextStop(this->id, this->destinations.at(1));
             }else{
