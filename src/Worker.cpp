@@ -16,7 +16,7 @@ Passenger(sharedMem){
 	tuple<string,char> s = Passenger::getSemaphore(this->id);
 	this->semTravel = new Semaphore(0, get<0>(s), get<1>(s));
 
-	string logMessage = string("PASSENGER-") + to_string(this->id) + string(" CREATED, HAS TICKET: ") + to_string(this->hasTicket);
+	string logMessage = string("PASSENGER-") + to_string(this->id) + string(" CREATED. WORKER, HAS TICKET: ") + to_string(this->hasTicket);
     Logger::getInstance().log(logMessage);
 }
 
@@ -41,7 +41,7 @@ void Worker::travel(){
 			entrance.cerrar();
 			return;
 		}
-		Logger::getInstance().log(string("PASSENGER-")  +to_string(this->id) + " QUEUED AT " + to_string(this->locationStart));
+		Logger::getInstance().log(string("PASSENGER-")  +to_string(this->id) + " QUEUED AT HARBOUR-" + to_string(this->locationStart));
 		if(!this->running()){
 			entrance.cerrar();
 			return;

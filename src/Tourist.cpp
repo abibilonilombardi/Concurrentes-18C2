@@ -26,12 +26,12 @@ Passenger(sharedMem),qtyHarbours(maxHarbours){
 
     string dest;
     for(int j=0; j<(int)this->destinations.size(); j++){
-        dest += to_string(this->destinations[j])+ string(" - ");
+        dest += to_string(this->destinations[j])+ string(" ");
     }
-    Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" destinos: ") + dest);
-    Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" HAS ")+ to_string(this->destinations.size()-2) + string(" ADITIONAL STOPS"));
+    // Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" destinos: ") + dest , 'd');
+    // Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" HAS ")+ to_string(this->destinations.size()-2) + string(" ADITIONAL STOPS"));
     
-    Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" CREATED"),'d');
+    Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" CREATED. TOURIST, HAS TICKET: ") + to_string(this->hasTicket) + string(" AND ") + to_string(this->destinations.size()-2) + string(" ADITIONAL STOPS") + dest,'d');
 }
 
 void Tourist::travel(){
@@ -55,7 +55,7 @@ void Tourist::travel(){
                 entrance.cerrar();
                 return;
             }
-            Logger::getInstance().log(string("PASSENGER-") +to_string(this->id) + " QUEUED AT " + to_string(this->locationStart));
+            Logger::getInstance().log(string("PASSENGER-") +to_string(this->id) + " QUEUED AT HARBOUR-" + to_string(this->locationStart));
             if(!this->running()){
                 entrance.cerrar();
                 return;

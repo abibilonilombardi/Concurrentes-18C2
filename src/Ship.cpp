@@ -124,7 +124,9 @@ void Ship::writeInHarbourFile(int fd, int value){
     ssize_t writedBytes = 0;
     while( writedBytes < (ssize_t)sizeof(value)){
         writedBytes += write(fd, (char*)&value + writedBytes , sizeof(value) - writedBytes);
-        if(writedBytes == -1){throw std::string("Error hip::writeInHarbourFile(value) =") + to_string(value);}
+        if(writedBytes == -1){
+            Logger::getInstance().log("void Ship::writeInHarbourFile(int fd, int value)",'d');
+            throw std::string("Error hip::writeInHarbourFile(value) =") + to_string(value);}
     }
 }
 
@@ -142,7 +144,7 @@ void Ship::unloadPeople(){
         // Logger::getInstance().log(logMessage);
 
         if(this->shmPassenger.getNextStop(*it) == this->harbour ){
-            Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" UNLOADING PASSENGER-") + to_string(*it));
+            Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" UNLOADING PASSENGER-") + to_string(*it) + string (" ON HARBOUR-") + to_string(this->harbour));
 
             this->shmPassenger.updateLocation(*it,this->harbour);
             if(!this->running()){
@@ -158,7 +160,7 @@ void Ship::unloadPeople(){
         }
     }
     if (unloded == 0){
-        Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" NO PASSENGER-UNLOADED AT HARBOUR-") + to_string(this->harbour));   
+        Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" NO PASSENGER UNLOADED AT HARBOUR-") + to_string(this->harbour));   
         return;
     }
     this->shmship->updatePassengers(shipPassengers);
@@ -206,7 +208,7 @@ void Ship::loadPeople(){
             alarm(0); //restart alarm when a passenger get on ship
             // Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" READ ") + to_string(idPassenger));
             this->shmship->addPassenger(idPassenger);
-            Logger::getInstance().log(string("PASSENGER-") + to_string(idPassenger) + string(" GET ON SHIP ") + to_string(this->id));
+            Logger::getInstance().log(string("PASSENGER-") + to_string(idPassenger) + string(" GET ON SHIP-") + to_string(this->id));
             currentNumberOfPassengers++;
         }
     }
