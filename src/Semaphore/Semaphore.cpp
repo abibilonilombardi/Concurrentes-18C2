@@ -5,7 +5,7 @@
 Semaphore::Semaphore(const int &initialValue, const string& pathname, const char letter):initialValue(initialValue),
 pathname(pathname){
     this->checkingInitialValue();
-    creat(pathname.c_str(), 0644);
+    // creat(pathname.c_str(), 0644);
     createKey(pathname, letter);
 
     //lockeo la creacion e inicializacion para que sea atomica
@@ -80,5 +80,5 @@ void Semaphore::remove(){
 }
 
 Semaphore::~Semaphore(){
-    unlink(this->pathname.c_str());
+    // unlink(this->pathname.c_str());
 }

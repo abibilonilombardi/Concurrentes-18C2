@@ -38,25 +38,17 @@ void Inspector::behave(int maxHarbours, int maxPassengers){
         	read(fd, &buffer, sizeof(int));
         	// std::cout << "Leido en archivo muelle: " << Harbour::entranceLockName(harbourToInspect) << " valor leido: " << buffer << std::endl;
         	if(buffer != -1){
-				// logMessage = string("INSPECTOR: ") + string(" FOUND SHIP: ") + to_string(buffer) + string("ON HARBOUR ") + to_string(harbourToInspect);
-				// Logger::getInstance().log(logMessage);
-        		//si lo que hay en el archivo es == a -1 chau
-        		//si no deberia acceder al archivo de memoria comp del barco
-                // std::cout << "Va a tomar lock del mem compartida de barco: " << Ship::getShmName(buffer) << std::endl;
-				// logMessage = string("INSPECTOR: ") + string(" ABOUT TO LOCK SHIP SHARED MEMORY: ") + Ship::getShmName(buffer);
-				// Logger::getInstance().log(logMessage);
-				SharedMemoryShip sharedMemoryShip(Ship::getShmName(buffer));
-                // std::cout << "Instancio mem compartida del barco" << std::endl;
-                ExclusiveLock l_ship(Ship::getShmName(buffer));
-
-                logMessage = string("INSPECTOR: ") + string(" LOCKED SHIP SHARED MEMORY: ") + Ship::getShmName(buffer);
-                Logger::getInstance().log(logMessage);
-                // std::cout << "Lockeo mem comaprtida barco" << std::endl;
-    	        SharedMemoryPassenger sharedMemoryPassenger(maxPassengers);
-    	        inspect(harbourToInspect, sharedMemoryShip, sharedMemoryPassenger);
-                l_ship.unlock();
+				
+				if(this->running()){
+                    SharedMemoryShip sharedMemoryShip(Ship::getShmName(buffer));
+                    ExclusiveLock l_ship(Ship::getShmName(buffer));
+                    logMessage = string("INSPECTOR: ") + string(" LOCKED SHIP SHARED MEMORY: ") + Ship::getShmName(buffer);
+                    Logger::getInstance().log(logMessage);
+                    SharedMemoryPassenger sharedMemoryPassenger(maxPassengers);
+                    inspect(harbourToInspect, sharedMemoryShip, sharedMemoryPassenger);
+                    l_ship.unlock();
+                }
         	}
-            // cout << "Antes del unlock inspector" << endl;
             l.unlock();
             close(fd);
     	}

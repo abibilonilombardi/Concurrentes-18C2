@@ -119,8 +119,14 @@ int ProcessGenerator::beginSimulation(){
     pid_t pid;
     int status;
 
+    for(int i = 0; i < MAX_PASSENGERS; i++){
+        tuple<string,char> semTuple = Passenger::getSemaphore(i);
+        creat(get<0>(semTuple).c_str(), 0644);
+    }
+
     //spawn passanger processes...
     try{
+        creat("/bin/ls", 0644);
         Semaphore s(MAX_PASSENGERS, "/bin/ls",'A'); //???? no se si quiere esto o o A++?  ++++++++
         while(this->running()){
             s.wait();
@@ -160,6 +166,10 @@ int ProcessGenerator::beginSimulation(){
 
         this->processes.clear();
         this->passengers.clear();
+        for(int i = 0; i < MAX_PASSENGERS; i++){
+            tuple<string,char> semTuple = Passenger::getSemaphore(i);
+            unlink(get<0>(semTuple).c_str());
+        }
         vector<Harbour*>::iterator hbIt;
         for (hbIt=this->harbours.begin(); hbIt!=this->harbours.end(); ++hbIt){
             delete(*hbIt);
