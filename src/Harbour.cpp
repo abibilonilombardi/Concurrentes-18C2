@@ -39,7 +39,7 @@ Harbour::Harbour(int id):id(id){
         throw std::string("Error at Harbour creation! ") + string(strerror(errno));
     }
     close(this->fdHarbour);
-    // cout<<" SE CREO EL HARBOUR " << id << endl;
+    Logger::getInstance().log(string("HARBOUR-") + to_string(this->id) + string(" CREATED"), 'd');
 }
 
 int Harbour::distanceNextHarbour(){
@@ -54,7 +54,6 @@ void Harbour::writeInHarbourFile(int fd, int value){
             throw std::string("Error hip::writeInHarbourFile(value) =") + to_string(value);
         }
     }
-    // std::cout << "Harbour initialization writing value: " << value << std::endl;
 }
 
 Harbour::~Harbour(){
@@ -62,4 +61,5 @@ Harbour::~Harbour(){
     unlink(Harbour::entranceName(this->id).c_str());
     unlink(Harbour::harbourLockName(this->id).c_str());
     unlink(Harbour::entranceLockName(this->id).c_str());
+    Logger::getInstance().log(string("HARBOUR-") + to_string(this->id) + string(" DELETED"), 'd');
 }

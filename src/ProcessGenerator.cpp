@@ -1,20 +1,16 @@
 #include "ProcessGenerator.h"
 #include "Logger/LogMessages.h"
 
-#define MAX_HARBOURS 20 //max amount of harbours total.
+#define MAX_HARBOURS 7 //max amount of harbours total.
 #define MAX_PASSENGERS 15 //max amount of passengers total.
 
 
 ProcessGenerator::ProcessGenerator():Process() {
-    Logger::getInstance().log(" --- START TO CREATE HARBOURS ---");
-    srand(1);//TODO:srand(time(NULL));
+    this->harbourQty = 3 + RANDOM(MAX_HARBOURS);
+    Logger::getInstance().log(string(NUMBER OF HARBOURS) + to_string(this->harbourQty));
 
-    this->harbourQty = (RANDOM(MAX_HARBOURS)) + 1;
-
-    // cout<<"Cantidad de harbours: "<<this->harbourQty<<endl;
     for(size_t i=0; i < this->harbourQty; i++){
         this->harbours.push_back(new Harbour(i));
-        Logger::getInstance().log(CREACION_PUERTO_EXITO(i));
     }
     this->passengersMem = new SharedMemoryPassenger(MAX_PASSENGERS);
     this->passengersMem->initialize();

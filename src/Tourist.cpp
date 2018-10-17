@@ -29,21 +29,21 @@ Passenger(sharedMem),qtyHarbours(maxHarbours){
     for(int j=0; j<(int)this->destinations.size(); j++){
         dest += to_string(this->destinations[j])+ string(" - ");
     }
-    Logger::getInstance().log(string("TOURIST: ") + to_string(this->id) + string(" destinos: ") + dest);
+    Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" destinos: ") + dest);
     
-    Logger::getInstance().log(string("TOURIST: ") + to_string(this->id) + string(" CREATED"));
-    Logger::getInstance().log(string("TOURIST: ") + to_string(this->id) + string(" HAS ")+ to_string(this->destinations.size()-2) + string(" ADITIONAL STOPS"));
+    Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" CREATED"));
+    Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" HAS ")+ to_string(this->destinations.size()-2) + string(" ADITIONAL STOPS"));
 }
 
 void Tourist::travel(){
-	Logger::getInstance().log(string("TOURIST: ") + to_string(this->id) + string(" STARTED TO TRAVEL"));
+	Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" STARTED TO TRAVEL"));
 
     try{
         while(this->destinations.size() >= 2){
             this->locationStart = this->destinations.front();
             this->destinations.erase(this->destinations.begin());
             int nextDestination = this->destinations.front();
-            Logger::getInstance().log(string("TOURIST: ") + to_string(this->id) + string(" TRAVELING FROM ") + to_string(this->locationStart)+ " TO "+ to_string(nextDestination) + string(" BUT HIS FINAL DESTINY IS ")+ to_string(this->destinations[this->destinations.size()-1]));
+            Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" TRAVELING FROM ") + to_string(this->locationStart)+ " TO "+ to_string(nextDestination) + string(" BUT HIS FINAL DESTINY IS ")+ to_string(this->destinations[this->destinations.size()-1]));
 
             FifoEscritura entrance(Harbour::entranceName(this->locationStart));
             entrance.abrir();
@@ -51,7 +51,7 @@ void Tourist::travel(){
                 return;
             }
             entrance.escribir(static_cast<const void*>(&this->id),sizeof(int));
-            Logger::getInstance().log("TOURIST: " +to_string(this->id) + " QUEUED AT " + to_string(this->locationStart));
+            Logger::getInstance().log("PASSENGER-" +to_string(this->id) + " QUEUED AT " + to_string(this->locationStart));
             if(!this->running()){
                 return;
             }
@@ -64,24 +64,22 @@ void Tourist::travel(){
             int loc = this->sharedMem.getLocation(this->id);
             
 		    if (loc != nextDestination){
-                Logger::getInstance().log("TOURIST: " +to_string(this->id) + " WAS FORCED TO GET OFF AT HARBOUR " + to_string(loc));
+                Logger::getInstance().log("PASSENGER-" +to_string(this->id) + " WAS FORCED TO GET OFF AT HARBOUR-" + to_string(loc));
 		    }else if(loc != this->locationEnd){
-                Logger::getInstance().log("TOURIST: " +to_string(this->id) + " IM GOING TO WALK TO NEXT CITY");
+                Logger::getInstance().log("PASSENGER-" +to_string(this->id) + " IM GOING TO WALK TO NEXT CITY");
                 int secondsWalking = 10 + RANDOM(30);
                 sleep(secondsWalking); 
                 int newBeginig = (nextDestination + 1) % this->qtyHarbours ;
-                Logger::getInstance().log(string("TOURIST: " )+ to_string(this->id) + string(" WALKING BY  ") + to_string(secondsWalking)+ string(" SECONDS TO HARBOUR ") + to_string(newBeginig));
+                Logger::getInstance().log(string("PASSENGER-" )+ to_string(this->id) + string(" WALKING BY  ") + to_string(secondsWalking)+ string(" SECONDS TO HARBOUR-") + to_string(newBeginig));
                 this->destinations[0]= newBeginig;
                 this->sharedMem.updateNextStop(this->id, this->destinations.at(1));
             }else{
-                Logger::getInstance().log("TOURIST: " +to_string(this->id) + " ARRIVED AT DESTINATION!");
+                Logger::getInstance().log("PASSENGER-" +to_string(this->id) + " ARRIVED AT DESTINATION!");
             }
             entrance.cerrar(); 
         }
-        Logger::getInstance().log("Tourist with id " +to_string(this->id) + " arrived at destination!");
-
 	}catch(string error){
-        Logger::getInstance().log("ERROR! TOURIST: " +to_string(this->id) + " - "+  string(strerror(errno)));
+        Logger::getInstance().log("ERROR! PASSENGER-" +to_string(this->id) + " - "+  string(strerror(errno)));
         throw string("Tourist::travel() ") + error;
 	}
 }

@@ -18,23 +18,17 @@ string Ship::getShmName(int shipId){
 Ship::Ship(int id, vector<Harbour*> &map, size_t harbour, int capacity, SharedMemoryPassenger& shmPassenger):Process(),
 id(id), map(map), harbour(harbour), capacity(capacity), fdShip(-1), shmPassenger(shmPassenger){
     this->initialize();
-    srand(time(NULL));
-
     SignalHandler::getInstance()->registrarHandler(SIGALRM, &this->sigalrm_handler);
-
-    string logMessage = string("SHIP: ") + to_string(this->id) + string(" CREATED");
-    Logger::getInstance().log(logMessage);
+    Logger::getInstance().log( string("SHIP-") + to_string(this->id) + string(" CREATED"),'d');
 }
 
 void Ship::freeResources(){
     if(this->fdShip > 0){
         close(this->fdShip);
-        Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" CERRO FILE DESCRIPTOR") );
     }
     if(this->shmship != NULL){
         delete this->shmship;
         // unlink(Ship::getShmName(this->id).c_str());
-        Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" eLIMINO MEMORIA COKMPARTID") );
     }
 }
 
@@ -54,13 +48,13 @@ void Ship::initialize(){
         throw message + string(strerror(errno));
     }
 
-    bool authorized = rand() % 2;
+    bool authorized = RANDOM(2);
     // bool authorized = 0;//TODO SOF: CAMBIAR
     this->shmship = new SharedMemoryShip(Ship::getShmName(id), authorized);
 }
 
 void Ship::sail(){
-    string logMessage = string("SHIP: ") + to_string(this->id) + string(" STARTED TO SAIL");
+    string logMessage = string("SHIP-") + to_string(this->id) + string(" STARTED TO SAIL");
     Logger::getInstance().log(logMessage);
 
     while(this->running()){
@@ -71,7 +65,7 @@ void Ship::sail(){
         sleep(15);
 
         ExclusiveLock lockHarbour(Harbour::harbourLockName(this->harbour));
-        logMessage = string("SHIP: ") + to_string(this->id) + string(" ENTRANCE TO HARBOUR ") + to_string(this->harbour);
+        logMessage = string("SHIP-") + to_string(this->id) + string(" ENTRANCE TO HARBOUR-") + to_string(this->harbour);
         Logger::getInstance().log(logMessage);
 
         ExclusiveLock lockShmShip(Ship::getShmName(this->id));
@@ -104,7 +98,7 @@ void Ship::sail(){
         lockHarbour.unlock();
 
         if(this->shmship->confiscated()){
-            Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" WAS CONFISCATED AT HARBOUR ") + to_string(this->harbour));
+            Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" WAS CONFISCATED AT HARBOUR-") + to_string(this->harbour));
             // exit(0);
             return;
         }
@@ -114,7 +108,7 @@ void Ship::sail(){
 void Ship::arrivalAnnouncement(int fd){
     this->writeInHarbourFile(fd,this->id);
     // close(fd);
-    Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" ANNOUCED IN THE HARRBOUR ") + to_string(this->harbour));
+    Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" ANNOUCED IN THE HARRBOUR ") + to_string(this->harbour));
 }
 
 void Ship::departureAnnouncement(int fd){
@@ -123,7 +117,7 @@ void Ship::departureAnnouncement(int fd){
     this->writeInHarbourFile(fd, DEPARTUREVALUE);
     // close(fd);
 
-    Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" DEPARTURE TO HARBOUR ") + to_string(this->harbour));
+    Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" DEPARTURE TO HARBOUR-") + to_string(this->harbour));
 }
 
 void Ship::writeInHarbourFile(int fd, int value){
@@ -136,7 +130,7 @@ void Ship::writeInHarbourFile(int fd, int value){
 
 
 void Ship::unloadPeople(){
-    Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" STARTS UNLOADING PEOPLE AT HARBOUR ") + to_string(this->harbour));
+    Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" STARTS UNLOADING PEOPLE AT HARBOUR-") + to_string(this->harbour));
     vector<int> shipPassengers = this->shmship->getPassengers();
     
     int unloded = 0;
@@ -148,7 +142,7 @@ void Ship::unloadPeople(){
         // Logger::getInstance().log(logMessage);
 
         if(this->shmPassenger.getNextStop(*it) == this->harbour ){
-            Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" UNLOADING PASSENGER ") + to_string(*it));
+            Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" UNLOADING PASSENGER-") + to_string(*it));
 
             this->shmPassenger.updateLocation(*it,this->harbour);
             if(!this->running()){
@@ -164,18 +158,18 @@ void Ship::unloadPeople(){
         }
     }
     if (unloded == 0){
-        Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" NO PASSENGER UNLOADED AT HARBOUR ") + to_string(this->harbour));   
+        Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" NO PASSENGER-UNLOADED AT HARBOUR-") + to_string(this->harbour));   
         return;
     }
     this->shmship->updatePassengers(shipPassengers);
-    Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" FINISHED UNLOAD PEOPLE AT HARBOUR ") + to_string(this->harbour));
+    Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" FINISHED UNLOAD PEOPLE AT HARBOUR-") + to_string(this->harbour));
 }
 
 void Ship::loadPeople(){
     int idPassenger;
     FifoLectura fifito(Harbour::entranceName(this->harbour));
 
-    Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" STARTS LOADING PEOPLE AT HARBOUR ") + to_string(this->harbour));
+    Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" STARTS LOADING PEOPLE AT HARBOUR-") + to_string(this->harbour));
     
     int currentNumberOfPassengers = 0;
     for (unsigned int i = 0;i< this->shmship->getPassengers().size(); i++){
@@ -184,46 +178,46 @@ void Ship::loadPeople(){
         }
     }
     
-    alarm(5); // espera por si llega pasajero
+    alarm(5); //Ships waits for 5 seconds to some passegenger appear
     try{
         fifito.abrir();
     }catch(string err){
         alarm(0);
         this->sigalrm_handler.restartAlarm();
-        Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" NO PASSENGER AT HARBOUR ") + to_string(this->harbour) );
+        Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" HAS NO PASSENGER AT HARBOUR-") + to_string(this->harbour) );
         return;
     }
 
-    Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" CURRENT NUMBER OF PASSENGER ") + to_string(currentNumberOfPassengers) + string(" QUEDA LUGAR PARA ") + to_string(this->capacity - currentNumberOfPassengers));
+    Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" CURRENT NUMBER OF PASSENGER-") + to_string(currentNumberOfPassengers) + string(" QUEDA LUGAR PARA ") + to_string(this->capacity - currentNumberOfPassengers));
     
     while(currentNumberOfPassengers < this->capacity && !this->sigalrm_handler.isActivate()){
-        alarm(15);
+        alarm(15); //Ships waits for 15 seconds entre cada subida de pasajero
         idPassenger = fifito.leerId();
         
         if(this->sigalrm_handler.isActivate()){
-            Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" ALARM SOUNDED AT HARBOUR ") + to_string(this->harbour));
+            Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" ALARM SOUNDED AT HARBOUR-") + to_string(this->harbour));
             sigalrm_handler.restartAlarm();
             break;
         }else{
             if(!this->running() || idPassenger == -1 ){
-                Logger::getInstance().log(string(" interrumpido o EOF ") + to_string(this->harbour));
+                Logger::getInstance().log(string(" interrumpido o EOF ") + to_string(this->harbour), 'd');
                 break;
             }
-            alarm(0);
-            Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" READ ") + to_string(idPassenger));
+            alarm(0); //restart alarm when a passenger get on ship
+            // Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" READ ") + to_string(idPassenger));
             this->shmship->addPassenger(idPassenger);
-            Logger::getInstance().log(string("PASSENGER: ") + to_string(idPassenger) + string(" GET ON SHIP ") + to_string(this->id));
+            Logger::getInstance().log(string("PASSENGER-") + to_string(idPassenger) + string(" GET ON SHIP ") + to_string(this->id));
             currentNumberOfPassengers++;
         }
     }
     fifito.cerrar();
-    Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" FINISHED LOAD PEOPLE AT HARBOUR ") + to_string(this->harbour) );
+    Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" FINISHED LOAD PEOPLE AT HARBOUR-") + to_string(this->harbour) );
 }
 
 Ship::~Ship(){
-    Logger::getInstance().log(string("SHIP: ") + to_string(this->id) + string(" DESTRUCTOR")  );
     this->freeResources();
     unlink(Ship::getShmName(this->id).c_str());
+    Logger::getInstance().log( string("SHIP-") + to_string(this->id) + string(" DELETED"),'d');
 }
 
 

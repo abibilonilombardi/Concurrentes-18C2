@@ -36,6 +36,22 @@ void Logger::log(const std::string& eventDescription){
     mylock.unlock();
 }
 
+void Logger::log(const std::string& eventDescription, char mood){
+    std::string descpMood("");
+    switch(mood){
+        case ('i'):
+            descpMood = std::string(" INFO ");
+            break;
+        case ('d'):
+            descpMood = std::string(" DEBUG ");
+            break;
+        case ('e'):
+            descpMood = std::string(" ERROR ");
+            break;
+    }
+    this->log(descpMood+eventDescription);
+}
+
 std::string Logger::getCurrentTime(){
     char buff[20];
     time(&now);

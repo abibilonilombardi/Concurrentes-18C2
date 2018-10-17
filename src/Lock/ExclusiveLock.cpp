@@ -12,7 +12,7 @@ void ExclusiveLock::initializeFlock(){
 void ExclusiveLock::openFile(const std::string file){
     this->fd = open(file.c_str(), O_CREAT|O_WRONLY, 0644);
     if (this->fd == -1) {
-        // std::cout<<"ExclusiveLock::openFile " << file << "  " << this->fd << std::string(strerror(errno))<<std::endl;
+
         throw "ExclusiveLock::openFile file: " + file + " " + std::string(strerror(errno));
     }
 }
@@ -31,11 +31,9 @@ ExclusiveLock::ExclusiveLock(int fileDescriptor):isInternalFile(false){
     if(result == -1 && (errno!=EINTR)){
         throw "ExclusiveLock::ExclusiveLock(int fileDescriptor) " + std::string(strerror(errno));
     }
-    //std::cout << "ExclusiveLock el proceso "<< getpid() << " TOMO lock " << std::endl;
 }
 
 ExclusiveLock::ExclusiveLock(const std::string& file):isInternalFile(true){
-    // std::cout << "Por lockear archivo: " << file << std::endl;
     openFile(file);
     initializeFlock();
     int result = fcntl(this->fd,F_SETLKW, &lock);
@@ -50,7 +48,6 @@ int ExclusiveLock::getfd(){
 
 void ExclusiveLock::unlock(){
     lock.l_type = F_UNLCK;
-    //std::cout << "ExclusiveLock el proceso "<< getpid() << " LIBERO lock " << std::endl;
     int result = fcntl(this->fd, F_SETLK, &lock);
     if(result == -1){
         throw "ExclusiveLock::unlock() " + std::string(strerror(errno));

@@ -20,7 +20,7 @@ int main(int argc, char *argv[]){
         int createLogFile = open("ShipsTrevelingSimulation.log", O_CREAT, 0666);
         close(createLogFile);
 
-        if (argc == 3){
+        if (argc == 3){ //TODO SACAR
             shipQty = atoi(argv[1]);
             shipCty = atoi(argv[2]);
         }
@@ -47,7 +47,6 @@ int main(int argc, char *argv[]){
 
         //begin simulation (spawn people processes)
         pc.beginSimulation();
-        // std::cout<< "El proceso: "<< getpid() << " ha finalizado correctamente"<< std::endl;
         return 0;
     }catch(const string &error){
         cout<< error<<endl;
@@ -61,9 +60,6 @@ int main(int argc, char *argv[]){
         cout<< error<<endl;
         return -1;
     }
-    // catch(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > error){
-    //     cout << "error mistico: " << error << endl;
-    // }
     catch(...){
         cout << "Catch vacio" << endl;
     }

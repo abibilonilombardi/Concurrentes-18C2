@@ -8,14 +8,6 @@
 #include <string>
 #include <ctime>
 
-// TODO: VER DONDE DECARAMOS EL NOMBRE DEL ARCHIVO DE LOG
-// TODO: DOCUMENTAR
-
-/* #define LOG( msg ) \
-//   do { \
-//     std::stringstream ss;
-//     Logger::getInstance().log(str); \
-   } while( 0 ) */
 
 class Logger {
 private:
@@ -26,6 +18,7 @@ public:
     static Logger& getInstance();
     static void destroy();
     void log(const std::string& eventDescription);
+    void log(const std::string& eventDescription, char mood);
 private:
     Logger();
     void fdCheking();

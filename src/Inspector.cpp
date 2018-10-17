@@ -26,7 +26,7 @@ void Inspector::behave(int maxHarbours, int maxPassengers){
             sleep(2);
         	int harbourToInspect = rand() % maxHarbours;
             // int harbourToInspect = 1;
-            logMessage = string("INSPECTOR: ") + string(" ABOUT TO LOCK HARBOUR FILE: ") + Harbour::entranceLockName(harbourToInspect);
+            logMessage = string("INSPECTOR: ") + string(" ABOUT TO LOCK HARBOUR-FILE: ") + Harbour::entranceLockName(harbourToInspect);
             Logger::getInstance().log(logMessage);
         	//Accede a archivo de lock
         	int fd = open(Harbour::entranceLockName(harbourToInspect).c_str(), O_RDWR, 0644);
@@ -38,7 +38,7 @@ void Inspector::behave(int maxHarbours, int maxPassengers){
         	read(fd, &buffer, sizeof(int));
         	// std::cout << "Leido en archivo muelle: " << Harbour::entranceLockName(harbourToInspect) << " valor leido: " << buffer << std::endl;
         	if(buffer != -1){
-				// logMessage = string("INSPECTOR: ") + string(" FOUND SHIP: ") + to_string(buffer) + string("ON HARBOUR ") + to_string(harbourToInspect);
+				// logMessage = string("INSPECTOR: ") + string(" FOUND SHIP-") + to_string(buffer) + string("ON HARBOUR-") + to_string(harbourToInspect);
 				// Logger::getInstance().log(logMessage);
         		//si lo que hay en el archivo es == a -1 chau
         		//si no deberia acceder al archivo de memoria comp del barco
