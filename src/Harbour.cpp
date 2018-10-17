@@ -58,7 +58,8 @@ void Harbour::writeInHarbourFile(int fd, int value){
 }
 
 Harbour::~Harbour(){
-    //TODO:cerrar los FIFOS, y hacer el unlink.
+    //eliminar los archivos de FIFO:
+    unlink(Harbour::entranceName(this->id).c_str());
     unlink(Harbour::harbourLockName(this->id).c_str());
     unlink(Harbour::entranceLockName(this->id).c_str());
 }

@@ -28,7 +28,7 @@ ExclusiveLock::ExclusiveLock(int fileDescriptor):isInternalFile(false){
     initializeFlock();
     this->fd = fileDescriptor;
     int result = fcntl(this->fd,F_SETLKW, &lock);
-    if(result == -1){
+    if(result == -1 && (errno!=EINTR)){
         throw "ExclusiveLock::ExclusiveLock(int fileDescriptor) " + std::string(strerror(errno));
     }
     //std::cout << "ExclusiveLock el proceso "<< getpid() << " TOMO lock " << std::endl;
@@ -39,7 +39,7 @@ ExclusiveLock::ExclusiveLock(const std::string& file):isInternalFile(true){
     openFile(file);
     initializeFlock();
     int result = fcntl(this->fd,F_SETLKW, &lock);
-    if(result == -1){
+    if(result == -1 && (errno!=EINTR)){
         throw "ExclusiveLock::ExclusiveLock(const std::string& file) " + std::string(strerror(errno));
     }
 }
