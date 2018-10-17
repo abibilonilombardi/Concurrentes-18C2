@@ -7,7 +7,7 @@
 using namespace std;
 
 ShipInspector::ShipInspector(): Inspector(){
-
+	Logger::getInstance().log(string("SHIPINSPECTOR-") + to_string(getpid())+ string(" CREATED"),'d');
 }
 
 void ShipInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemoryShip, SharedMemoryPassenger &sharedMemoryPassenger){
@@ -49,4 +49,6 @@ void ShipInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemory
     }
 }
 
-ShipInspector::~ShipInspector(){}
+ShipInspector::~ShipInspector(){
+	Logger::getInstance().log(string("SHIPINSPECTOR-") + to_string(getpid())+ string(" DELETED"),'d');
+}

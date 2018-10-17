@@ -16,10 +16,8 @@ bool Passenger::failedBoard(){
 }
 
 Passenger::~Passenger(){
-    string logMessage = string("PASSENGER: ") + to_string(this->id) + string(" MUERE id ") + to_string(this->semTravel->getId());
-    Logger::getInstance().log(logMessage);
-
     this->sharedMem.freePassengerId(this->id);
     this->semTravel->remove();
     delete this->semTravel;
+    Logger::getInstance().log( string("PASSENGER-") + to_string(this->id) + string(" DELETED"),'d');
 }

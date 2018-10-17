@@ -1,3 +1,6 @@
+#ifndef HARBOUR_H
+#define HARBOUR_H
+
 #include <iostream>
 #include <unistd.h>
 #include <sstream>
@@ -8,8 +11,6 @@
 
 using namespace std;
 
-#ifndef HARBOUR_H
-#define HARBOUR_H
 
 #include "Process.h"
 #include "SharedMemoryMap.h"

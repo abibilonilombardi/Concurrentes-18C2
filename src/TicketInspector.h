@@ -1,9 +1,10 @@
+#ifndef TICKET_INSPECTOR_H
+#define TICKET_INSPECTOR_H
+
 #include "Inspector.h"
 
 using namespace std;
 
-#ifndef TICKET_INSPECTOR_H
-#define TICKET_INSPECTOR_H
 
 class TicketInspector: public Inspector{
 public:

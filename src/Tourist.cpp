@@ -2,7 +2,6 @@
 
 Tourist::Tourist(SharedMemoryPassenger &sharedMem, int maxHarbours):
 Passenger(sharedMem),qtyHarbours(maxHarbours){
-    // srand(getpid());
     this->locationStart =RANDOM(maxHarbours);//rand() % ( int(maxHarbours/2) + 1 ) ; //generate random between [0, maxHarbours/2)
     this->hasTicket = RANDOM(2);
     this->locationEnd = RANDOM(maxHarbours);//int(maxHarbours/2) + rand() % ((maxHarbours + 1) - int(maxHarbours/2)); //generate random between [maxHarbours/2, maxHarbours)
@@ -30,9 +29,9 @@ Passenger(sharedMem),qtyHarbours(maxHarbours){
         dest += to_string(this->destinations[j])+ string(" - ");
     }
     Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" destinos: ") + dest);
-    
-    Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" CREATED"));
     Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" HAS ")+ to_string(this->destinations.size()-2) + string(" ADITIONAL STOPS"));
+    
+    Logger::getInstance().log(string("PASSENGER-") + to_string(this->id) + string(" CREATED"),'d');
 }
 
 void Tourist::travel(){

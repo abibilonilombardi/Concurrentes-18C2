@@ -1,3 +1,6 @@
+#ifndef INSPECTOR_H
+#define INSPECTOR_H
+
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -12,8 +15,6 @@
 
 using namespace std;
 
-#ifndef INSPECTOR_H
-#define INSPECTOR_H
 
 class Inspector: public Process{
 public:

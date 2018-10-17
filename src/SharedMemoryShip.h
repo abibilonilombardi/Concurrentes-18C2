@@ -1,3 +1,6 @@
+#ifndef SHMSHIP_H
+#define SHMSHIP_H
+
 #include "MemoriaCompartida.h"
 #include <string.h>
 #include <vector>
@@ -5,8 +8,6 @@
 
 using namespace std;
 
-#ifndef SHMSHIP_H
-#define SHMSHIP_H
 
 class SharedMemoryShip: public MemoriaCompartida<int> {
     static size_t shipCty;

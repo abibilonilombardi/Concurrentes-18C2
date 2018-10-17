@@ -1,9 +1,9 @@
+#ifndef SHIP_INSPECTOR_H
+#define SHIP_INSPECTOR_H
+
 #include "Inspector.h"
 
 using namespace std;
-
-#ifndef SHIP_INSPECTOR_H
-#define SHIP_INSPECTOR_H
 
 class ShipInspector: public Inspector{
 public:

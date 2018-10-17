@@ -1,8 +1,9 @@
+#ifndef SIGINT_HANDLER
+#define SIGINT_HANDLER
+
 #include <assert.h>
 #include <iostream>
 
-#ifndef SIGINT_HANDLER
-#define SIGINT_HANDLER
 
 class SIGINT_Handler : public EventHandler {
 private:

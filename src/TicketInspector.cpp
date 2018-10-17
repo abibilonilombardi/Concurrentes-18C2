@@ -2,7 +2,7 @@
 #define NO_PASSENGER -1
 
 TicketInspector::TicketInspector(): Inspector(){
-
+    Logger::getInstance().log(string("TICKETINSPECTOR-") +to_string(getpid())+ string(" CREATED"),'d');
 }
 
 void TicketInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemoryShip, SharedMemoryPassenger &sharedMemoryPassenger){
@@ -37,4 +37,6 @@ void TicketInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemo
     sharedMemoryShip.updatePassengers(passengerIds);
 }
     
-TicketInspector::~TicketInspector(){}
+TicketInspector::~TicketInspector(){
+    Logger::getInstance().log(string("TICKETINSPECTOR-") + to_string(getpid())+ string(" DELETED"),'d');
+}

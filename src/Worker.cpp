@@ -58,12 +58,12 @@ void Worker::travel(){
 			Logger::getInstance().log("PASSENGER-" +to_string(this->id) + " WAS FORCED TO GET OFF AT HARBOUR-" + to_string(loc));
 		}else{
 			Logger::getInstance().log("PASSENGER-" +to_string(this->id) + " ARRIVED AT DESTINATION!");
-		    sleep(8); //spend 8hs working...
+		    sleep(60); //spend 60 seconds working...
 			Logger::getInstance().log("PASSENGER-" +to_string(this->id) + " FINISHED WORK!");
 		}
 		entrance.cerrar();
 	}catch(string error){
-		Logger::getInstance().log("ERROR! PASSENGER-" +to_string(this->id) + " - "+  string(strerror(errno)));
+		Logger::getInstance().log("PASSENGER-" +to_string(this->id) + " - "+  string(strerror(errno)),'e');
 		throw string("Worker::travel() ") + error;
 	}
 }

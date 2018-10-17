@@ -7,7 +7,7 @@
 
 ProcessGenerator::ProcessGenerator():Process() {
     this->harbourQty = 3 + RANDOM(MAX_HARBOURS);
-    Logger::getInstance().log(string(NUMBER OF HARBOURS) + to_string(this->harbourQty));
+    Logger::getInstance().log(string("NUMBER OF HARBOURS ") + to_string(this->harbourQty));
 
     for(size_t i=0; i < this->harbourQty; i++){
         this->harbours.push_back(new Harbour(i));
@@ -50,19 +50,20 @@ pid_t ProcessGenerator::spawnPassenger(){
             throw "ProcessGenerator::spawnPassenger() failed at fork!";
         }
         if (pid==0){
-            //if ((RANDOM(2))==1){
-                //Worker w(*this->passengersMem, this->harbourQty);
-                 //w.travel();
-            //}else{
+            if ((RANDOM(2))==1){
+                Worker w(*this->passengersMem, this->harbourQty);
+                 w.travel();
+            }else{
                 Tourist t(*this->passengersMem, this->harbourQty);
                 t.travel();
-            //}
+            }
             return 0;
         }else{
             this->passengers.insert(pid);
         }
         return pid;
     }catch(string error){
+        Logger::getInstance().log(string("ProcessGenerator::spawnPassenger() ") + error,'e');
         throw  string(" ProcessGenerator::spawnPassenger() ") + error;
     }
 }
@@ -70,7 +71,6 @@ pid_t ProcessGenerator::spawnPassenger(){
 //SpawnInspectors
 
 pid_t ProcessGenerator::spawnShipInspector(){
-    Logger::getInstance().log(" --- CREATE SHIP INSPECTOR ---");
     pid_t pid = 0;
     //Instanciar inspectores y pasarles la referencia de la memoria
     try{
@@ -86,12 +86,12 @@ pid_t ProcessGenerator::spawnShipInspector(){
         }
         return pid;
     }catch(string error){
+        Logger::getInstance().log("ProcessGenerator::spawnShipInspector():" + error,'e');
         throw error + " ProcessGenerator::spawnShipInspector() ";
     }
 }
 
 pid_t ProcessGenerator::spawnTicketInspector(){
-    Logger::getInstance().log(" --- CREATE TICKET INSPECTOR ---");
     pid_t pid = 0;
     //Instanciar inspectores y pasarles la referencia de la memoria
     try{

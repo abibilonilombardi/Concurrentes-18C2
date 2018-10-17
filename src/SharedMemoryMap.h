@@ -1,6 +1,7 @@
-#include "MemoriaCompartida.h"
 #ifndef SHMMAP_H
 #define SHMMAP_H
+
+#include "MemoriaCompartida.h"
 
 class SharedMemoryMap: protected MemoriaCompartida<int> {
 private:

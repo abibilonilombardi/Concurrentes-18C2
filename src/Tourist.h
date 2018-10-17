@@ -1,3 +1,6 @@
+#ifndef TOURIST_H
+#define TOURIST_H
+
 #include "Passenger.h"
 #include "Logger/Logger.h"
 #include "Harbour.h"
@@ -7,8 +10,6 @@
 
 using namespace std;
 
-#ifndef TOURIST_H
-#define TOURIST_H
 
 class Tourist : public Passenger {
 private:

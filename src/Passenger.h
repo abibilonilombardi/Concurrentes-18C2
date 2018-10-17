@@ -1,3 +1,6 @@
+#ifndef PASSENGER_H
+#define PASSENGER_H
+
 #include <stdlib.h>
 #include <string.h>
 #include <tuple>
@@ -10,8 +13,6 @@
 
 using namespace std;
 
-#ifndef PASSENGER_H
-#define PASSENGER_H
 
 class Passenger : public Process{
 protected:

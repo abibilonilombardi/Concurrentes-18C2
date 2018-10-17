@@ -1,3 +1,6 @@
+#ifndef WORKER_H
+#define WORKER_H
+
 #include "Passenger.h"
 #include "Fifos/FifoEscritura.h"
 #include "Harbour.h"
@@ -6,8 +9,6 @@
 #include <string.h>
 #include <iostream>
 
-#ifndef WORKER_H
-#define WORKER_H
 
 class Worker : public Passenger {
 public:

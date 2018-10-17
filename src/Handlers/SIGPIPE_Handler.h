@@ -1,8 +1,8 @@
-#include <assert.h>
-#include <iostream>
-
 #ifndef SIGPIPE_HANDLER
 #define SIGPIPE_HANDLER
+
+#include <assert.h>
+#include <iostream>
 
 class SIGPIPE_Handler : public EventHandler {
 private:
