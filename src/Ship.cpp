@@ -97,7 +97,6 @@ void Ship::sail(){
 
         if(this->shmship->confiscated()){
             Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" WAS CONFISCATED AT HARBOUR-") + to_string(this->harbour));
-            // exit(0);
             return;
         }
     }
@@ -105,16 +104,12 @@ void Ship::sail(){
 
 void Ship::arrivalAnnouncement(int fd){
     this->writeInHarbourFile(fd,this->id);
-    // close(fd);
     Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" ANNOUCED IN THE HARBOUR-") + to_string(this->harbour));
 }
 
 void Ship::departureAnnouncement(int fd){
     const int DEPARTUREVALUE = -1;
-
     this->writeInHarbourFile(fd, DEPARTUREVALUE);
-    // close(fd);
-
     Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" DEPARTURE TO HARBOUR-") + to_string(this->harbour));
 }
 
@@ -128,7 +123,6 @@ void Ship::writeInHarbourFile(int fd, int value){
     }
 }
 
-
 void Ship::unloadPeople(){
     Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" STARTS UNLOADING PEOPLE AT HARBOUR-") + to_string(this->harbour));
     vector<int> shipPassengers = this->shmship->getPassengers();
@@ -137,10 +131,6 @@ void Ship::unloadPeople(){
     vector<int>::iterator it;
     for (it=shipPassengers.begin(); it!=shipPassengers.end(); ++it){
         if (*it < 0) {continue;}
-
-        // string logMessage = "Passenger: " + to_string(*it) + " getNextStop: " + to_string(this->shmPassenger.getNextStop(*it)) + " Harbour actual del ship: " + to_string(this->harbour);
-        // Logger::getInstance().log(logMessage);
-
         if(this->shmPassenger.getNextStop(*it) == this->harbour ){
             Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" UNLOADING PASSENGER-") + to_string(*it) + string (" ON HARBOUR-") + to_string(this->harbour));
 
@@ -188,7 +178,7 @@ void Ship::loadPeople(){
         return;
     }
 
-    Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" CURRENT NUMBER OF PASSENGER-") + to_string(currentNumberOfPassengers) + string(" QUEDA LUGAR PARA ") + to_string(this->capacity - currentNumberOfPassengers));
+    Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" CURRENT NUMBER OF PASSENGER ONBOARD: ") + to_string(currentNumberOfPassengers) + string(". SPACE LEFT FOR ") + to_string(this->capacity - currentNumberOfPassengers)+ string(" MORE PASSENGERS"));
     
     while(currentNumberOfPassengers < this->capacity && !this->sigalrm_handler.isActivate()){
         alarm(15); //Ships waits for 15 seconds entre cada subida de pasajero
@@ -200,11 +190,10 @@ void Ship::loadPeople(){
             break;
         }else{
             if(!this->running() || idPassenger == -1 ){
-                Logger::getInstance().log(string(" interrumpido o EOF ") + to_string(this->harbour), 'd');
+                Logger::getInstance().log(string(" READ INTERRUPTED (CTRL+C/EOF) ") + to_string(this->harbour), 'd');
                 break;
             }
             alarm(0); //restart alarm when a passenger get on ship
-            // Logger::getInstance().log(string("SHIP-") + to_string(this->id) + string(" READ ") + to_string(idPassenger));
             this->shmship->addPassenger(idPassenger);
             Logger::getInstance().log(string("PASSENGER-") + to_string(idPassenger) + string(" GET ON SHIP-") + to_string(this->id));
             currentNumberOfPassengers++;

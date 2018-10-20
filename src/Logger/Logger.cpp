@@ -42,13 +42,13 @@ void Logger::log(const std::string& eventDescription, char mood){
     std::string descpMood("");
     switch(mood){
         case ('i'):
-            descpMood = std::string(" INFO ");
+            descpMood = std::string("INFO ");
             break;
         case ('d'):
-            descpMood = std::string(" DEBUG ");
+            descpMood = std::string("DEBUG ");
             break;
         case ('e'):
-            descpMood = std::string(" ERROR ");
+            descpMood = std::string("ERROR ");
             break;
     }
     if(!debbugingMood && mood == 'd'){

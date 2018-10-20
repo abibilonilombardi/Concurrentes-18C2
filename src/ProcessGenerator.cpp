@@ -144,11 +144,15 @@ int ProcessGenerator::beginSimulation(){
             //signal all child processes to end in orderly fashion:
             kill(*procIt, SIGINT);
         }
+        for (size_t i=0; i < this->processes.size(); i++){
+            //wait for all child processes to end:
+            wait(&status);
+        }
         for (passIt=this->passengers.begin(); passIt!=this->passengers.end(); ++passIt){
             //signal all passengers to end in orderly fashion:
             kill(*passIt, SIGINT);
         }
-        for (size_t i=0; i < this->processes.size()+this->passengers.size(); i++){
+        for (size_t i=0; i < this->passengers.size(); i++){
             //wait for all child processes to end:
             wait(&status);
         }
@@ -160,6 +164,8 @@ int ProcessGenerator::beginSimulation(){
         this->passengers.clear();
         for(int i = 0; i < MAX_PASSENGERS; i++){
             tuple<string,char> semTuple = Passenger::getSemaphore(i);
+            Semaphore sem(0,get<0>(semTuple),get<1>(semTuple));
+            sem.remove();
             unlink(get<0>(semTuple).c_str());
         }
 

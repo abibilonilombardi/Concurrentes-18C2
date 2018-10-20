@@ -16,10 +16,15 @@ using namespace std;
 
 int main(int argc, char *argv[]){
     int shipQty, shipCty;
+
     try{
         int createLogFile = open("ShipsTrevelingSimulation.log", O_CREAT, 0666);
         close(createLogFile);
 
+        Logger::getInstance().log(string("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"));
+        Logger::getInstance().log(string("+++++++++++++++++++++++++++++ LAKE CONCU +++++++++++++++++++++++++++++"));
+        Logger::getInstance().log(string("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"));
+        
         if (argc < 3){ //TODO SACAR
             throw "No enough params";
         }

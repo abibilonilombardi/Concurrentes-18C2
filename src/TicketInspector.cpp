@@ -12,8 +12,6 @@ void TicketInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemo
 
     std::vector<int> passengerIds = sharedMemoryShip.getPassengers();
     for(size_t i = 0; i < passengerIds.size(); i++){
-        string logMessage = string("TICKET INSPECTOR: ") + string(" ABOUT TO UNLOAD PASSENGER: ") + to_string(passengerIds[i]);
-        Logger::getInstance().log(logMessage);
         if(this->running() && passengerIds[i] != NO_PASSENGER){
             if(!sharedMemoryPassenger.hasTicket(passengerIds[i])){
                 //cambiar ubicacion actual
@@ -25,12 +23,8 @@ void TicketInspector::inspect(int harbourToInspect, SharedMemoryShip &sharedMemo
                 tuple<string,char> semTuple = Passenger::getSemaphore(passengerIds[i]);
                 Semaphore passSemaphore(0, get<0>(semTuple), get<1>(semTuple));
                 passSemaphore.signal();
-                //passSemaphore.remove();
-                //borrar de mem de barco al tipo
+                Logger::getInstance().log(string("INSPECTOR-") + to_string(getpid())+ string(" UNLOADED PASSENGER-") + to_string(passengerIds[i]) + string(" AT HARDBOUR-") + to_string(harbourToInspect));
                 passengerIds[i] = NO_PASSENGER;
-
-                logMessage = string("TICKET INSPECTOR: ") + string(" UNLOADED PASSENGER: ") + to_string(passengerIds[i]);
-                Logger::getInstance().log(logMessage);
             }
         }
     }

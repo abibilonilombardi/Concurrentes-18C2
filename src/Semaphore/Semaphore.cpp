@@ -17,6 +17,8 @@ pathname(pathname){
     this->initialize(); // depende de lo anterior si tiene sentido asi o publico
     // l.unlock();
 
+    // Logger::getInstance().log("SEM" + to_string(this->getId()) + " CREATED",'e');
+
 }
 
 void Semaphore::createKey(const string& pathname, const char letter){
@@ -80,5 +82,6 @@ void Semaphore::remove(){
 }
 
 Semaphore::~Semaphore(){
+    // Logger::getInstance().log("SEM" + to_string(this->getId()) + " DELETED",'e');
     // unlink(this->pathname.c_str());
 }

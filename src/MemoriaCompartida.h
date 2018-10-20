@@ -34,7 +34,7 @@ public:
 	T leer(size_t pos) const;
 	size_t size();
 
-	// TODO: barrar, solo lo uso para debbuger
+	// TODO:  solo lo uso para debbuger
 	int getMemId(){return shmId;}
 };
 
